@@ -18,21 +18,9 @@ app.set('trust proxy', true);
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
 
 app.use('/api', routes);
-app.use((req, res, next) => {
-  const filePath = `${path.join(__dirname, '../static')}${req.path}`;
-  const sendIndex = () => res.sendFile(path.join(__dirname, '../static/index.html'));
-  fs.stat(filePath, (err, stats) => {
-    if (err) {
-      if (err.code === 'ENOENT') {
-        return sendIndex();
-      }
-      return next(err);
-    }
-    if (stats.isFile()) {
-      return res.sendFile(filePath);
-    }
-    return sendIndex();
-  });
+app.use('/static', express.static(path.join(__dirname, '../static')));
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, './index.html'));
 });
 
 app.use((err, req, res, next) => {

@@ -16,7 +16,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, './static'),
     filename: '[name].[chunkhash].js',
-    publicPath: '/',
+    publicPath: '/static',
     sourceMapFilename: '[name].[chunkhash].js.map',
     crossOriginLoading: 'anonymous',
   },
@@ -92,7 +92,7 @@ module.exports = {
   plugins: [
     new (require('html-webpack-plugin'))({
       template: './src/index.ejs',
-      filename: '../static/index.html',
+      filename: '../lib/index.html',
       chunksSortMode: 'none',
       minify: {
         minifyCSS: true,
