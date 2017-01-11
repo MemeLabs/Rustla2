@@ -1,18 +1,28 @@
-import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
+import React from 'react';
 
 import MainLayout from './MainLayout';
+import StreamThumbnail from './StreamThumbnail';
 
 
-const Strims = props =>
-  <MainLayout>
-    <div>
-      You are at {props.location.pathname}
+const Strims = props => {
+  const { streams } = props;
+
+  let grid = null;
+  if (streams && streams.length) {
+    grid = streams.map(stream => {
+      return <StreamThumbnail name = {stream.channel}
+        thumbnail = {stream.image_url} url = {stream.url}
+        service = {stream.platform} viewers = {stream.rustlers}
+        key = {stream.url}
+      />
+    });
+  }
+
+  return <MainLayout>
+    <div className='strims'>
+      {grid}
     </div>
-    <div><Link to='/one'>one</Link></div>
-    <div><Link to='/two'>two</Link></div>
-    <div><Link to='/three'>three</Link></div>
-  </MainLayout>
-  ;
+  </MainLayout>;
+};
 
 export default Strims;
