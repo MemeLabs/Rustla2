@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
 
-const StreamThumbnail = ({ thumbnai, url, name, service, viewers, ...rest }) =>
+const StreamThumbnail = ({ thumbnail, url, name, service, viewers, ...rest }) =>
   <div
     style={{
       padding: 4,
