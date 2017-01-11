@@ -1,0 +1,22 @@
+.stream-thumbnail {
+  padding: 4;
+  margin-bottom: 20;
+  border-radius: 4;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .stream-caption {
+    padding: 9;
+    color: #333;
+
+    a {
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+}

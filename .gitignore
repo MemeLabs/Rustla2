@@ -1,6 +1,9 @@
 node_modules
 lib
+static/css
 static/*.js
+static/*.svg
+static/*.ttf
 static/index.html
 .env
 *.log
