@@ -11,7 +11,7 @@
     "build:babel": "babel src --out-dir lib",
     "build:bundle": "webpack --progress --display-chunks --display-reasons --display-error-details --display-modules",
     "build:production": "NODE_ENV=production npm run build",
-    "dev-server": "npm run clean && npm run static && webpack-dev-server --inline --hot",
+    "dev-server": "npm run build &&  webpack-dev-server --inline --hot",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -50,6 +50,7 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
     "webpack": "^1.14.0",
+    "webpack-dev-server": "^1.16.2",
     "webpack-subresource-integrity": "^0.8.2"
   },
   "babel": {

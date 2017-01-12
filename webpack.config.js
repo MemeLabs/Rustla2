@@ -5,6 +5,7 @@ const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const { NODE_ENV } = process.env;
+const IS_PRODUCTION = NODE_ENV === 'production';
 console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
 
 
@@ -16,21 +17,21 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, './static'),
-    filename: '[name].[chunkhash].js',
+    filename: IS_PRODUCTION ? '[name].[chunkhash].js' : '[name].js',
     publicPath: '/static',
     sourceMapFilename: '[name].[chunkhash].js.map',
     crossOriginLoading: 'anonymous',
   },
   devServer: {
-    contentBase: path.join(__dirname, './lib'),
+    contentBase: path.join(__dirname, './static'),
     host: '0.0.0.0',
-    port: process.env.npm_package_config_dev_server_port || 3000,
+    port: process.env.DEV_SERVER_PORT || 3000,
     historyApiFallback: true,
     watchOptions: {
       aggregateTimeout: 100,
     },
   },
-  debug: NODE_ENV !== 'production',
+  debug: !IS_PRODUCTION,
   cache: true,
   stats: {
     colors: true,
@@ -79,19 +80,18 @@ module.exports = {
   plugins: [
     new (require('html-webpack-plugin'))({
       template: './src/index.ejs',
-      filename: '../lib/index.html',
+      filename: '../static/index.html',
       chunksSortMode: 'none',
       inject: true,
       minify: {
         minifyCSS: true,
         minifyJS: true,
-        collapseWhitespace: NODE_ENV === 'production',
+        collapseWhitespace: IS_PRODUCTION,
       },
     }),
     new (require('webpack-subresource-integrity'))({
       hashFuncNames: ['sha256', 'sha384'],
-      enabled: NODE_ENV === 'production',
-      enabled: true,
+      enabled: IS_PRODUCTION,
     }),
     new webpack.DefinePlugin(Object.assign({
       'process.env.NODE_ENV': `"${NODE_ENV}"`,
@@ -100,7 +100,7 @@ module.exports = {
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : "'/nicememe'",
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : "'/nicememe'",
       'TWITCH_API_OAUTH_URL': process.env.TWITCH_API_OAUTH_URL ? `"${process.env.TWITCH_API_OAUTH_URL}"` : "'/nicememe'",
-    }, (() => NODE_ENV === 'production' ? {
+    }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),
     new webpack.optimize.CommonsChunkPlugin({
@@ -113,7 +113,7 @@ module.exports = {
     new ExtractTextPlugin('css/[name].[contenthash].css'),
 
     // production-only plugins
-    ...(() => NODE_ENV === 'production' ? [
+    ...(() => IS_PRODUCTION ? [
       new webpack.optimize.UglifyJsPlugin(),
     ] : [])(),
   ].filter(Boolean),
