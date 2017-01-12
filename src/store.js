@@ -17,8 +17,8 @@ export default createStore(
         predicate: () => process.env.NODE_ENV === 'production',
         actionTransformer: action => ({
           ...action,
-          type: String(action.type),
-        }),
+          type: String(action.type)
+        })
       }),
     ),
   ),

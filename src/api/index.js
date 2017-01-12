@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.use((req, res) => {
   res.json({
-    memes: true,
+    memes: true
   });
 });
 
