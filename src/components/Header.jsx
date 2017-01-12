@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import { browserHistory } from 'react-router';
 
+import 'bootstrap/dist/css/bootstrap.css'
+import '../css/Header';
 
 const onHeaderFormSubmit = e => {
   console.log(e);
@@ -10,10 +12,8 @@ const onHeaderFormSubmit = e => {
 // TODO - give this component `toggleSettings` dispatch-wrapped action that toggles the settings dropdown
 const Header = ({ toggleSettings = noop => noop }) =>
   <nav
-    className='navbar navbar-default navbar-inverse'
-    role='navigation'
-    style={{ borderRadius: 0 }}
-    >
+    className='header navbar navbar-default navbar-inverse'
+    role='navigation'>
     <div className='container-fluid'>
       <div className='navbar-header hidden-sm'>
         <a className='navbar-brand' href='/'>OverRustle</a>

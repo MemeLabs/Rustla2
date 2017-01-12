@@ -2,6 +2,7 @@ require('dotenv').config({ silent: true });
 
 const webpack = require('webpack');
 const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const { NODE_ENV } = process.env;
 console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
@@ -10,7 +11,7 @@ console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
 module.exports = {
   entry: {
     main: [
-      './lib/client.js',
+      path.resolve(__dirname, 'src/client.jsx')
     ],
   },
   output: {
@@ -35,24 +36,23 @@ module.exports = {
     colors: true,
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.ts', '.tsx', '.scss', '.less', '.json'],
+    extensions: ['', '.js', '.jsx', '.scss', '.json'],
   },
   module: {
     loaders: [
       {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loaders: [
-          'babel?presets[]=es2015&presets[]=react&presets[]=stage-0',
-          'ts',
-        ],
-      },
-      {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loaders: [
-          'babel?presets[]=es2015&presets[]=react&presets[]=stage-0',
-        ],
+        include: path.resolve(__dirname, 'src'),
+        loader: 'babel',
+        query: {
+          babelrc: false,
+          presets: [
+            require.resolve('babel-preset-es2015'),
+            require.resolve('babel-preset-react'),
+            require.resolve('babel-preset-stage-0')
+          ],
+          cacheDirectory: true
+        }
       },
       {
         test: /\.pug$/,
@@ -63,22 +63,9 @@ module.exports = {
         loaders: ['json'],
       },
       {
-        test: /\.less/,
-        loaders: [
-          'style',
-          'css',
-          'postcss',
-          'less',
-        ],
-      },
-      {
-        test: /\.scss/,
-        loaders: [
-          'style',
-          'css',
-          'postcss',
-          'sass',
-        ],
+        test: /\.s?css$/,
+        loader: ExtractTextPlugin.extract('style',
+          'css?importLoaders=1!postcss!sass')
       },
       {
         test: /\.(eot|woff|woff2|ttf|png|jpg|svg|ttf|gif)/,
@@ -94,6 +81,7 @@ module.exports = {
       template: './src/index.ejs',
       filename: '../lib/index.html',
       chunksSortMode: 'none',
+      inject: true,
       minify: {
         minifyCSS: true,
         minifyJS: true,
@@ -121,6 +109,9 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(true),
     new webpack.optimize.AggressiveMergingPlugin(),
+
+    new ExtractTextPlugin('css/[name].[contenthash].css'),
+
     // production-only plugins
     ...(() => NODE_ENV === 'production' ? [
       new webpack.optimize.UglifyJsPlugin(),

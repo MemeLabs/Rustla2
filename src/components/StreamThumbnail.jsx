@@ -1,42 +1,19 @@
 import React, { PropTypes } from 'react';
 
+import 'bootstrap/dist/css/bootstrap.css';
+import '../css/StreamThumbnail';
 
 const StreamThumbnail = ({ thumbnail, url, name, service, viewers, ...rest }) =>
-  <div
-    style={{
-      padding: 4,
-      marginBottom: 20,
-      borderRadius: 4,
-    }}
-    {...rest}
-    >
-    {
+  <div className='stream-thumbnail' {...rest}>    {
       thumbnail ?
       <a href={url}>
-        <img
-          style={{
-            maxWidth: '100%',
-            height: 'auto',
-          }}
-          src={thumbnail}
-          />
+        <img src={thumbnail} />
       </a>
       : null
     }
-    <div
-      style={{
-        padding: 9,
-        color: '#333',
-      }}
-      >
+    <div className='stream-caption'>
       <a
         href={url}
-        style={{
-          display: 'block',
-          whiteSpace: 'nowrap',
-          textOveflow: 'ellipsis',
-          overflow: 'hidden',
-        }}
         >
         <div>
           <span>{name}</span>

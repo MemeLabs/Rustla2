@@ -1,17 +1,12 @@
 import React, { PropTypes } from 'react';
 
+import 'bootstrap/dist/css/bootstrap.css';
+import '../css/Footer';
 
 const Footer = ({}) =>
-  <footer
-    style={{
-      marginTop: 30,
-      paddingTop: 30,
-      width: '100%',
-      background: 'linear-gradient(#1A1A1A, #121212)',
-    }}
-    >
+  <footer>
     <div className='container'>
-      <p className='text-muted' style={{ textAlign: 'right' }}>
+      <p className='text-muted'>
         OverRustle.com, a <a href='https://destiny.gg'>destiny.gg</a> community
         <br />
         By <a href={`${GITHUB_URL}/graphs/contributors`}>memers</a>
