@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import 'bootstrap/dist/css/bootstrap.css';
 import '../css/Footer';
 
 const Footer = ({}) =>

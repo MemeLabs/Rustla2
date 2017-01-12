@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
 import { browserHistory } from 'react-router';
 
-import 'bootstrap/dist/css/bootstrap.css'
 import '../css/Header';
 
 const onHeaderFormSubmit = e => {
@@ -13,7 +12,8 @@ const onHeaderFormSubmit = e => {
 const Header = ({ toggleSettings = noop => noop }) =>
   <nav
     className='header navbar navbar-default navbar-inverse'
-    role='navigation'>
+    role='navigation'
+    >
     <div className='container-fluid'>
       <div className='navbar-header hidden-sm'>
         <a className='navbar-brand' href='/'>OverRustle</a>
