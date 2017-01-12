@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { browserHistory } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 
 import '../css/Header';
 
@@ -16,7 +16,7 @@ const Header = ({ toggleSettings = noop => noop }) =>
     >
     <div className='container-fluid'>
       <div className='navbar-header hidden-sm'>
-        <a className='navbar-brand' href='/'>OverRustle</a>
+        <Link className='navbar-brand' to='/'>OverRustle</Link>
       </div>
       <div className='collapse navbar-collapse'>
         <ul className='nav navbar-nav'>
@@ -55,7 +55,7 @@ const Header = ({ toggleSettings = noop => noop }) =>
           </li>
           <li>
             <div className='btn-group'>
-              <a className='btn btn-default navbar-btn' href={TWITCH_API_OAUTH_URL} title='Log In'>
+              <a className='btn btn-default navbar-btn' rel='noopener noreferrer' href={TWITCH_API_OAUTH_URL} title='Log In'>
                 <span className='glyphicon glyphicon-log-in' />
               </a>
               <button className='btn btn-default navbar-btn' title='Settings' type='button' onClick={toggleSettings}>
