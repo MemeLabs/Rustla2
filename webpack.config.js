@@ -13,6 +13,7 @@ module.exports = {
   entry: {
     main: [
       'bootstrap/dist/css/bootstrap.css',
+      path.resolve(__dirname, 'src/css/main.scss'),
       path.resolve(__dirname, 'src/client.jsx'),
     ],
   },
