@@ -12,18 +12,19 @@ console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
 module.exports = {
   entry: {
     main: [
-      path.resolve(__dirname, 'src/client.jsx')
+      'bootstrap/dist/css/bootstrap.css',
+      path.resolve(__dirname, 'src/client.jsx'),
     ],
   },
   output: {
-    path: path.join(__dirname, './static'),
+    path: path.join(__dirname, './public/assets'),
     filename: IS_PRODUCTION ? '[name].[chunkhash].js' : '[name].js',
-    publicPath: '/static',
+    publicPath: '/assets',
     sourceMapFilename: '[name].[chunkhash].js.map',
     crossOriginLoading: 'anonymous',
   },
   devServer: {
-    contentBase: path.join(__dirname, './static'),
+    contentBase: path.join(__dirname, './public'),
     host: '0.0.0.0',
     port: process.env.DEV_SERVER_PORT || 3000,
     historyApiFallback: true,
@@ -56,10 +57,6 @@ module.exports = {
         }
       },
       {
-        test: /\.pug$/,
-        loaders: [`pug?pretty=${NODE_ENV === 'development'}`],
-      },
-      {
         test: /\.json/,
         loaders: ['json'],
       },
@@ -80,7 +77,7 @@ module.exports = {
   plugins: [
     new (require('html-webpack-plugin'))({
       template: './src/index.ejs',
-      filename: '../static/index.html',
+      filename: '../index.html',
       chunksSortMode: 'none',
       inject: true,
       minify: {
@@ -103,15 +100,10 @@ module.exports = {
     }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-    }),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(true),
     new webpack.optimize.AggressiveMergingPlugin(),
-
     new ExtractTextPlugin('css/[name].[contenthash].css'),
-
     // production-only plugins
     ...(() => IS_PRODUCTION ? [
       new webpack.optimize.UglifyJsPlugin(),

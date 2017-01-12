@@ -1,0 +1,21 @@
+import React, { PropTypes } from 'react';
+
+import Header from './Header';
+import Footer from './Footer';
+
+
+const MainLayout = ({ showHeader = true, showFooter = true, children }) =>
+  <div>
+    {showHeader ? <Header /> : null}
+    {children}
+    {showFooter ? <Footer /> : null}
+  </div>
+  ;
+
+MainLayout.propTypes = {
+  showHeader: PropTypes.bool,
+  showFooter: PropTypes.bool,
+  children: PropTypes.node.isRequired,
+};
+
+export default MainLayout;

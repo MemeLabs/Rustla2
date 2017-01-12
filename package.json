@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node ./lib/server.js",
-    "clean": "rm -rf lib static/*.js static/index.html",
+    "clean": "rm -rf lib public/assets public/index.html",
     "postinstall": "npm run build",
     "build": "npm run clean && npm run build:babel && npm run build:bundle",
     "build:babel": "babel src --out-dir lib",

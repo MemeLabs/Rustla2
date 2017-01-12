@@ -18,9 +18,9 @@ app.set('trust proxy', true);
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
 
 app.use('/api', routes);
-app.use('/static', express.static(path.join(__dirname, '../static')));
+app.use(express.static(path.join(__dirname, '../public')));
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, './index.html'));
+  res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.use((err, req, res, next) => {

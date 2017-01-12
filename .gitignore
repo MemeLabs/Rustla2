@@ -1,10 +1,7 @@
 node_modules
 lib
-static/css
-static/*.js
-static/*.svg
-static/*.ttf
-static/index.html
+public/assets/*
+public/index.html
 .env
 *.log
 *.sqlite
