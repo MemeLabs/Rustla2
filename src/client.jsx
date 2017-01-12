@@ -6,12 +6,13 @@ import { browserHistory, Router } from 'react-router';
 import routes from './routes';
 import store from './store';
 
-
+const mountPoint = document.getElementById('main');
 render(
   <Provider store={store}>
     <Router history={browserHistory}>
       {routes}
     </Router>
   </Provider>,
-  document.getElementById('main'),
+  mountPoint,
+  () => mountPoint.className = mountPoint.className.replace('loading', '')
 );
