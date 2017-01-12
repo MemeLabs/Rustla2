@@ -1,8 +1,9 @@
-import INITIAL_STATE from '../INITIAL_STATE';
+import { combineReducers } from 'redux';
 
+import streams from './streams';
 
-const rootReducer = (state = INITIAL_STATE, action) => {
-  return state;
-};
+const rootReducer = combineReducers({
+  streams
+});
 
 export default rootReducer;

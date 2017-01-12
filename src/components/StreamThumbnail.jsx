@@ -4,13 +4,13 @@ import '../css/StreamThumbnail';
 
 
 const StreamThumbnail = ({ thumbnail, url, name, service, viewers, ...rest }) =>
-  <div className='stream-thumbnail' {...rest}>
+  <div className='stream-thumbnail thumbnail' {...rest}>
     {
-      thumbnail
-        ? <a href={url}>
-          <img src={thumbnail} />
-        </a>
-        : null
+      thumbnail ?
+      <a href={url}>
+        <img src={thumbnail} />
+      </a>
+      : null
     }
     <div className='stream-caption'>
       <a

@@ -1,18 +1,18 @@
-/* global process */
+import process from 'process';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
 
 import reducer from './reducers';
 import INITIAL_STATE from './INITIAL_STATE';
+import {init as wsInit, emit as wsEmit} from './actions/websocket'
 
-
-export default createStore(
+const store = createStore(
   reducer,
   INITIAL_STATE,
   compose(
     applyMiddleware(
-      thunk,
+      thunk.withExtraArgument({emit: wsEmit}),
       createLogger({
         duration: true,
         predicate: () => process.env.NODE_ENV === 'production',
@@ -24,3 +24,7 @@ export default createStore(
     ),
   ),
 );
+
+wsInit(store);
+
+export default store;
