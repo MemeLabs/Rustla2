@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
-
+import '../css/Streams';
 
 const Strims = props => {
   const { streams } = props;
@@ -21,17 +21,18 @@ const Strims = props => {
     });
   }
 
-  return (
-    <MainLayout>
-      <div className='strims'>
-        {grid}
-      </div>
-    </MainLayout>
-  );
+  return <MainLayout>
+    <h1 className='streams-headling'>See what {streams.reduce((sum, stream) => {
+      return sum + stream.rustlers;
+    }, 0)} rustlers are watching!</h1>
+    <div className='streams'>
+      {grid}
+    </div>
+  </MainLayout>;
 };
 
 Strims.propTypes = {
-  streams: React.PropTypes.array.isRequired,
+  streams: React.PropTypes.array.isRequired
 };
 
 function stateToProps(state) {
