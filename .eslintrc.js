@@ -1,3 +1,6 @@
 module.exports = {
-  extends: 'semistandard'
+  extends: 'semistandard',
+  rules: {
+    'no-multiple-empty-lines': 'off'
+  }
 };
