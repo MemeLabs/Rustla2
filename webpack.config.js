@@ -103,7 +103,7 @@ module.exports = {
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.OccurenceOrderPlugin(true),
     new webpack.optimize.AggressiveMergingPlugin(),
-    new ExtractTextPlugin('css/[name].[contenthash].css'),
+    new ExtractTextPlugin(IS_PRODUCTION ? 'css/[name].[contenthash].css' : 'css/[name].css'),
     // production-only plugins
     ...(() => IS_PRODUCTION ? [
       new webpack.optimize.UglifyJsPlugin(),
