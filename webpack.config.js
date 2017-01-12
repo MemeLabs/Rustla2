@@ -42,6 +42,12 @@ module.exports = {
     extensions: ['', '.js', '.jsx', '.scss', '.json'],
   },
   module: {
+    preLoaders: [
+      {
+        test: /\.jsx?$/,
+        loader: 'eslint'
+      }
+    ],
     loaders: [
       {
         test: /\.jsx?$/,
@@ -71,6 +77,9 @@ module.exports = {
         loaders: ['url?limit=30000&name=[name]-[hash].[ext]'],
       },
     ],
+  },
+  eslint: {
+    configFile: path.resolve(__dirname, '.eslintrc.js')
   },
   postcss: [
     require('autoprefixer')({ browsers: ['last 2 versions'] }),
