@@ -116,7 +116,11 @@ module.exports = {
     new ExtractTextPlugin(IS_PRODUCTION ? 'css/[name].[contenthash].css' : 'css/[name].css'),
     // production-only plugins
     ...(() => IS_PRODUCTION ? [
-      new webpack.optimize.UglifyJsPlugin()
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false
+        }
+      })
     ] : [])()
   ].filter(Boolean)
 };
