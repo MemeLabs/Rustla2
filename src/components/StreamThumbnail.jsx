@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 
-import 'bootstrap/dist/css/bootstrap.css';
 import '../css/StreamThumbnail';
+
 
 const StreamThumbnail = ({ thumbnail, url, name, service, viewers, ...rest }) =>
   <div className='stream-thumbnail' {...rest}>
