@@ -26,5 +26,6 @@ html, body, #main {
   .grow-#{$i} {
     display: flex;
     flex-grow: $i;
+    flex-direction: column;
   }
 }
