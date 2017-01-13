@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
-import { Link, browserHistory } from 'react-router';
+import { Link } from 'react-router';
 
 import '../css/Header';
 
 const onHeaderFormSubmit = e => {
   console.log(e);
-  // TODO - navigate to correct location with `browserHistory`
+  // TODO - navigate to correct location with `react-router/browserHistory`
 };
 
 // TODO - give this component `toggleSettings` dispatch-wrapped action that toggles the settings dropdown
@@ -70,7 +70,7 @@ const Header = ({ toggleSettings = noop => noop }) =>
   ;
 
 Header.propTypes = {
-  toggleSettings: PropTypes.func.isRequired,
+  toggleSettings: PropTypes.func.isRequired
 };
 
 export default Header;

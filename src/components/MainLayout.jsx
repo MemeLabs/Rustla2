@@ -19,7 +19,7 @@ const MainLayout = ({ showHeader = true, showFooter = true, children }) =>
 MainLayout.propTypes = {
   showHeader: PropTypes.bool,
   showFooter: PropTypes.bool,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired
 };
 
 export default MainLayout;

@@ -1,9 +1,9 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import MainLayout from './MainLayout';
 
 
-const Error404 = ({}) =>
+const Error404 = () =>
   <MainLayout>
     <div className='text-center'>
       <h1>Strim Not Found</h1>

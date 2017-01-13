@@ -4,12 +4,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../css/StreamThumbnail';
 
 const StreamThumbnail = ({ thumbnail, url, name, service, viewers, ...rest }) =>
-  <div className='stream-thumbnail' {...rest}>    {
-      thumbnail ?
-      <a href={url}>
-        <img src={thumbnail} />
-      </a>
-      : null
+  <div className='stream-thumbnail' {...rest}>
+    {
+      thumbnail
+        ? <a href={url}>
+          <img src={thumbnail} />
+        </a>
+        : null
     }
     <div className='stream-caption'>
       <a
@@ -34,7 +35,7 @@ StreamThumbnail.propTypes = {
   url: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   service: PropTypes.string.isRequired,
-  viewers: PropTypes.number.isRequired,
+  viewers: PropTypes.number.isRequired
 };
 
 export default StreamThumbnail;
