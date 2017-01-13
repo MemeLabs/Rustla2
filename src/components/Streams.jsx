@@ -5,7 +5,8 @@ import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
 import '../css/Streams';
 
-const Strims = props => {
+
+const Streams = props => {
   const { streams } = props;
 
   let grid = null;
@@ -35,7 +36,7 @@ const Strims = props => {
   );
 };
 
-Strims.propTypes = {
+Streams.propTypes = {
   streams: React.PropTypes.array.isRequired,
 };
 
@@ -45,4 +46,4 @@ function stateToProps(state) {
   };
 }
 
-export default connect(stateToProps)(Strims);
+export default connect(stateToProps)(Streams);

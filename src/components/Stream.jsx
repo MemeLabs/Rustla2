@@ -1,10 +1,10 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
 
 
-const Strim = ({}) =>
+const Stream = () =>
   <MainLayout showFooter={false}>
     <Resizeable className='grow-1'>
       <div className='grow-1' style={{ backgroundColor: 'red', width: '50%' }} />
@@ -13,4 +13,4 @@ const Strim = ({}) =>
   </MainLayout>
   ;
 
-export default Strim;
+export default Stream;

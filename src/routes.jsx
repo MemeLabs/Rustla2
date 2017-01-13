@@ -1,16 +1,16 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
-import Strims from './components/Strims';
-import Strim from './components/Strim';
+import Streams from './components/Streams';
+import Stream from './components/Stream';
 import Error404 from './components/Error404';
 
 
 const routes =
   <Route path='/'>
-    <IndexRoute component={Strims} />
-    <Route path='strims' component={Strims} />
-    <Route path=':service/:channel' component={Strim} />
+    <IndexRoute component={Streams} />
+    <Route path='strims' component={Streams} />
+    <Route path=':service/:channel' component={Stream} />
     <Route path='*' component={Error404} />
   </Route>
   ;
