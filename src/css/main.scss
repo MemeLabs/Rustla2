@@ -24,6 +24,7 @@ html, body, #main {
 
 @for $i from 1 through 6 {
   .grow-#{$i} {
+    display: flex;
     flex-grow: $i;
   }
 }

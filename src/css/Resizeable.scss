@@ -1,0 +1,32 @@
+
+
+.resizeable {
+  display: flex;
+}
+.resizeable-x {
+  flex-direction: row;
+}
+.resizeable-y {
+  flex-direction: column;
+}
+
+
+.resizeable-bar {
+  // border-top: solid 5px transparent;
+  // border-bottom: solid 5px transparent;
+  border-radius: 4px;
+  transition: background-color 0.25s ease;
+  cursor: col-resize;
+  &.react-draggable-dragging, &.react-draggable-dragging:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+.resizeable-bar-x {
+  height: 100%;
+}
+.resizeable-bar-y {
+  width: 100%;
+}
