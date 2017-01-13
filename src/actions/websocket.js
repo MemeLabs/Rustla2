@@ -1,14 +1,17 @@
-const io = require('socket.io-client');
+// TODO: remove `socket.io` and use native WebSockets once the new server is up
+import io from 'socket.io-client';
 
-const msgTypes = [
-  'error',
-  'strims'
-];
 
 const socket = io('https://api.overrustle.com/streams');
 
+// the types of payloads we can expect from the server
+const MSG_TYPES = [
+  'error',
+  'strims',
+];
+
 function init(store) {
-  msgTypes.forEach(type => {
+  MSG_TYPES.forEach(type => {
     socket.on(type, payload => {
       // rename old server's "strims" to "streams"
       if (type === 'strims') {
@@ -21,7 +24,7 @@ function init(store) {
 }
 
 function emit(type, payload) {
-  socket.send(payload);
+  socket.emit(type, payload);
 }
 
 export { init, emit };
