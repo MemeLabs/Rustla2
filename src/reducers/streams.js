@@ -3,4 +3,4 @@ export default function streams(state = [], action) {
     state = action.payload.stream_list;
   }
   return state;
-};
+}

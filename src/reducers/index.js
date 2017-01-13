@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import streams from './streams';
 
 const rootReducer = combineReducers({
-  streams
+  streams,
 });
 
 export default rootReducer;
