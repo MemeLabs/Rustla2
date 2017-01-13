@@ -1,3 +1,4 @@
+/* global process */
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import createLogger from 'redux-logger';
@@ -17,8 +18,8 @@ export default createStore(
         predicate: () => process.env.NODE_ENV === 'production',
         actionTransformer: action => ({
           ...action,
-          type: String(action.type)
-        })
+          type: String(action.type),
+        }),
       }),
     ),
   ),

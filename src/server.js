@@ -1,3 +1,4 @@
+/* global __dirname process */
 require('dotenv').config();
 
 import path from 'path';

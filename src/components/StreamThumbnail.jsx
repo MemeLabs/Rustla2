@@ -35,7 +35,7 @@ StreamThumbnail.propTypes = {
   url: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   service: PropTypes.string.isRequired,
-  viewers: PropTypes.number.isRequired
+  viewers: PropTypes.number.isRequired,
 };
 
 export default StreamThumbnail;

@@ -1,3 +1,4 @@
+/* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL */
 import React from 'react';
 
 import '../css/Footer';

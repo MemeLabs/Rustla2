@@ -1,3 +1,5 @@
+/* global process __dirname */
+/* eslint quotes: 0 */
 require('dotenv').config({ silent: true });
 
 const webpack = require('webpack');
@@ -14,15 +16,15 @@ module.exports = {
     main: [
       'bootstrap/dist/css/bootstrap.css',
       path.resolve(__dirname, 'src/css/main.scss'),
-      path.resolve(__dirname, 'src/client.jsx')
-    ]
+      path.resolve(__dirname, 'src/client.jsx'),
+    ],
   },
   output: {
     path: path.join(__dirname, './public/assets'),
     filename: IS_PRODUCTION ? '[name].[chunkhash].js' : '[name].js',
     publicPath: '/assets',
     sourceMapFilename: '[name].[chunkhash].js.map',
-    crossOriginLoading: 'anonymous'
+    crossOriginLoading: 'anonymous',
   },
   devServer: {
     contentBase: path.join(__dirname, './public'),
@@ -30,23 +32,23 @@ module.exports = {
     port: process.env.DEV_SERVER_PORT || 3000,
     historyApiFallback: true,
     watchOptions: {
-      aggregateTimeout: 100
-    }
+      aggregateTimeout: 100,
+    },
   },
   debug: !IS_PRODUCTION,
   cache: true,
   stats: {
-    colors: true
+    colors: true,
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.scss', '.json']
+    extensions: ['', '.js', '.jsx', '.scss', '.json'],
   },
   module: {
     preLoaders: [
       {
         test: /\.jsx?$/,
-        loader: 'eslint'
-      }
+        loader: 'eslint',
+      },
     ],
     loaders: [
       {
@@ -58,31 +60,30 @@ module.exports = {
           presets: [
             require.resolve('babel-preset-es2015'),
             require.resolve('babel-preset-react'),
-            require.resolve('babel-preset-stage-0')
+            require.resolve('babel-preset-stage-0'),
           ],
-          cacheDirectory: true
-        }
+          cacheDirectory: true,
+        },
       },
       {
         test: /\.json/,
-        loaders: ['json']
+        loaders: ['json'],
       },
       {
         test: /\.s?css$/,
-        loader: ExtractTextPlugin.extract('style',
-          'css?importLoaders=1!postcss!sass')
+        loader: ExtractTextPlugin.extract('style', 'css?importLoaders=1!postcss!sass'),
       },
       {
         test: /\.(eot|woff|woff2|ttf|png|jpg|svg|ttf|gif)/,
-        loaders: ['url?limit=30000&name=[name]-[hash].[ext]']
-      }
-    ]
+        loaders: ['url?limit=30000&name=[name]-[hash].[ext]'],
+      },
+    ],
   },
   eslint: {
-    configFile: path.resolve(__dirname, '.eslintrc.js')
+    configFile: path.resolve(__dirname, '.eslintrc.js'),
   },
   postcss: [
-    require('autoprefixer')({ browsers: ['last 2 versions'] })
+    require('autoprefixer')({ browsers: ['last 2 versions'] }),
   ],
   plugins: [
     new (require('html-webpack-plugin'))({
@@ -93,12 +94,12 @@ module.exports = {
       minify: {
         minifyCSS: true,
         minifyJS: true,
-        collapseWhitespace: IS_PRODUCTION
-      }
+        collapseWhitespace: IS_PRODUCTION,
+      },
     }),
     new (require('webpack-subresource-integrity'))({
       hashFuncNames: ['sha256', 'sha384'],
-      enabled: IS_PRODUCTION
+      enabled: IS_PRODUCTION,
     }),
     new webpack.DefinePlugin(Object.assign({
       'process.env.NODE_ENV': `"${NODE_ENV}"`,
@@ -106,7 +107,7 @@ module.exports = {
       'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : "'/nicememe'",
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : "'/nicememe'",
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : "'/nicememe'",
-      'TWITCH_API_OAUTH_URL': process.env.TWITCH_API_OAUTH_URL ? `"${process.env.TWITCH_API_OAUTH_URL}"` : "'/nicememe'"
+      'TWITCH_API_OAUTH_URL': process.env.TWITCH_API_OAUTH_URL ? `"${process.env.TWITCH_API_OAUTH_URL}"` : "'/nicememe'",
     }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),
@@ -118,9 +119,9 @@ module.exports = {
     ...(() => IS_PRODUCTION ? [
       new webpack.optimize.UglifyJsPlugin({
         compress: {
-          warnings: false
-        }
-      })
-    ] : [])()
-  ].filter(Boolean)
+          warnings: false,
+        },
+      }),
+    ] : [])(),
+  ].filter(Boolean),
 };

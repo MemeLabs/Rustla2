@@ -1,3 +1,4 @@
+/* global DONATE_PAYPAL_URL TWITCH_API_OAUTH_URL */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 
@@ -70,7 +71,7 @@ const Header = ({ toggleSettings = noop => noop }) =>
   ;
 
 Header.propTypes = {
-  toggleSettings: PropTypes.func.isRequired
+  toggleSettings: PropTypes.func.isRequired,
 };
 
 export default Header;
