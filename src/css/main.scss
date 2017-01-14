@@ -22,10 +22,13 @@ html, body, #main {
   }
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
 @for $i from 1 through 6 {
   .grow-#{$i} {
-    display: flex;
     flex-grow: $i;
-    flex-direction: column;
   }
 }

@@ -9,7 +9,7 @@ import Footer from './Footer';
 const MainLayout = ({ showHeader = true, showFooter = true, children }) =>
   <div className='main-layout'>
     {showHeader ? <Header /> : null}
-    <div className='grow-1'>
+    <div className='flex-column grow-1'>
       {children}
     </div>
     {showFooter ? <Footer /> : null}
