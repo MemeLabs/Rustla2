@@ -22,8 +22,8 @@ const Resizeable = ({ children, barSize = 5, axis = 'x', onStart = logfn('onstar
           onStop={onStop}
           bounds='parent'
           >
-          <div className={`resizeable-bar resizeable-bar-${axis}`}>
-            <div style={{ [axis === 'x' ? 'width' : 'height']: barSize }} />
+          <div className={`resizeable-bar resizeable-bar-${axis} grow-1`}>
+            <div className='resizeable-bar-child' style={{ [axis === 'x' ? 'width' : 'height']: barSize }} />
           </div>
         </Draggable>
       );

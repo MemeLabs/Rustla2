@@ -12,8 +12,6 @@
 
 
 .resizeable-bar {
-  // border-top: solid 5px transparent;
-  // border-bottom: solid 5px transparent;
   border-radius: 4px;
   transition: background-color 0.25s ease;
   cursor: col-resize;
@@ -25,8 +23,12 @@
   }
 }
 .resizeable-bar-x {
-  height: 100%;
+  .resizeable-bar-child {
+    height: 100%;
+  }
 }
 .resizeable-bar-y {
-  width: 100%;
+  .resizeable-bar-child {
+    width: 100%;
+  }
 }
