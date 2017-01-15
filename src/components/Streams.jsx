@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import FlipMove from 'react-flip-move';
 
 import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
@@ -9,15 +10,19 @@ import '../css/Streams';
 const Streams = props => {
   const { streams } = props;
 
-  let grid = null;
+  let grid = [];
+
   if (streams.length) {
     grid = streams.map(stream => {
       return (
         <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.url}>
           <StreamThumbnail
-            name={stream.channel} thumbnail={stream.image_url} url={stream.url}
-            service={stream.platform} viewers={stream.rustlers}
-                                      />
+            name={stream.name || stream.channel}
+            thumbnail={stream.image_url}
+            url={stream.url}
+            service={stream.platform}
+            viewers={stream.rustlers}
+            />
         </div>
       );
     });
@@ -30,7 +35,10 @@ const Streams = props => {
         are watching!
       </h1>
       <div className='streams'>
-        {grid}
+        {
+          // Cannot send an empty array of elements to `FlipMove`
+          grid.length && <FlipMove>{grid}</FlipMove>
+        }
       </div>
     </MainLayout>
   );

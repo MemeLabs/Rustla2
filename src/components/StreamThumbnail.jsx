@@ -7,15 +7,15 @@ const StreamThumbnail = ({ thumbnail, url, name, service, viewers, ...rest }) =>
   <div className='stream-thumbnail thumbnail' {...rest}>
     {
       thumbnail ?
-      <a href={url}>
-        <img src={thumbnail} />
-      </a>
-      : null
+        <a href={url}>
+          <img src={thumbnail} />
+        </a>
+        : null
     }
     <div className='stream-caption'>
       <a
         href={url}
-        >
+      >
         <div>
           <span>{name}</span>
           <span className='pull-right label label-as-badge label-success'>
