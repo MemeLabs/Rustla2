@@ -1,10 +1,15 @@
 import React from 'react';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import lifecycle from 'recompose/lifecycle';
+
+import { setStream } from '../actions';
 
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
 
 
-const Stream = () =>
+export const Stream = () =>
   <MainLayout showFooter={false}>
     <Resizeable className='grow-1'>
       <div style={{ backgroundColor: 'red', width: '50%' }} />
@@ -13,4 +18,12 @@ const Stream = () =>
   </MainLayout>
   ;
 
-export default Stream;
+export default compose(
+  connect(null, { setStream }),
+  lifecycle({
+    componentDidMount() {
+      const { channel, service } = this.props.params;
+      this.props.setStream(channel, service);
+    },
+  }),
+)(Stream);

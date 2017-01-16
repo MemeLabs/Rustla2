@@ -367,7 +367,7 @@ module.exports = {
     ],
 
     'callback-return': [
-      'error',
+      'warn',
     ],
     'global-require': [
       'off',
@@ -688,7 +688,7 @@ module.exports = {
       'off',
     ],
     'arrow-parens': [
-      'error',
+      'off',
       'as-needed',
     ],
     'arrow-spacing': [

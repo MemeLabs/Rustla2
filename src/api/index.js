@@ -1,11 +1,24 @@
 import express from 'express';
 
-const router = express.Router();
+import errors from '../http_errors';
 
-router.use((req, res) => {
+
+const api = express.Router();
+
+api.get('/streamer/:name', async (req, res, next) => {
+  try {
+    // TODO - fetch and send the streamer here
+    throw new errors.NotFound();
+  }
+  catch (err) {
+    return next(err);
+  }
+});
+
+api.use((req, res) => {
   res.json({
     memes: true,
   });
 });
 
-export default router;
+export default api;
