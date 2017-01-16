@@ -92,6 +92,9 @@ const wsEventHandlers = {
             stream = cached_stream;
             break;
           }
+          if (!stream) {
+            throw new Error(`unknown stream id "${channel}"`);
+          }
         }
       }
       else {
@@ -149,6 +152,10 @@ wss.on('connection', ws => {
     }
     catch (err) {
       console.error(`Failed to handle incoming websocket message\n${message}\n`, err);
+      ws.send(JSON.stringify([
+        'ERR',
+        err.message,
+      ]));
     }
   });
   ws.on('error', () => wsEventHandlers.disconnect(ws));
