@@ -1,5 +1,6 @@
 /* global process __dirname */
 /* eslint quotes: 0 */
+/* eslint no-template-curly-in-string: 0 */
 require('dotenv').config({ silent: true });
 
 const webpack = require('webpack');
@@ -15,6 +16,8 @@ module.exports = {
   entry: {
     main: [
       'bootstrap/dist/css/bootstrap.css',
+      'babel-polyfill',
+      'isomorphic-fetch',
       path.resolve(__dirname, 'src/css/main.scss'),
       path.resolve(__dirname, 'src/client.jsx'),
     ],
@@ -103,6 +106,8 @@ module.exports = {
     }),
     new webpack.DefinePlugin(Object.assign({
       'process.env.NODE_ENV': `"${NODE_ENV}"`,
+      'API': process.env.API ? `"${process.env.API}"` : "'/api'",
+      'API_WS': process.env.API_WS ? `"${process.env.API_WS}"` : undefined,
       'GITHUB_URL': process.env.GITHUB_URL ? `"${process.env.GITHUB_URL}"` : "'https://github.com/ILiedAboutCake/Rustla2'",
       'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : "'/nicememe'",
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : "'/nicememe'",

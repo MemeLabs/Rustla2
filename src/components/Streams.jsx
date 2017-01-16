@@ -1,13 +1,13 @@
 import React from 'react';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 
+import '../css/Streams';
 import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
-import '../css/Streams';
 
 
-const Streams = props => {
-  const { streams } = props;
+const Streams = ({ streams }) => {
 
   let grid = null;
   if (streams.length) {
@@ -15,9 +15,12 @@ const Streams = props => {
       return (
         <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.url}>
           <StreamThumbnail
-            name={stream.channel} thumbnail={stream.image_url} url={stream.url}
-            service={stream.platform} viewers={stream.rustlers}
-                                      />
+            name={stream.channel}
+            thumbnail={stream.image_url}
+            url={stream.url}
+            platform={stream.platform}
+            viewers={stream.rustlers}
+            />
         </div>
       );
     });
@@ -25,10 +28,7 @@ const Streams = props => {
 
   return (
     <MainLayout>
-      <h1 className='streams-headling'>See what {
-        streams.reduce((sum, stream) => sum + stream.rustlers, 0) } rustlers
-        are watching!
-      </h1>
+      <h1 className='streams-headling'>See what {streams.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
       <div className='streams'>
         {grid}
       </div>
@@ -40,10 +40,6 @@ Streams.propTypes = {
   streams: React.PropTypes.array.isRequired,
 };
 
-function stateToProps(state) {
-  return {
-    streams: state.streams,
-  };
-}
-
-export default connect(stateToProps)(Streams);
+export default compose(
+  connect(state => ({ streams: state.streams })),
+)(Streams);
