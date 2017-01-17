@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import lifecycle from 'recompose/lifecycle';
+
+import { setStream } from '../actions';
 
 import '../css/Streams';
 import MainLayout from './MainLayout';
@@ -13,14 +16,8 @@ const Streams = ({ streams }) => {
   if (streams.length) {
     grid = streams.map(stream => {
       return (
-        <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.url}>
-          <StreamThumbnail
-            name={stream.channel}
-            thumbnail={stream.image_url}
-            url={stream.url}
-            platform={stream.platform}
-            viewers={stream.rustlers}
-            />
+        <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+          <StreamThumbnail {...stream} />
         </div>
       );
     });
@@ -28,7 +25,7 @@ const Streams = ({ streams }) => {
 
   return (
     <MainLayout>
-      <h1 className='streams-headling'>See what {streams.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
+      <h1 className='streams-headling'>See what {Object.values(streams).reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
       <div className='streams'>
         {grid}
       </div>
@@ -37,9 +34,22 @@ const Streams = ({ streams }) => {
 };
 
 Streams.propTypes = {
-  streams: React.PropTypes.array.isRequired,
+  streams: PropTypes.objectOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      rustlers: PropTypes.number.isRequired,
+    }).isRequired,
+  ).isRequired,
 };
 
 export default compose(
-  connect(state => ({ streams: state.streams })),
+  connect(
+    state => ({ streams: state.streams }),
+    { setStream },
+  ),
+  lifecycle({
+    componentDidMount() {
+      this.props.setStream(null);
+    },
+  }),
 )(Streams);

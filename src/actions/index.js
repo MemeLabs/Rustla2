@@ -1,7 +1,9 @@
 /* global API */
-import { emit } from '../websocket';
+import { emit } from './websocket';
 
-export const setStream = (...args) => (dispatch, getState) => emit('setStream', ...args);
+export const setStream = (...args) => (dispatch, getState) => {
+  emit('setStream', ...args);
+};
 
 // TODO - actually do things with these events in the reducer
 export const STREAMER_FETCH = Symbol('STREAMER_FETCH');

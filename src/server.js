@@ -65,11 +65,17 @@ const wss = new WebSocket.Server({ server });
 // }
 const rustlers = new Map(); // websocket => Rustler map
 const streams = new Map(); // `${channel}/${service}` => Stream map
+
 // update all rustlers for this stream, and the lobby
-const updateRustlers = (stream) => {
+const updateRustlers = stream => {
+  // ensure we're passing a stream whose viewers we will be notifying
+  if (!stream) {
+    return;
+  }
   for (const [ ws, rustler ] of rustlers.entries()) {
+    // send this update to everyone on this stream and everyone in the lobby
     if (rustler.stream === null || rustler.stream === stream) {
-      ws.send(JSON.stringify(['RUSTLERS_UPDATE', stream.id, stream.rustlers.size]));
+      ws.send(JSON.stringify(['RUSTLERS_SET', stream.id, stream.rustlers.size]));
     }
   }
 };
@@ -115,15 +121,30 @@ const wsEventHandlers = {
     }
     debug('rustler set stream %j => %j', rustler.stream, stream);
     // remove rustler from previous stream (if there was one)
+    let prevStream = null;
     if (rustler.stream) {
+      prevStream = rustler.stream;
       rustler.stream.rustlers.delete(rustler);
     }
     rustler.stream = stream;
     if (stream) {
       stream.rustlers.add(ws);
       streams.set(`${stream.channel}/${stream.service}`, stream);
+      ws.send(JSON.stringify(['STREAM_SET', {
+        ...stream,
+        rustlers: stream.rustlers.size,
+      }]));
     }
-    updateRustlers(stream);
+    else {
+      ws.send(JSON.stringify([
+        'STREAMS_SET',
+        Array.from(streams.values()).map(stream => ({
+          ...stream,
+          rustlers: stream.rustlers.size,
+        })),
+      ]));
+    }
+    updateRustlers(stream || prevStream);
   },
   disconnect(ws) {
     const rustler = rustlers.get(ws);
@@ -160,13 +181,6 @@ wss.on('connection', ws => {
   });
   ws.on('error', () => wsEventHandlers.disconnect(ws));
   ws.on('close', () => wsEventHandlers.disconnect(ws));
-  ws.send(JSON.stringify([
-    'STREAMS',
-    Array.from(streams.values()).map(stream => ({
-      ...stream,
-      rustlers: stream.rustlers.size,
-    })),
-  ]));
 });
 
 server.listen(process.env.PORT || 80, () => debug(`listening on port ${process.env.PORT || 80}`));
