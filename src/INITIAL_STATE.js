@@ -1,3 +1,4 @@
 export default {
-  streams: [],
+  stream: null,
+  streams: {},
 };
