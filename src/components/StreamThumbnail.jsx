@@ -39,7 +39,7 @@ StreamThumbnail.propTypes = {
   service: PropTypes.string.isRequired,
   thumbnail: PropTypes.string,
   live: PropTypes.bool.isRequired,
-  viewers: PropTypes.number.isRequired,
+  viewers: PropTypes.number,
   rustlers: PropTypes.number.isRequired,
 };
 

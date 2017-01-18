@@ -7,6 +7,7 @@ export const actions = [
   'RUSTLERS_SET',
   'STREAM_SET',
   'STREAMS_SET',
+  'STREAM_GET',
 ].reduce((acc, curr) => {
   acc[curr] = Symbol(curr);
   return acc;

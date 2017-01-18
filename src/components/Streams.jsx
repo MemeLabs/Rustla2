@@ -11,10 +11,9 @@ import StreamThumbnail from './StreamThumbnail';
 
 
 const Streams = ({ streams }) => {
-
   let grid = null;
-  if (streams.length) {
-    grid = streams.map(stream => {
+  if (Object.values(streams).length) {
+    grid = Object.values(streams).map(stream => {
       return (
         <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
           <StreamThumbnail {...stream} />
@@ -36,8 +35,8 @@ const Streams = ({ streams }) => {
 Streams.propTypes = {
   streams: PropTypes.objectOf(
     PropTypes.shape({
+      ...StreamThumbnail.propTypes,
       id: PropTypes.string.isRequired,
-      rustlers: PropTypes.number.isRequired,
     }).isRequired,
   ).isRequired,
 };

@@ -80,6 +80,22 @@ const updateRustlers = stream => {
   }
 };
 const wsEventHandlers = {
+  // get information about a stream
+  // getStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
+  getStream(ws, id) {
+    for (const [ _, stream ] of streams.entries()) {
+      if (stream.id === id) {
+        ws.send(JSON.stringify([
+          'STREAM_GET',
+          {
+            ...stream,
+            rustlers: stream.rustlers.size,
+          },
+        ]));
+      }
+    }
+  },
+
   // set the user's stream to [channel, service], or id, or null (for lobby)
   // eg, on client:
   // setStream('destiny', 'twitch');
