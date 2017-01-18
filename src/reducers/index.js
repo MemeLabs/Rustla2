@@ -7,6 +7,7 @@ function rootReducer(state, action) {
     return INITIAL_STATE;
   }
   switch (action.type) {
+    case websocket_actions.STREAM_GET:
     case websocket_actions.STREAM_SET: {
       const [ stream ] = action.payload;
       return {
@@ -26,6 +27,7 @@ function rootReducer(state, action) {
           ...state.streams,
           [id]: {
             ...state.streams[id],
+            id,
             rustlers,
           },
         },
