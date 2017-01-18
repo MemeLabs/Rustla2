@@ -7,7 +7,7 @@ import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import WebSocket from 'uws';
-import uuid from 'node-uuid';
+import uuid from 'uuid/v4';
 
 import routes from './api';
 import errors from './http_errors';
@@ -108,7 +108,7 @@ const wsEventHandlers = {
       }
       if (!stream) {
         stream = {
-          id: uuid.v4(),
+          id: uuid(),
           channel,
           service,
           overrustle: null,
