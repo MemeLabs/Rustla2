@@ -1,5 +1,8 @@
 /* global API_WS */
 
+import WebSocket from 'reconnecting-websocket';
+
+
 let socket;
 export let emit; // eslint-disable-line one-var
 // the types of payloads we can expect from the server
@@ -73,11 +76,6 @@ export const init = store => {
     catch (err) {
       console.error(`Failed to handle incoming websocket action\n${data}\n`, err);
     }
-  };
-
-  socket.onerror = socket.onclose = function ondisconnect(event) {
-    console.log('socket disconnect', event);
-    setTimeout(() => init(store), 10000);
   };
 };
 
