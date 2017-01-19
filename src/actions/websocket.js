@@ -1,10 +1,12 @@
 /* global API_WS */
-
 import WebSocket from 'reconnecting-websocket';
+
+import { setStream } from '.';
 
 
 let socket;
 export let emit; // eslint-disable-line one-var
+
 // the types of payloads we can expect from the server
 export const actions = [
   'RUSTLERS_SET',
@@ -35,7 +37,8 @@ const thunks = {
 
 export const init = store => {
   socket = new WebSocket(API_WS || `ws://${location.host}`);
-  const messageQueue = [];
+  let messageQueue = [];
+  let wasReconnect = false;
   emit = (...args) => {
     if (socket.readyState !== 1) {
       messageQueue.push(args);
@@ -48,6 +51,18 @@ export const init = store => {
   socket.onopen = function onopen(event) {
     console.log('socket opened', event);
     messageQueue.forEach(args => emit(...args));
+    messageQueue = [];
+    console.log(wasReconnect);
+    if (wasReconnect) {
+      // resend setStream on reconnect if we're watching one
+      const state = store.getState();
+      const stream = state.streams[state.stream];
+      console.log(stream);
+      if (stream) {
+        store.dispatch(setStream(stream.channel, stream.service));
+      }
+    }
+    wasReconnect = true;
   };
 
 

@@ -79,6 +79,7 @@ const updateRustlers = stream => {
     }
   }
 };
+
 const wsEventHandlers = {
   // get information about a stream
   // getStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
@@ -199,5 +200,11 @@ wss.on('connection', ws => {
   ws.on('error', () => wsEventHandlers.disconnect(ws));
   ws.on('close', () => wsEventHandlers.disconnect(ws));
 });
+
+setInterval(() => {
+  console.log(rustlers);
+  console.log(streams);
+  console.log('=======================================================================');
+}, 10000);
 
 server.listen(process.env.PORT || 80, () => debug(`listening on port ${process.env.PORT || 80}`));

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import '../css/StreamThumbnail';
 
@@ -9,15 +10,13 @@ const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustle
     <div className='stream-thumbnail' {...rest}>
       {
         thumbnail ?
-        <a href={url}>
+        <Link to={url}>
           <img src={thumbnail} />
-        </a>
+        </Link>
         : null
       }
       <div className='stream-caption'>
-        <a
-          href={url}
-          >
+        <Link to={url}>
           <div>
             <span>{channel}</span>
             <span className='pull-right label label-as-badge label-success'>
@@ -27,7 +26,7 @@ const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustle
             </span>
           </div>
           <div>on {service}</div>
-        </a>
+        </Link>
       </div>
     </div>
   );
