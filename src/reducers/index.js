@@ -7,7 +7,15 @@ function rootReducer(state, action) {
     return INITIAL_STATE;
   }
   switch (action.type) {
-    case websocket_actions.STREAM_GET:
+    case websocket_actions.STREAM_GET: {
+      const [ stream ] = action.payload;
+      return {
+        streams: {
+          ...state.streams,
+          [stream.id]: stream,
+        },
+      };
+    }
     case websocket_actions.STREAM_SET: {
       const [ stream ] = action.payload;
       return {
@@ -38,9 +46,9 @@ function rootReducer(state, action) {
       return {
         ...state,
         streams: {
-          ...state.streams,
           ...streams.reduce((acc, stream) => {
             acc[stream.id] = stream;
+            return acc;
           }, {}),
         },
       };

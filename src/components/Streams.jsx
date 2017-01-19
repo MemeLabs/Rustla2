@@ -23,10 +23,8 @@ const Streams = ({ streams }) => {
 
   return (
     <MainLayout>
-      <h1 className='streams-headling'>See what {Object.values(streams).reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
-      <div className='streams'>
-        {grid}
-      </div>
+      <h1 className='streams-headling'>See what {streams_arr.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
+      <div className='streams'>{grid}</div>
     </MainLayout>
   );
 };
