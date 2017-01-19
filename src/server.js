@@ -83,7 +83,7 @@ const wsEventHandlers = {
   // get information about a stream
   // getStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
   getStream(ws, id) {
-    for (const [ _, stream ] of streams.entries()) {
+    for (const stream of streams.values()) {
       if (stream.id === id) {
         ws.send(JSON.stringify([
           'STREAM_GET',
@@ -92,6 +92,7 @@ const wsEventHandlers = {
             rustlers: stream.rustlers.size,
           },
         ]));
+        return;
       }
     }
   },

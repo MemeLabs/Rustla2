@@ -12,14 +12,13 @@ import StreamThumbnail from './StreamThumbnail';
 
 const Streams = ({ streams }) => {
   let grid = null;
-  if (Object.values(streams).length) {
-    grid = Object.values(streams).map(stream => {
-      return (
-        <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
-          <StreamThumbnail {...stream} />
-        </div>
-      );
-    });
+  const streams_arr = Object.values(streams);
+  if (streams_arr.length) {
+    grid = streams_arr.map(stream =>
+      <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+        <StreamThumbnail {...stream} />
+      </div>
+    );
   }
 
   return (
