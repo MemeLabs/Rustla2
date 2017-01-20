@@ -144,8 +144,8 @@ const wsEventHandlers = {
               {
                 headers: {
                   Accept: 'application/vnd.twitchtv.v5+json',
-                  'Client-ID': process.env.TWITCH_CLIENT_ID
-                }
+                  'Client-ID': process.env.TWITCH_CLIENT_ID,
+                },
               });
           const data = await response.json();
 
