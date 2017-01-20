@@ -4,17 +4,13 @@ import { Link } from 'react-router';
 import '../css/StreamThumbnail';
 
 
-const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustlers, viewers, ...rest }) => {
+const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustlers, ...rest }) => {
   const url = overrustle ? overrustle : `${service}/${channel}`;
   return (
-    <div className='stream-thumbnail' {...rest}>
-      {
-        thumbnail ?
-        <Link to={url}>
-          <img src={thumbnail} />
-        </Link>
-        : null
-      }
+    <div className='stream-thumbnail'>
+      <Link to={url}>
+        <img src={thumbnail ? thumbnail : '/image/jigglymonkey.png'} />
+      </Link>
       <div className='stream-caption'>
         <Link to={url}>
           <div>
@@ -40,6 +36,7 @@ StreamThumbnail.propTypes = {
   live: PropTypes.bool.isRequired,
   viewers: PropTypes.number,
   rustlers: PropTypes.number.isRequired,
+  twitch_channel_id: PropTypes.number,
 };
 
 export default StreamThumbnail;

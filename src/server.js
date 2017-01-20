@@ -136,6 +136,22 @@ const wsEventHandlers = {
           rustlers: new Set(),
           viewers: 0,
         };
+
+        // Twitch API v5: must convert channel name to numeric ID
+        if (service === 'twitch') {
+          const response =
+            await fetch(`https://api.twitch.tv/kraken/users?login=${channel}`,
+              {
+                headers: {
+                  Accept: 'application/vnd.twitchtv.v5+json',
+                  'Client-ID': process.env.TWITCH_CLIENT_ID
+                }
+              });
+          const data = await response.json();
+
+          // TODO: figure out why Twitch returns an array of users
+          stream.twitch_channel_id = parseInt(data.users[0]._id, 10);
+        }
         stream.thumbnail = await getThumbnail(stream);
       }
     }
