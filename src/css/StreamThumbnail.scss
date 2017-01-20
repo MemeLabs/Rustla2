@@ -5,6 +5,11 @@
   img {
     max-width: 100%;
     height: auto;
+
+    &.jiggle {
+      position: relative;
+      animation: rustle 100ms infinite;
+    }
   }
 
   .stream-caption {
@@ -18,4 +23,9 @@
       overflow: hidden;
     }
   }
+}
+
+@keyframes rustle {
+  from { left: 0px; }
+  to { left: 2px; }
 }
