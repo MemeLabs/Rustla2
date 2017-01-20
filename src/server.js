@@ -11,6 +11,7 @@ import uuid from 'uuid/v4';
 
 import routes from './api';
 import errors from './http_errors';
+import getThumbnail from './get-thumbnail';
 
 
 const debug = require('debug')('overrustle');
@@ -103,7 +104,7 @@ const wsEventHandlers = {
   // setStream('destiny', 'twitch');
   // setStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
   // setStream(null); // lobby
-  setStream(ws, channel, service) {
+  async setStream(ws, channel, service) {
     const rustler = rustlers.get(ws);
     let stream;
     if (!channel) {
@@ -135,6 +136,7 @@ const wsEventHandlers = {
           rustlers: new Set(),
           viewers: 0,
         };
+        stream.thumbnail = await getThumbnail(stream);
       }
     }
     debug('rustler set stream %j => %j', rustler.stream, stream);
