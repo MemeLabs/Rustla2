@@ -9,7 +9,10 @@ const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustle
   return (
     <div className='stream-thumbnail'>
       <Link to={url}>
-        <img src={thumbnail ? thumbnail : '/image/jigglymonkey.png'} />
+        <img
+          className={thumbnail ? null : 'jiggle'}
+          src={thumbnail ? thumbnail : '/image/jigglymonkey.png'}
+          />
       </Link>
       <div className='stream-caption'>
         <Link to={url}>
