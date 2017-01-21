@@ -1,20 +1,24 @@
 import React from 'react';
-import { Field, reduxForm } from 'redux-form';
 import { browserHistory } from 'react-router';
 
 
-const HeaderForm = ({ handleSubmit }) => {
+const handleSubmit = event => {
+  event.preventDefault();
+  const service = event.target.elements.service.value;
+  const channel = event.target.elements.channel.value;
+  if (channel && channel.length) {
+    browserHistory.push(`/${service}/${channel}`);
+  }
+};
+
+const HeaderForm = () => {
   return (
     <form
       className='navbar-form navbar-left'
       role='search'
       onSubmit={handleSubmit}
     >
-      <Field
-        className='form-control'
-        component='select'
-        name='service'
-      >
+      <select className='form-control' name='service'>
         <option value='angelthump'>AngelThump</option>
         <option value='azubu'>azubu</option>
         <option value='dailymotion'>Dailymotion</option>
@@ -31,14 +35,13 @@ const HeaderForm = ({ handleSubmit }) => {
         <option value='youtube'>YouTube</option>
         <option value='youtube-playlist'>YouTube (playlist)</option>
         <option value='advanced'>Advanced</option>
-      </Field>
+      </select>
       <div className='input-group'>
-        <Field
+        <input
           className='form-control'
           placeholder='Stream/Video ID'
-          component='input'
-          name='channel'
           type='text'
+          name='channel'
           />
         <span className='input-group-btn'>
           <button type='submit' className='btn btn-default'>Go</button>
@@ -48,22 +51,4 @@ const HeaderForm = ({ handleSubmit }) => {
   );
 };
 
-HeaderForm.propTypes = {
-  handleSubmit: React.PropTypes.func.isRequired,
-};
-
-export default reduxForm({
-  form: 'header',
-  initialValues: {
-    service: 'angelthump',
-    channel: null,
-  },
-  onSubmit: data => {
-    // don't do anything if the channel field is empty
-    if (!data.channel.length) {
-      return;
-    }
-
-    browserHistory.push(`/${data.service}/${data.channel}`);
-  },
-})(HeaderForm);
+export default HeaderForm;
