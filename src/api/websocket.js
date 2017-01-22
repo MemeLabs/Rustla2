@@ -1,7 +1,6 @@
 /* global */
 import WebSocket from 'uws';
 import uuid from 'uuid/v4';
-// import getThumbnail from './get-thumbnail';
 
 import { sequelize, Rustler, Stream } from '../db';
 
@@ -15,24 +14,34 @@ export default function makeWebSocketServer(server) {
 
   // update all rustlers for this stream, and the lobby
   const updateRustlers = async stream_id => {
+    // ensure we're actually updating a stream and not the lobby on accident
     if (!stream_id) {
       return;
     }
-    console.log('updating dudes for ', stream_id);
-    // send this update to everyone on this stream and everyone in the lobby
-    const rustlers = await Rustler.findAll({
-      where: {
-        $or: [
-          { stream_id },
-          // { stream_id: null },
-        ],
-      },
-    });
+    const [ rustlers, rustler_count ] = await Promise.all([ // we can do this in parallel
+      // send this update to everyone on this stream and everyone in the lobby
+      Rustler.findAll({
+        where: {
+          $or: [
+            { stream_id },
+            { stream_id: null },
+          ],
+        },
+      }),
+      // need to get the amount of rustlers watching this stream too
+      Stream.findRustlersFor(stream_id),
+    ]);
+    // send update to these rustlers
     for (const rustler of rustlers) {
       const ws = rustler_sockets.get(rustler.id);
+      // check that we have this rustler, they might be using another websocket server
       if (ws) {
-        ws.send(JSON.stringify(['RUSTLERS_SET', stream_id, rustlers.length]));
+        ws.send(JSON.stringify(['RUSTLERS_SET', stream_id, rustler_count]));
       }
+    }
+    // get rid of the stream if no one's watching it anymore
+    if (rustler_count === 0) {
+      await Stream.destroy({ where: { id: stream_id } });
     }
   };
 
