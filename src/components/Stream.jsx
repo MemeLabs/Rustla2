@@ -7,12 +7,13 @@ import { setStream } from '../actions';
 
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
+import StreamEmbed from './StreamEmbed';
 
 
-export const Stream = () =>
+export const Stream = ({ channel, service }) =>
   <MainLayout showFooter={false}>
     <Resizeable className='grow-1'>
-      <div style={{ backgroundColor: 'red', width: '50%' }} />
+      <StreamEmbed channel={channel} service={service} />
       <div style={{ backgroundColor: 'blue', width: '50%' }} />
     </Resizeable>
   </MainLayout>
