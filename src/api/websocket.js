@@ -1,0 +1,203 @@
+/* global */
+import WebSocket from 'uws';
+import uuid from 'uuid/v4';
+// import getThumbnail from './get-thumbnail';
+
+import { sequelize, Rustler, Stream } from '../db';
+
+
+const debug = require('debug')('overrustle:websocket');
+
+export default function makeWebSocketServer(server) {
+
+  const wss = new WebSocket.Server({ server });
+  const rustler_sockets = new Map(); // Rustler.id => websocket map
+
+  // update all rustlers for this stream, and the lobby
+  const updateRustlers = async stream_id => {
+    if (!stream_id) {
+      return;
+    }
+    console.log('updating dudes for ', stream_id);
+    // send this update to everyone on this stream and everyone in the lobby
+    const rustlers = await Rustler.findAll({
+      where: {
+        $or: [
+          { stream_id },
+          // { stream_id: null },
+        ],
+      },
+    });
+    for (const rustler of rustlers) {
+      const ws = rustler_sockets.get(rustler.id);
+      if (ws) {
+        ws.send(JSON.stringify(['RUSTLERS_SET', stream_id, rustlers.length]));
+      }
+    }
+  };
+
+  const wsEventHandlers = {
+    // get information about a stream
+    // getStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
+    async getStream(id, stream_id) {
+      const ws = rustler_sockets(id);
+      try {
+        const stream = await Stream.findById(stream_id);
+        if (!stream) {
+          throw new Error(`Stream "${stream_id}" not found`);
+        }
+        ws.send(JSON.stringify([
+          'STREAM_GET',
+          {
+            ...stream,
+            rustlers: stream.rustlers.size,
+          },
+        ]));
+      }
+      catch (err) {
+        debug(`Failed to respond to \`getStream\` event from rustler ${id}`, err);
+        ws.send(JSON.stringify([
+          'ERR',
+          err.message,
+        ]));
+      }
+    },
+
+    // set the user's stream to [channel, service], or id, or null (for lobby)
+    // eg, on client:
+    // setStream('destiny', 'twitch');
+    // setStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
+    // setStream(null); // lobby
+    async setStream(id, channel, service) {
+      const ws = rustler_sockets.get(id);
+      try {
+        // get our rustler and their stream from the db
+        const [ rustler ] = await Rustler.findAll({
+          where: { id },
+          limit: 1,
+          include: [
+            {
+              model: Stream,
+              as: 'stream',
+            },
+          ],
+        });
+        // get our stream
+        let stream;
+        if (!channel) {
+          // we must be setting our stream to null (for lobby)
+          stream = null;
+        }
+        else {
+          if (!service) {
+            // must be setting by id
+            ([ stream ] = await Stream.findAll({
+              where: { id: channel },
+              attributes: ['Stream.*', [sequelize.fn('COUNT', 'Rustler.id'), 'rustlers']],
+              include: [ Rustler ],
+              limit: 1,
+            }));
+            if (!stream) {
+              throw new Error(`unknown stream id "${channel}"`);
+            }
+          }
+          else {
+            // must be setting by channel-service pair
+            ([ stream ] = await Stream.findAll({
+              where: { channel, service },
+              limit: 1,
+            }));
+            if (!stream) {
+              stream = await Stream.create({ channel, service });
+            }
+          }
+        }
+        const prevStream = rustler.stream ? rustler.stream.toJSON() : null;
+        if (stream) {
+          debug('rustler set stream %j => %j', prevStream, stream.toJSON());
+          // update rustler
+          await rustler.update({ stream_id: stream.id });
+          const rustlers = await Stream.findRustlersFor(stream.id);
+          // send `SET_STREAM` acknowledgement
+          ws.send(JSON.stringify(['STREAM_SET', {
+            ...stream.toJSON(),
+            rustlers,
+          }]));
+          // update everyone else
+          await updateRustlers(stream.id);
+        }
+        else {
+          debug('rustler set stream %j => null', prevStream);
+          // update rustler
+          await rustler.update({ stream_id: null });
+          // get all streams and count rustlers
+          const streams = await Stream.findAllWithRustlers();
+          // send `STREAMS_SET` acknowledgement
+          ws.send(JSON.stringify([
+            'STREAMS_SET',
+            streams,
+          ]));
+          if (prevStream) {
+            // update everyone else
+            await updateRustlers(prevStream.id);
+          }
+        }
+      }
+      catch (err) {
+        debug(`Failed to respond to \`setStream\` event from rustler ${id}`, err);
+        ws.send(JSON.stringify([
+          'ERR',
+          err.message,
+        ]));
+      }
+    },
+    async disconnect(id) {
+      try {
+        rustler_sockets.delete(id);
+        const rustler = await Rustler.findById(id);
+        debug('rustler disconnect %j', rustler.toJSON());
+        const { stream_id } = rustler;
+        await rustler.destroy();
+        if (stream_id) {
+          await updateRustlers(stream_id);
+        }
+      }
+      catch (err) {
+        debug('Error disconnecting', err);
+      }
+    },
+  };
+
+  wss.on('connection', ws => {
+    try {
+      const id = uuid();
+      rustler_sockets.set(id, ws);
+      const rustler_create = Rustler.create({ id, stream_id: null });
+      ws.on('message', async message => {
+        try {
+          const [ event, ...args ] = JSON.parse(message);
+          const handler = wsEventHandlers[event];
+          if (!handler) {
+            throw new TypeError(`Invalid event "${event}"`);
+          }
+          // ensure we've created this rustler first
+          await Promise.resolve(rustler_create);
+          debug(`event [${event}] (${id})`);
+          handler(id, ...args);
+        }
+        catch (err) {
+          debug(`Failed to handle incoming websocket message:\n${message}\n`, err);
+          ws.send(JSON.stringify([
+            'ERR',
+            err.message,
+          ]));
+        }
+      });
+      ws.on('error', () => wsEventHandlers.disconnect(id));
+      ws.on('close', () => wsEventHandlers.disconnect(id));
+    }
+    catch (err) {
+      debug('Failed to handle incoming websocket connection', err);
+    }
+  });
+}
