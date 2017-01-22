@@ -14,7 +14,12 @@ export const Stream = ({ channel, service }) =>
   <MainLayout showFooter={false}>
     <Resizeable className='grow-1'>
       <StreamEmbed channel={channel} service={service} />
-      <div style={{ backgroundColor: 'blue', width: '50%' }} />
+      <iframe
+        src='https://destiny.gg/embed/chat'
+        frameBorder='0'
+        width='100%'
+        style={{ height: '100%' }}
+        />
     </Resizeable>
   </MainLayout>
   ;
