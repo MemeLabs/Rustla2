@@ -3,13 +3,11 @@ require('dotenv').config();
 
 import 'babel-polyfill';
 import http from 'http';
-import https from 'https';
 import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import WebSocket from 'uws';
 import uuid from 'uuid/v4';
-import fs from 'graceful-fs';
 
 import routes from './api';
 import errors from './http_errors';
@@ -50,16 +48,7 @@ app.use((err, req, res, next) => {
 });
 
 // Websocket Stuff
-let server = null;
-if (process.env.SSL_KEY && process.env.SSL_CERT) {
-  server = https.createServer({
-    key: fs.readFileSync(process.env.SSL_KEY),
-    cert: fs.readFileSync(process.env.SSL_CERT),
-  }, app);
-}
-else {
-  server = http.createServer(app);
-}
+const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 // interface Rustler {
