@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node ./lib/server.js",
     "clean": "rm -rf lib public/assets public/index.html",
-    "postinstall": "npm run build",
     "build": "npm run clean && npm run build:babel && npm run build:bundle",
     "build:babel": "babel src --out-dir lib",
     "build:bundle": "webpack --progress --display-chunks --display-reasons --display-error-details --display-modules",
