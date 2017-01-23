@@ -77,7 +77,7 @@ module.exports = {
         loader: ExtractTextPlugin.extract('style', 'css?importLoaders=1!postcss!sass'),
       },
       {
-        test: /\.(eot|woff|woff2|ttf|png|jpg|svg|ttf|gif)/,
+        test: /\.(eot|woff|woff2|ttf|png|jpg|svg|gif)/,
         loaders: ['url?limit=30000&name=[name]-[hash].[ext]'],
       },
     ],
