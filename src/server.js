@@ -1,51 +1,24 @@
-/* global __dirname process */
-require('dotenv').config();
-
-import 'babel-polyfill';
-import http from 'http';
-import path from 'path';
-import express from 'express';
-import morgan from 'morgan';
-
-import routes from './api';
-import errors from './http_errors';
-import makeWebSocketServer from './api/websocket';
+/* global __dirname */
+import cluster from 'cluster';
+import os from 'os';
+import cp from 'child_process';
 
 
-const debug = require('debug')('overrustle');
-const app = express();
+const debug = require('debug')('overrustle:master');
 
-app.set('x-powered-by', false);
-app.set('etag', false);
-app.set('trust proxy', true);
+if (cluster.isMaster) {
 
-app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
+  // spawn our servers
+  os.cpus().forEach(() => {
+    const worker = cluster.fork();
+    ['disconnect', 'error', 'exit', 'listening', 'message', 'online'].map(evt => {
+      worker.on(evt, () => debug(`worker ${worker.id} ${evt}`));
+    });
+  });
 
-app.use('/api', routes);
-app.use(express.static(path.join(__dirname, '../public')));
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
-
-app.use((err, req, res, next) => {
-  if (!(err instanceof errors.HTTPError)) {
-    const wrapper = new errors.InternalServerError(err.message);
-    wrapper.error = err.name;
-    wrapper.stack = err.stack;
-    err = wrapper;
-  }
-  if (!err) {
-    err = new errors.InternalServerError('unknown');
-  }
-  debug(err);
-  res
-    .status(err.status || 500)
-    .json(err)
-    .end()
-    ;
-});
-
-const server = http.createServer(app);
-makeWebSocketServer(server);
-
-server.listen(process.env.PORT || 80, () => debug(`listening on port ${process.env.PORT || 80}`));
+  // spawn livechecking server
+  cp.fork(`${__dirname}/server-livecheck`);
+}
+else {
+  require('./server-slave');
+}
