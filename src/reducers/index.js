@@ -1,4 +1,5 @@
 import omit from 'lodash/omit';
+
 import INITIAL_STATE from '../INITIAL_STATE';
 import { actions as websocket_actions } from '../actions/websocket';
 
