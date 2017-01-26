@@ -18,7 +18,7 @@ export const Stream = ({ channel, service }) =>
         src='https://destiny.gg/embed/chat'
         frameBorder='0'
         width='100%'
-        style={{ height: '100%' }}
+        height='100%'
         />
     </Resizeable>
   </MainLayout>

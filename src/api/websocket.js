@@ -1,4 +1,5 @@
-/* global */
+/* global process */
+import cluster from 'cluster';
 import WebSocket from 'uws';
 import uuid from 'uuid/v4';
 
@@ -13,7 +14,7 @@ export default function makeWebSocketServer(server) {
   const rustler_sockets = new Map(); // Rustler.id => websocket map
 
   // update all rustlers for this stream, and the lobby
-  const updateRustlers = async stream_id => {
+  let updateRustlers = async stream_id => {
     // ensure we're actually updating a stream and not the lobby on accident
     if (!stream_id) {
       return;
@@ -44,24 +45,51 @@ export default function makeWebSocketServer(server) {
       await Stream.destroy({ where: { id: stream_id } });
     }
   };
+  // need to set up some relaying if we're multi-processing
+  // set up basic eventing between master and slave
+  if (cluster.isWorker) {
+    // define events to listen to from master
+    const events = {
+      updateRustlers,
+    };
+    // listen for events from master
+    process.on('message', message => {
+      debug('got message from master %j', message);
+      if (message.event) {
+        const { event, args } = message;
+        const handler = events[event];
+        if (handler) {
+          debug(`handling event from master "${event}"`);
+          handler(...args);
+        }
+      }
+    });
+    // make our `updateRustlers` function notify master instead
+    updateRustlers = (...args) => process.send({
+      type: 'forward',
+      payload: {
+        event: 'updateRustlers',
+        args: args,
+      },
+    });
+  }
 
   const wsEventHandlers = {
     // get information about a stream
     // getStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
     async getStream(id, stream_id) {
-      const ws = rustler_sockets(id);
+      const ws = rustler_sockets.get(id);
       try {
         const stream = await Stream.findById(stream_id);
         if (!stream) {
           throw new Error(`Stream "${stream_id}" not found`);
         }
-        ws.send(JSON.stringify([
-          'STREAM_GET',
-          {
-            ...stream,
-            rustlers: stream.rustlers.size,
-          },
-        ]));
+        const rustlers = await Stream.findRustlersFor(stream.id);
+        // send `SET_STREAM` acknowledgement
+        ws.send(JSON.stringify(['STREAM_GET', {
+          ...stream.toJSON(),
+          rustlers,
+        }]));
       }
       catch (err) {
         debug(`Failed to respond to \`getStream\` event from rustler ${id}`, err);

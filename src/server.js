@@ -10,10 +10,18 @@ if (cluster.isMaster) {
 
   // spawn our servers
   os.cpus().forEach(() => {
-    const worker = cluster.fork();
-    ['disconnect', 'error', 'exit', 'listening', 'message', 'online'].map(evt => {
-      worker.on(evt, () => debug(`worker ${worker.id} ${evt}`));
-    });
+    cluster.fork();
+  });
+  ['disconnect', 'exit', 'error', 'listening', 'message', 'online'].map(evt => {
+    cluster.on(evt, worker => debug(`worker ${worker.id} ${evt}`));
+  });
+  cluster.on('message', (worker, message) => {
+    if (message && message.type === 'forward') {
+      for (const id in cluster.workers) {
+        const worker = cluster.workers[id];
+        worker.send(message.payload);
+      }
+    }
   });
 
   // spawn livechecking server
