@@ -32,7 +32,7 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, './public'),
     host: '0.0.0.0',
-    port: process.env.DEV_SERVER_PORT || 3000,
+    port: process.env.PORT || 3000,
     historyApiFallback: true,
     watchOptions: {
       aggregateTimeout: 100,

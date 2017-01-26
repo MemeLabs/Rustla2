@@ -1,3 +1,5 @@
+import omit from 'lodash/omit';
+
 import INITIAL_STATE from '../INITIAL_STATE';
 import { actions as websocket_actions } from '../actions/websocket';
 
@@ -29,6 +31,13 @@ function rootReducer(state, action) {
     }
     case websocket_actions.RUSTLERS_SET: {
       const [ id, rustlers ] = action.payload;
+      // flush this guy if no one is watching him
+      if (rustlers === 0) {
+        return {
+          ...state,
+          streams: omit(state.streams, [id]),
+        };
+      }
       return {
         ...state,
         streams: {
