@@ -14,12 +14,10 @@ html, body, #main {
   100% { background-position: 51% 50%; }
 }
 
-#main {
-  &.loading {
-    background-image: url('/image/jigglymonkey.png');
-    background-repeat: no-repeat;
-    animation: background_rustle 100ms infinite;
-  }
+.jiggle-background {
+  background-image: url('/image/jigglymonkey.png');
+  background-repeat: no-repeat;
+  animation: background_rustle 100ms infinite;
 }
 
 .flex-column {
@@ -31,4 +29,8 @@ html, body, #main {
   .grow-#{$i} {
     flex-grow: $i;
   }
+}
+
+.navbar {
+  border: 0;
 }

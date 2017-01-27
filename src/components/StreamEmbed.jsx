@@ -54,11 +54,7 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
     );
   }
   else {
-    content = (
-      <div>
-        <img className='jiggle' src='/image/jigglymonkey.png' />
-      </div>
-    );
+    content = <div className='jiggle-background' />;
   }
   return <div {...rest}>{content}</div>;
 };

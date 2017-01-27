@@ -15,5 +15,5 @@ render(
     </Router>
   </Provider>,
   mountPoint,
-  () => mountPoint.className = mountPoint.className.replace('loading', '')
+  () => mountPoint.className = mountPoint.className.replace('jiggle-background', '')
 );
