@@ -2,6 +2,7 @@
 
 .resizeable {
   display: flex;
+  // position: relative;
 }
 .resizeable-x {
   flex-direction: row;
@@ -10,8 +11,19 @@
   flex-direction: column;
 }
 
+.resizeable-backdrop {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+}
+
 
 .resizeable-bar {
+  // position: absolute;
+  // top: 0;
+  // height: 100%;
+
   border-radius: 4px;
   transition: background-color 0.25s ease;
   cursor: col-resize;

@@ -9,7 +9,11 @@ html, body, #main {
   background-color: $background-gray;
 }
 
-@keyframes background_rustle {
+iframe {
+  display: block;
+}
+
+@keyframes jiggle_background {
   0% { background-position: 50% 50%; }
   100% { background-position: 51% 50%; }
 }
@@ -17,7 +21,7 @@ html, body, #main {
 .jiggle-background {
   background-image: url('/image/jigglymonkey.png');
   background-repeat: no-repeat;
-  animation: background_rustle 100ms infinite;
+  animation: jiggle_background 100ms infinite;
 }
 
 .flex-column {

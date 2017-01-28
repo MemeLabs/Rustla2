@@ -1,20 +1,29 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
 
-import { setStream } from '../actions';
+import { setStream, setChatSize } from '../actions';
 
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
 import StreamEmbed from './StreamEmbed';
 
 
-export const Stream = ({ channel, service }) =>
+export const Stream = ({ params: { channel, service }, chatSize, setChatSize }) =>
   <MainLayout showFooter={false}>
-    <Resizeable className='grow-1'>
-      <StreamEmbed channel={channel} service={service} />
-      <div>
+    <Resizeable
+      className='grow-1'
+      barPosition={{ x: 0, y: 0 }}
+      onResize={e => {
+        const newChatSize = window.innerWidth - e.screenX;
+        setChatSize(newChatSize);
+      }}
+      >
+      <div style={{ width: `calc(100% - ${chatSize}px)` }}>
+        <StreamEmbed channel={channel} service={service} />
+      </div>
+      <div style={{ width: chatSize }}>
         <iframe
           src='https://destiny.gg/embed/chat'
           frameBorder='0'
@@ -26,8 +35,24 @@ export const Stream = ({ channel, service }) =>
   </MainLayout>
   ;
 
+Stream.propTypes = {
+  params: PropTypes.shape({
+    channel: PropTypes.string.isRequired,
+    service: PropTypes.string.isRequired,
+  }),
+  chatSize: PropTypes.number.isRequired,
+};
+
 export default compose(
-  connect(null, { setStream }),
+  connect(
+    state => ({
+      chatSize: state.ui.chatSize,
+    }),
+    {
+      setStream,
+      setChatSize,
+    },
+  ),
   lifecycle({
     componentDidMount() {
       const { channel, service } = this.props.params;

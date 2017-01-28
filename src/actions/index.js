@@ -23,3 +23,17 @@ export const fetchStreamer = (name) => async (dispatch) => {
     payload: streamer,
   });
 };
+
+export const SET_CHAT_SIZE = Symbol('SET_CHAT_SIZE');
+export const setChatSize = size => (dispatch, getState) => {
+  if (size < 320) {
+    size = 320;
+  }
+  if (localStorage) {
+    localStorage.setItem('chatSize', size);
+  }
+  dispatch({
+    type: SET_CHAT_SIZE,
+    payload: size,
+  });
+};

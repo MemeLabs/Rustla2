@@ -36,9 +36,8 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
         return `https://www.youtube.com/embed/${channel}?autoplay1`;
     }
   })();
-  let content;
   if (src) {
-    content = (
+    return (
       <iframe
         width='100%'
         height='100%'
@@ -50,13 +49,11 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
         allowFullscreen
         allowTransparency
         src={src}
+        {...rest}
         />
     );
   }
-  else {
-    content = <div className='jiggle-background' />;
-  }
-  return <div {...rest}>{content}</div>;
+  return <div className='jiggle-background' style={{ width: '100%', height: '100%' }} {...rest} />;
 };
 
 StreamEmbed.propTypes = {

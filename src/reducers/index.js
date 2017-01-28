@@ -3,6 +3,8 @@ import omit from 'lodash/omit';
 import INITIAL_STATE from '../INITIAL_STATE';
 import { actions as websocket_actions } from '../actions/websocket';
 
+import uiReducer from './ui';
+
 
 function rootReducer(state, action) {
   if (!state) {
@@ -62,6 +64,13 @@ function rootReducer(state, action) {
         },
       };
     }
+  }
+  const uiState = uiReducer(state.ui, action);
+  if (uiState !== state.ui) {
+    state = {
+      ...state,
+      ui: uiState,
+    };
   }
   return state;
 }

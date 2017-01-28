@@ -5,42 +5,74 @@ import cs from 'classnames';
 import '../css/Resizeable';
 
 // TODO - connect these handlers to action dispatchers
-const logfn = (...args) => () => console.log(...args);
+const logfn = (...args) => (...otherArgs) => console.log(...args, ...otherArgs);
 
-const Resizeable = ({ children, barSize = 5, axis = 'x', onStart = logfn('onstart'), onStop = logfn('onstop'), ...rest }) => {
-  if (children.length !== 2) {
-    throw new Error('Resizeable: unsupported children length');
+// innerWidth - screenX = pixels from right side
+
+class Resizeable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dragging: false,
+    };
+    this.dragStart = this.dragStart.bind(this);
+    this.dragStop = this.dragStop.bind(this);
   }
-  const content = [];
-  children.forEach((child, i) => {
-    content.push(child);
-    if (i % 2 === 0) {
-      content.push(
-        <Draggable
-          axis={axis}
-          onStart={onStart}
-          onStop={onStop}
-          bounds='parent'
-          >
-          <div className={`resizeable-bar resizeable-bar-${axis}`}>
-            <div className='resizeable-bar-child' style={{ [axis === 'x' ? 'width' : 'height']: barSize }} />
-          </div>
-        </Draggable>
-      );
-    }
-  });
-  return React.createElement('div', {
-    ...rest,
-    className: cs('resizeable', `resizeable-${axis}`, rest.className),
-  }, ...content);
-};
 
-Resizeable.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.node).isRequired,
-  barSize: PropTypes.number,
-  axis: PropTypes.oneOf(['x', 'y']),
-  onStart: PropTypes.func,
-  onStop: PropTypes.func,
-};
+  static propTypes = {
+    children: PropTypes.arrayOf(PropTypes.node).isRequired,
+    barSize: PropTypes.number,
+    axis: PropTypes.oneOf(['x', 'y']),
+    onStart: PropTypes.func,
+    onStop: PropTypes.func,
+  };
+
+  dragStart(e, dragData) {
+    if (!this.state.dragging) {
+      this.setState({ dragging: true });
+    }
+  }
+  dragStop(e, dragData) {
+    if (this.state.dragging) {
+      this.setState({ dragging: false });
+    }
+    if (typeof this.props.onResize === 'function') {
+      this.props.onResize(e, dragData);
+    }
+  }
+
+  render() {
+    const { children, barSize = 5, axis = 'x', barPosition, ...rest } = this.props;
+    if (children.length !== 2) {
+      throw new Error('Resizeable: unsupported children length');
+    }
+    const content = [];
+    children.forEach((child, i) => {
+      content.push(child);
+      if (i % 2 === 0) {
+        content.push(
+          <Draggable
+            axis={axis}
+            onStart={this.dragStart}
+            onStop={this.dragStop}
+            bounds='parent'
+            position={barPosition}
+            >
+            <div className={`resizeable-bar resizeable-bar-${axis}`}>
+              <div className='resizeable-bar-child' style={{ [axis === 'x' ? 'width' : 'height']: barSize }} />
+            </div>
+          </Draggable>
+        );
+      }
+    });
+    if (this.state.dragging) {
+      content.push(<div className='resizeable-backdrop' />);
+    }
+    return React.createElement('div', {
+      ...rest,
+      className: cs('resizeable', `resizeable-${axis}`, rest.className),
+    }, ...content);
+  }
+}
 
 export default Resizeable;
