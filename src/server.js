@@ -12,9 +12,11 @@ if (cluster.isMaster) {
   os.cpus().forEach(() => {
     cluster.fork();
   });
+  // set up debug logging on worker events
   ['disconnect', 'exit', 'error', 'listening', 'message', 'online'].map(evt => {
     cluster.on(evt, worker => debug(`worker ${worker.id} ${evt}`));
   });
+  // set up basic message relaying
   cluster.on('message', (worker, message) => {
     if (message && message.type === 'forward') {
       for (const id in cluster.workers) {
@@ -28,5 +30,6 @@ if (cluster.isMaster) {
   cp.fork(`${__dirname}/server-livecheck`);
 }
 else {
+  // start working
   require('./server-slave');
 }

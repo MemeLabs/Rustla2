@@ -4,10 +4,6 @@ import cs from 'classnames';
 
 import '../css/Resizeable';
 
-// TODO - connect these handlers to action dispatchers
-const logfn = (...args) => (...otherArgs) => console.log(...args, ...otherArgs);
-
-// innerWidth - screenX = pixels from right side
 
 class Resizeable extends React.Component {
   constructor(props) {
