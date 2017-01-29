@@ -108,7 +108,7 @@ export const Rustler = sequelize.define('rustler', {
 });
 
 User.sync();
-Rustler.sync();
+Rustler.sync({ force: true });
 Stream.sync();
 
 Rustler.belongsTo(Stream, { as: 'stream' });
