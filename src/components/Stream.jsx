@@ -14,7 +14,6 @@ export const Stream = ({ params: { channel, service }, chatSize, setChatSize }) 
   <MainLayout showFooter={false}>
     <Resizeable
       className='grow-1'
-      barPosition={{ x: 0, y: 0 }}
       onResize={e => {
         const newChatSize = window.innerWidth - e.screenX;
         setChatSize(newChatSize);

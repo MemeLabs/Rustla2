@@ -19,8 +19,7 @@ class Resizeable extends React.Component {
     children: PropTypes.arrayOf(PropTypes.node).isRequired,
     barSize: PropTypes.number,
     axis: PropTypes.oneOf(['x', 'y']),
-    onStart: PropTypes.func,
-    onStop: PropTypes.func,
+    onResize: PropTypes.func,
   };
 
   dragStart(e, dragData) {
@@ -38,7 +37,7 @@ class Resizeable extends React.Component {
   }
 
   render() {
-    const { children, barSize = 5, axis = 'x', barPosition, ...rest } = this.props;
+    const { children, barSize = 5, axis = 'x', ...rest } = this.props;
     if (children.length !== 2) {
       throw new Error('Resizeable: unsupported children length');
     }
@@ -52,7 +51,7 @@ class Resizeable extends React.Component {
             onStart={this.dragStart}
             onStop={this.dragStop}
             bounds='parent'
-            position={barPosition}
+            position={{ x: 0, y: 0 }}
             >
             <div className={`resizeable-bar resizeable-bar-${axis}`}>
               <div className='resizeable-bar-child' style={{ [axis === 'x' ? 'width' : 'height']: barSize }} />
