@@ -2,6 +2,7 @@
 require('dotenv').config();
 
 import 'babel-polyfill';
+import 'isomorphic-fetch';
 import http from 'http';
 import path from 'path';
 import express from 'express';

@@ -10,8 +10,8 @@ import Resizeable from './Resizeable';
 import StreamEmbed from './StreamEmbed';
 
 
-export const Stream = ({ params: { channel, service }, chatSize, setChatSize }) =>
-  <MainLayout showFooter={false}>
+export const Stream = ({ params: { channel, service }, chatSize, setChatSize, rustlerCount }) =>
+  <MainLayout showFooter={false} rustlerCount={rustlerCount}>
     <Resizeable
       className='grow-1'
       onResize={e => {
@@ -46,6 +46,7 @@ export default compose(
   connect(
     state => ({
       chatSize: state.ui.chatSize,
+      rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
     }),
     {
       setStream,

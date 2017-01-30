@@ -27,7 +27,7 @@ export const User = sequelize.define('user', {});
 
 export const Stream = sequelize.define('stream', {
   id: {
-    type: Sequelize.UUIDV4,
+    type: Sequelize.INTEGER,
     defaultValue: Sequelize.UUIDV4,
     primaryKey: true,
     unique: true,
@@ -68,7 +68,6 @@ export const Stream = sequelize.define('stream', {
   // },
   viewers: { // amount of people the service reports is watching this stream
     type: Sequelize.INTEGER,
-    defaultValue: 1,
   },
 }, {
   classMethods: {
@@ -97,7 +96,7 @@ export const Rustler = sequelize.define('rustler', {
     },
   },
   stream_id: { // the Stream that the rustler is watching
-    type: Sequelize.UUIDV4,
+    type: Sequelize.INTEGER,
     references: {
       model: 'streams',
       key: 'id',

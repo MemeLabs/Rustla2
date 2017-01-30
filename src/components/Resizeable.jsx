@@ -37,7 +37,7 @@ class Resizeable extends React.Component {
   }
 
   render() {
-    const { children, barSize = 5, axis = 'x', ...rest } = this.props;
+    const { children, barSize = 5, axis = 'x', onResize, ...rest } = this.props;
     if (children.length !== 2) {
       throw new Error('Resizeable: unsupported children length');
     }

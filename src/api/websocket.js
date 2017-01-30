@@ -2,6 +2,7 @@
 import cluster from 'cluster';
 import WebSocket from 'uws';
 import uuid from 'uuid/v4';
+import hash from 'string-hash';
 
 import { sequelize, Rustler, Stream } from '../db';
 
@@ -145,7 +146,11 @@ export default function makeWebSocketServer(server) {
               limit: 1,
             }));
             if (!stream) {
-              stream = await Stream.create({ channel, service });
+              stream = await Stream.create({
+                id: hash(`${service}/${channel}`),
+                channel,
+                service,
+              });
             }
           }
         }

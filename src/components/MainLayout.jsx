@@ -6,9 +6,9 @@ import Header from './Header';
 import Footer from './Footer';
 
 
-const MainLayout = ({ showHeader = true, showFooter = true, children }) =>
+const MainLayout = ({ showHeader = true, showFooter = true, rustlerCount, children }) =>
   <div className='main-layout flex-column'>
-    {showHeader ? <Header /> : null}
+    {showHeader ? <Header rustlerCount={rustlerCount} /> : null}
     <div className='flex-column grow-1'>
       {children}
     </div>
@@ -19,6 +19,7 @@ const MainLayout = ({ showHeader = true, showFooter = true, children }) =>
 MainLayout.propTypes = {
   showHeader: PropTypes.bool,
   showFooter: PropTypes.bool,
+  rustlerCount: Header.propTypes.rustlerCount,
   children: PropTypes.node.isRequired,
 };
 
