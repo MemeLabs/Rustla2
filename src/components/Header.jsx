@@ -44,7 +44,7 @@ const Header = ({ toggleSettings, rustlerCount }) => {
             </li>
             <li>
               <div className='btn-group'>
-                <a className='btn btn-default navbar-btn' rel='noopener noreferrer' href={TWITCH_API_OAUTH_URL} title='Log In'>
+                <a className='btn btn-default navbar-btn' rel='noopener noreferrer' href='/login' title='Log In'>
                   <span className='glyphicon glyphicon-log-in' />
                 </a>
                 <button className='btn btn-default navbar-btn' title='Settings' type='button' onClick={toggleSettings}>

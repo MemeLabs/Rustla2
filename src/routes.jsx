@@ -2,12 +2,14 @@
 
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
+import cookies from 'js-cookie';
 
 import Streams from './components/Streams';
 import Stream from './components/Stream';
 import Error404 from './components/Error404';
+import Profile from './components/Profile';
 
-import { fetchStreamer } from './actions';
+import { fetchProfile, fetchStreamer } from './actions';
 import store from './store';
 
 
@@ -17,6 +19,22 @@ const routes =
   <Route path='/'>
     <IndexRoute component={Streams} />
     <Route path='strims' component={Streams} />
+    <Route
+      path='profile'
+      getComponent={async (nextState, callback) => {
+        console.log(cookies.get());
+        try {
+          const res = await store.dispatch(fetchProfile());
+          if (res.error) {
+            throw res.error;
+          }
+          callback(null, Profile);
+        }
+        catch (e) {
+          callback(e);
+        }
+      }}
+      />
     <Route
       path=':service/:channel'
       getComponent={(nextState, callback) => {

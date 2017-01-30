@@ -1,4 +1,6 @@
 /* global API */
+import cookies from 'js-cookie';
+
 import { emit } from './websocket';
 
 export const setStream = (...args) => (dispatch, getState) => {
@@ -37,5 +39,28 @@ export const setChatSize = size => (dispatch, getState) => {
   dispatch({
     type: SET_CHAT_SIZE,
     payload: size,
+  });
+};
+
+export const PROFILE_FETCH = Symbol('PROFILE_FETCH');
+export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
+export const fetchProfile = () => async (dispatch) => {
+  const token = cookies.get('jwt');
+  const res = await fetch(`${API}/profile`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (res.states !== 200) {
+    const error = await res.json();
+    return dispatch({
+      type: PROFILE_FETCH_FAILURE,
+      error,
+    });
+  }
+  const profile = await res.json();
+  return dispatch({
+    type: PROFILE_FETCH,
+    payload: profile,
   });
 };

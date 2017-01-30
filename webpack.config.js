@@ -112,7 +112,6 @@ module.exports = {
       'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : "'/nicememe'",
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : "'/nicememe'",
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : "'/nicememe'",
-      'TWITCH_API_OAUTH_URL': process.env.TWITCH_API_OAUTH_URL ? `"${process.env.TWITCH_API_OAUTH_URL}"` : "'/nicememe'",
     }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),

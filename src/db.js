@@ -22,8 +22,46 @@ export const sequelize = new Sequelize(DB_DB, null, null, {
   },
 });
 
-// TODO
-export const User = sequelize.define('user', {});
+export const User = sequelize.define('user', {
+  // Twitch username
+  id: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    unique: true,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  service: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  channel: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  last_ip: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  last_seen: {
+    type: Sequelize.DATE,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+});
 
 export const Stream = sequelize.define('stream', {
   id: {
