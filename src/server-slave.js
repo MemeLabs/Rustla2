@@ -1,21 +1,21 @@
-/* global __dirname */
+/* global __dirname process */
 require('dotenv').config();
 
 import 'babel-polyfill';
 import 'isomorphic-fetch';
-import Cookies from 'cookies';
 import http from 'http';
 import path from 'path';
-import process from 'process';
 import querystring from 'querystring';
 import express from 'express';
 import morgan from 'morgan';
+import Cookies from 'cookies';
 import jwt from 'jwt-simple';
 
 import routes from './api';
 import errors from './http_errors';
 import makeWebSocketServer from './api/websocket';
 import { User } from './db';
+
 
 const debug = require('debug')('overrustle');
 const app = express();
@@ -42,85 +42,88 @@ app.use('/login', (req, res) => {
 // Twitch will then redirect user to this path, with a code that we can use to
 // obtain the access token.
 app.use('/oauth', async (req, res, next) => {
-  if (req.query.error) {
-    switch (req.query.error) {
-      case 'redirect_mismatch':
-        console.error(`
-          Got "redirect mismatch" error from Twitch. Please ensure that you have
-          set the TWITCH_REDIRECT_URI environment variable to the redirect URI
-          defined in your Twitch application.
-        `);
-        break;
-      default:
-        debug('got error from twitch authentification: ', req.query);
+  try {
+    if (req.query.error) {
+      switch (req.query.error) {
+        case 'redirect_mismatch':
+          console.error(`
+            Got "redirect mismatch" error from Twitch. Please ensure that you have
+            set the TWITCH_REDIRECT_URI environment variable to the redirect URI
+            defined in your Twitch application.
+          `);
+          break;
+        default:
+          debug('got error from twitch authentification: ', req.query);
+      }
+      throw new errors.InternalServerError(req.query.error);
     }
-    next();
-    return;
-  }
 
-  const oauthRequest = await fetch('https://api.twitch.tv/kraken/oauth2/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      client_id: process.env.TWITCH_CLIENT_ID,
-      client_secret: process.env.TWITCH_CLIENT_SECRET,
-      grant_type: 'authorization_code',
-      redirect_uri: process.env.TWITCH_REDIRECT_URI,
-      code: req.query.code,
-    }),
-  });
-  const oauthResult = await oauthRequest.json();
-
-  // This failure is almost certainly caused by the TWITCH_CLIENT_SECRET
-  // environment variable not being defined.
-  if (oauthResult.status === 400) {
-    debug(oauthResult);
-    res.redirect('/');
-  }
-
-  // Now, use the user access token in order to get the Twitch username.
-  const getUserRequest = await fetch('https://api.twitch.tv/kraken/user', {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      Authorization: `OAuth ${oauthResult.access_token}`,
-      'Client-ID': process.env.TWITCH_CLIENT_ID,
-    },
-  });
-  const getUserResult = await getUserRequest.json();
-
-  let dbUser = await User.findById(getUserResult.name);
-  if (!dbUser) {
-    debug(`user with Twitch username ${getUserResult.name} does not exist,
-      creating new one`);
-    dbUser = await User.create({
-      id: getUserResult.name,
-      service: 'twitch',
-      channel: getUserResult.name,
-      last_ip: req.connection.remoteAddress,
-      last_seen: new Date(),
+    const oauthRequest = await fetch('https://api.twitch.tv/kraken/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        client_id: process.env.TWITCH_CLIENT_ID,
+        client_secret: process.env.TWITCH_CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: process.env.TWITCH_REDIRECT_URI,
+        code: req.query.code,
+      }),
     });
-  }
-  else {
-    dbUser.update({
-      last_ip: req.connection.remoteAddress,
-      last_seen: new Date(),
+    const oauthResult = await oauthRequest.json();
+
+    // This failure is almost certainly caused by the TWITCH_CLIENT_SECRET
+    // environment variable not being defined.
+    if (oauthResult.status === 400) {
+      debug(oauthResult);
+      res.redirect('/');
+    }
+
+    // Now, use the user access token in order to get the Twitch username.
+    const getUserRequest = await fetch('https://api.twitch.tv/kraken/user', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `OAuth ${oauthResult.access_token}`,
+        'Client-ID': process.env.TWITCH_CLIENT_ID,
+      },
     });
+    const getUserResult = await getUserRequest.json();
+
+    let dbUser = await User.findById(getUserResult.name);
+    if (!dbUser) {
+      debug(`user with Twitch username ${getUserResult.name} does not exist, creating new one`);
+      dbUser = await User.create({
+        id: getUserResult.name,
+        service: 'twitch',
+        channel: getUserResult.name,
+        last_ip: req.connection.remoteAddress,
+        last_seen: new Date(),
+      });
+    }
+    else {
+      dbUser.update({
+        last_ip: req.connection.remoteAddress,
+        last_seen: new Date(),
+      });
+    }
+
+    const payload = {
+      sub: getUserResult.name,
+    };
+
+    const token = jwt.encode(payload, process.env.JWT_SECRET);
+    const cookies = new Cookies(req, res);
+    cookies.set('jwt', token, {
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
+
+    res.redirect('/profile');
   }
-
-  const payload = {
-    sub: getUserResult.name,
-  };
-
-  const token = jwt.encode(payload, process.env.JWT_SECRET);
-  const cookies = new Cookies(req, res);
-  cookies.set('jwt', token, {
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  });
-
-  res.redirect('/profile');
+  catch (err) {
+    return next(err);
+  }
 });
 
 app.use('/profile', (req, res, next) => {
@@ -145,7 +148,7 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   if (!(err instanceof errors.HTTPError)) {
     const wrapper = new errors.InternalServerError(err.message);
     wrapper.error = err.name;

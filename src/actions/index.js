@@ -3,7 +3,7 @@
 import { emit } from './websocket';
 
 
-export const setStream = (...args) => (dispatch, getState) => {
+export const setStream = (...args) => () => {
   emit('setStream', ...args);
 };
 
@@ -26,7 +26,7 @@ export const fetchStreamer = (name) => async (dispatch) => {
 };
 
 export const SET_CHAT_SIZE = Symbol('SET_CHAT_SIZE');
-export const setChatSize = size => (dispatch, getState) => {
+export const setChatSize = size => (dispatch) => {
   // clamp our chat size a bit
   if (size < 320) {
     size = 320;
