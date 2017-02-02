@@ -23,7 +23,7 @@ api.get('/streamer/:name', async (req, res, next) => {
 
 // Returns private information. Requires the "jwt" cookie to contain a valid
 // token.
-api.get('/profile', async (req, res, next) => {
+api.get('/profile', async (req, res) => {
   const cookies = new Cookies(req, res);
   const token = cookies.get('jwt');
 
