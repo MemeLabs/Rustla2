@@ -52,7 +52,7 @@ export const fetchProfile = () => async (dispatch) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  if (res.states !== 200) {
+  if (res.status !== 200) {
     const error = await res.json();
     return dispatch({
       type: PROFILE_FETCH_FAILURE,
