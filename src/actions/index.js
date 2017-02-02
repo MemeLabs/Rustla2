@@ -47,6 +47,7 @@ export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
 export const fetchProfile = () => async (dispatch) => {
   const token = cookies.get('jwt');
   const res = await fetch(`${API}/profile`, {
+    credentials: 'same-origin',
     headers: {
       Authorization: `Bearer ${token}`,
     },

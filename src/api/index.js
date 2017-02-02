@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jwt-simple';
 import process from 'process';
+import Cookies from 'cookies';
 
 import { User } from '../db';
 const debug = require('debug')('overrustle:api');
@@ -20,14 +21,11 @@ api.get('/streamer/:name', async (req, res, next) => {
   }
 });
 
-// Returns private information. Requires the "authorization" header with a valid
-// JWT, like so:
-//
-//     Authorization: Bearer <token>
-//
-// See: https://en.wikipedia.org/wiki/JSON_Web_Token#How_it_works
+// Returns private information. Requires the "jwt" cookie to contain a valid
+// token.
 api.get('/profile', async (req, res, next) => {
-  const token = req.headers.authorization;
+  const cookies = new Cookies(req, res);
+  const token = cookies.get('jwt');
 
   // Unauthorized.
   if (!token) {
@@ -35,10 +33,9 @@ api.get('/profile', async (req, res, next) => {
     return;
   }
 
+  // Catch invalid token errors.
   try {
-    const decoded = jwt.decode(
-      token.replace('Bearer ', ''),
-      process.env.JWT_SECRET);
+    const decoded = jwt.decode(token, process.env.JWT_SECRET);
     res.status(200).json(decoded);
   }
   catch (e) {
