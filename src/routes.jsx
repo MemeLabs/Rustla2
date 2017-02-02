@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import cookies from 'js-cookie';
 
 import Streams from './components/Streams';
 import Stream from './components/Stream';
@@ -22,7 +21,6 @@ const routes =
     <Route
       path='profile'
       getComponent={async (nextState, callback) => {
-        console.log(cookies.get());
         try {
           const res = await store.dispatch(fetchProfile());
           if (res.error) {
