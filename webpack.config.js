@@ -38,27 +38,25 @@ module.exports = {
       aggregateTimeout: 100,
     },
   },
-  debug: !IS_PRODUCTION,
   cache: true,
   stats: {
     colors: true,
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.scss', '.json'],
+    extensions: ['.js', '.jsx', '.scss', '.json'],
   },
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        loader: 'eslint',
+        loader: 'eslint-loader',
+        enforce: 'pre',
       },
-    ],
-    loaders: [
       {
         test: /\.jsx?$/,
         include: path.resolve(__dirname, 'src'),
-        loader: 'babel',
-        query: {
+        loader: 'babel-loader',
+        options: {
           babelrc: false,
           presets: [
             require.resolve('babel-preset-es2015'),
@@ -69,26 +67,35 @@ module.exports = {
         },
       },
       {
-        test: /\.json/,
-        loaders: ['json'],
-      },
-      {
         test: /\.s?css$/,
-        loader: ExtractTextPlugin.extract('style', 'css?importLoaders=1!postcss!sass'),
+        use: ExtractTextPlugin.extract({
+          fallbackLoader: 'style-loader',
+          loader: [
+            { loader: 'css-loader', options: { importLoaders: 1 } },
+            { loader: 'postcss-loader',
+              options: {
+                plugins: () => {
+                  require('autoprefixer')({
+                    browsers: ['last 2 versions'],
+                  });
+                },
+              },
+            },
+            { loader: 'sass-loader' },
+          ],
+        }),
       },
       {
         test: /\.(eot|woff|woff2|ttf|png|jpg|svg|gif)/,
-        loaders: ['url?limit=30000&name=[name]-[hash].[ext]'],
+        use: ['url-loader?limit=30000&name=[name]-[hash].[ext]'],
       },
     ],
   },
-  eslint: {
-    configFile: path.resolve(__dirname, '.eslintrc.js'),
-  },
-  postcss: [
-    require('autoprefixer')({ browsers: ['last 2 versions'] }),
-  ],
   plugins: [
+    new webpack.LoaderOptionsPlugin({
+      debug: !IS_PRODUCTION,
+      minimize: IS_PRODUCTION,
+    }),
     new (require('html-webpack-plugin'))({
       template: './src/index.ejs',
       filename: '../index.html',
@@ -115,10 +122,9 @@ module.exports = {
     }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(true),
     new webpack.optimize.AggressiveMergingPlugin(),
     new ExtractTextPlugin(IS_PRODUCTION ? 'css/[name].[contenthash].css' : 'css/[name].css'),
+
     // production-only plugins
     ...(() => IS_PRODUCTION ? [
       new webpack.optimize.UglifyJsPlugin({
