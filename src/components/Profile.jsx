@@ -30,10 +30,7 @@ const Profile = ({ profile, updateProfile }) =>
             htmlFor='profile-service-select'
             className='col-sm-2 control-label'>Streaming Service</label>
           <div className='col-sm-10'>
-            <ServiceSelect
-              id='profile-service-select'
-              className='form-control'
-              />
+            <ServiceSelect id='profile-service-select' />
           </div>
         </div>
         <div className='form-group'>
