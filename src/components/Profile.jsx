@@ -22,6 +22,17 @@ const Profile = ({ profile, updateProfile }) =>
             service: event.target.elements.service.value,
             channel: event.target.elements.channel.value,
           };
+
+          // Disallow blank inputs. The ORM will disallow these anyways but
+          // there's arguably no point in even making the request if it's known
+          // ahead of time that it's gonna fail. This check might be better off
+          // in the `updateProfile` action itself. Also, would be nice if we
+          // visually showed the user an error message regarding this (or simply
+          // disabled the button).
+          if (!payload.channel || !payload.channel.length) {
+            return;
+          }
+
           updateProfile(payload);
         }}
       >
