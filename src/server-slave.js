@@ -10,6 +10,7 @@ import express from 'express';
 import morgan from 'morgan';
 import Cookies from 'cookies';
 import jwt from 'jwt-simple';
+import bodyParser from 'body-parser';
 
 import routes from './api';
 import errors from './http_errors';
@@ -25,6 +26,8 @@ app.set('etag', false);
 app.set('trust proxy', true);
 
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
+
+app.use(bodyParser.json());
 
 app.use('/api', routes);
 

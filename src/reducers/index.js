@@ -3,6 +3,7 @@ import omit from 'lodash/omit';
 import INITIAL_STATE from '../INITIAL_STATE';
 import { actions as websocket_actions } from '../actions/websocket';
 
+import profileReducer from './profile';
 import uiReducer from './ui';
 
 
@@ -72,6 +73,15 @@ function rootReducer(state, action) {
       ui: uiState,
     };
   }
+
+  const profileState = profileReducer(state.profile, action);
+  if (profileState !== state.ui) {
+    state = {
+      ...state,
+      profile: profileState,
+    };
+  }
+
   return state;
 }
 

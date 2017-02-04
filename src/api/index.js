@@ -5,7 +5,7 @@ import Cookies from 'cookies';
 
 import { User } from '../db';
 import errors from '../http_errors';
-const debug = require('debug')('overrustle:api');
+
 
 const api = express.Router();
 
@@ -40,7 +40,15 @@ api.get('/profile', async (req, res, next) => {
     // Catch invalid token errors.
     try {
       const decoded = jwt.decode(token, process.env.JWT_SECRET);
-      res.status(200).json(decoded);
+      const dbUser = await User.findById(decoded.sub);
+      if (!dbUser) {
+        throw new errors.NotFound();
+      }
+      res.json({
+        username: dbUser.id,
+        service: dbUser.service,
+        channel: dbUser.channel,
+      });
     }
     catch (e) {
       throw new errors.Unauthorized();
@@ -48,6 +56,38 @@ api.get('/profile', async (req, res, next) => {
   }
   catch (err) {
     return next(err);
+  }
+});
+
+// Save changes to profile data. Returns updated profile data.
+api.post('/profile', async (req, res, next) => {
+  try {
+    const cookies = new Cookies(req, res);
+    const token = cookies.get('jwt');
+
+    if (!token) {
+      throw new errors.Unauthorized();
+    }
+
+    try {
+      const decoded = jwt.decode(token, process.env.JWT_SECRET);
+      const dbUser = await User.findById(decoded.sub);
+      if (!dbUser) {
+        throw new errors.NotFound();
+      }
+      dbUser.update(req.body);
+      res.json({
+        username: dbUser.id,
+        service: dbUser.service,
+        channel: dbUser.channel,
+      });
+    }
+    catch (error) {
+      throw new errors.Unauthorized();
+    }
+  }
+  catch (error) {
+    return next(error);
   }
 });
 

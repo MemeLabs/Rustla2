@@ -42,7 +42,14 @@ export const setChatSize = size => (dispatch) => {
   });
 };
 
-export const PROFILE_FETCH = Symbol('PROFILE_FETCH');
+export const SET_PROFILE = Symbol('SET_PROFILE');
+export const setProfile = profile => {
+  return {
+    type: SET_PROFILE,
+    payload: profile,
+  };
+};
+
 export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
 export const fetchProfile = () => async (dispatch) => {
   const res = await fetch(`${API}/profile`, {
@@ -56,8 +63,26 @@ export const fetchProfile = () => async (dispatch) => {
     });
   }
   const profile = await res.json();
-  return dispatch({
-    type: PROFILE_FETCH,
-    payload: profile,
+  return dispatch(setProfile(profile));
+};
+
+export const PROFILE_UPDATE_FAILURE = Symbol('PROFILE_UPDATE_FAILURE');
+export const updateProfile = (profile) => async (dispatch) => {
+  const res = await fetch(`${API}/profile`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(profile),
   });
+  if (res.status !== 200) {
+    const error = await res.json();
+    return dispatch({
+      type: PROFILE_UPDATE_FAILURE,
+      error,
+    });
+  }
+  const resProfile = await res.json();
+  return dispatch(setProfile(resProfile));
 };
