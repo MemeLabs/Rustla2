@@ -1,5 +1,3 @@
-/* global API */
-
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
@@ -26,10 +24,10 @@ const routes =
           if (res.error) {
             throw res.error;
           }
-          callback(null, Profile);
+          return callback(null, Profile);
         }
         catch (e) {
-          callback(e);
+          return callback(e);
         }
       }}
       />
