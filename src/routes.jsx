@@ -55,8 +55,9 @@ const routes =
           if (res.error) {
             throw res.error;
           }
-          // TODO - pass a component that will render this streamer's stream
-          return callback(null, Error404);
+          nextState.params.channel = res.payload.channel;
+          nextState.params.service = res.payload.service;
+          return callback(null, Stream);
         }
         catch (err) {
           console.error(err);
