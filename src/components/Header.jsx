@@ -1,6 +1,8 @@
-/* global DONATE_PAYPAL_URL TWITCH_API_OAUTH_URL */
+/* global DONATE_PAYPAL_URL */
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 import '../css/Header';
 
@@ -9,7 +11,7 @@ import HeaderForm from './HeaderForm';
 
 // TODO - give this component `toggleSettings` dispatch-wrapped action that
 // toggles the settings dropdown
-const Header = ({ toggleSettings, rustlerCount }) => {
+const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
   let rustlers = null;
   let viewers = null;
   if (rustlerCount) {
@@ -44,10 +46,22 @@ const Header = ({ toggleSettings, rustlerCount }) => {
             </li>
             <li>
               <div className='btn-group'>
-                <a className='btn btn-default navbar-btn' rel='noopener noreferrer' href='/login' title='Log In'>
-                  <span className='glyphicon glyphicon-log-in' />
+                <a
+                  className='btn btn-default navbar-btn'
+                  rel='noopener noreferrer'
+                  href={isLoggedIn ? '/logout' : '/login'}
+                  title={isLoggedIn ? 'Log Out' : 'Log In'}>
+                  <span
+                    className={
+                      `glyphicon glyphicon-log-${isLoggedIn ? 'out' : 'in'}`
+                    }
+                    />
                 </a>
-                <button className='btn btn-default navbar-btn' title='Settings' type='button' onClick={toggleSettings}>
+                <button
+                  className='btn btn-default navbar-btn'
+                  title='Settings'
+                  type='button'
+                  onClick={toggleSettings}>
                   <span className='glyphicon glyphicon-cog' />
                 </button>
               </div>
@@ -62,6 +76,13 @@ const Header = ({ toggleSettings, rustlerCount }) => {
 Header.propTypes = {
   toggleSettings: PropTypes.func.isRequired,
   rustlerCount: PropTypes.arrayOf(PropTypes.number), // [rustlers, viewers] tuple
+  isLoggedIn: PropTypes.bool.isRequired,
 };
 
-export default Header;
+export default compose(
+  connect(
+    state => ({
+      isLoggedIn: state.profile.username !== null,
+    })
+  ),
+)(Header);

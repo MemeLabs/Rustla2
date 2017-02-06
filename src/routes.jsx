@@ -6,8 +6,9 @@ import Stream from './components/Stream';
 import Error404 from './components/Error404';
 import Profile from './components/Profile';
 
-import { fetchProfile, fetchStreamer } from './actions';
+import { fetchProfile, fetchStreamer, setProfile } from './actions';
 import store from './store';
+import INITIAL_STATE from './INITIAL_STATE';
 
 
 const validServices = new Set(['angelthump', 'azubu', 'dailymotion', 'facebook', 'hitbox', 'hitbox-vod', 'mlg', 'nsfw-chaturbate', 'streamup', 'twitch', 'twitch-vod', 'ustream', 'vaughn', 'youtube', 'youtube-playlist']);
@@ -29,6 +30,17 @@ const routes =
         catch (e) {
           return callback(e);
         }
+      }}
+      />
+    <Route
+      path='logout'
+      onEnter={(nextState, replace, callback) => {
+        // TODO: delete all cookies
+
+        store.dispatch(setProfile(INITIAL_STATE.profile));
+
+        replace('/');
+        return callback();
       }}
       />
     <Route
