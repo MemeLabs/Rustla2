@@ -15,6 +15,7 @@ function rootReducer(state, action) {
     case websocket_actions.STREAM_GET: {
       const [ stream ] = action.payload;
       return {
+        ...state,
         streams: {
           ...state.streams,
           [stream.id]: stream,
