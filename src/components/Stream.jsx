@@ -63,5 +63,17 @@ export default compose(
       const { channel, service } = this.props.params;
       this.props.setStream(channel, service);
     },
+
+    // Catch updates to this component, which usually happen when the user goes
+    // to a another stream after having been watching one already.
+    componentDidUpdate(prevProps) {
+      const { channel, service } = this.props.params;
+
+      // Only dispatch action if user has navigated to a different stream.
+      if (prevProps.params.channel !== channel
+        || prevProps.params.service !== service) {
+        this.props.setStream(channel, service);
+      }
+    },
   }),
 )(Stream);
