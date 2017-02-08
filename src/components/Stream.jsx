@@ -40,6 +40,11 @@ Stream.propTypes = {
     service: PropTypes.string.isRequired,
   }),
   chatSize: PropTypes.number.isRequired,
+
+  // Should match `MainLayout.propTypes.rustleCount`. Can't access
+  // `MainLayout.propTypes` here, however, because `MainLayout` has been wrapped
+  // by recompose. TODO: fix this if possible.
+  rustlerCount: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default compose(
