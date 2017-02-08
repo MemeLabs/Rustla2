@@ -33,7 +33,7 @@ Streams.propTypes = {
   streams: PropTypes.objectOf(
     PropTypes.shape({
       ...StreamThumbnail.propTypes,
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
     }).isRequired,
   ).isRequired,
 };
