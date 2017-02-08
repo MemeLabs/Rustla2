@@ -117,6 +117,12 @@ export const Stream = sequelize.define('stream', {
     },
     async findAllWithRustlers() {
       const [ streams ] = await sequelize.query('SELECT `stream`.*, COUNT(`rustlers`.`stream_id`) AS `rustlers` FROM `streams` AS `stream` LEFT OUTER JOIN `rustlers` AS `rustlers` ON `stream`.`id` = `rustlers`.`stream_id` GROUP BY `stream`.`id`;');
+
+      // Fix live status not being boolean for some reason.
+      streams.forEach(stream => {
+        stream.live = Boolean(stream.live);
+      });
+
       return streams;
     },
   },
