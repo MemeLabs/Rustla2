@@ -8,7 +8,7 @@ import { Stream } from './db';
 import services from './status_check_services';
 
 
-const debug = require('debug')('overrustle:websocket');
+const debug = require('debug')('overrustle:livecheck');
 
 // runs the functions defined above with the appropriate streams in the db/store
 const service_names = Object.keys(services);
