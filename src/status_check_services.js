@@ -2,6 +2,19 @@
 
 // define functions to run for services that have status checking here
 const services = {
+  'angelthump': async stream => {
+    const res = await fetch(`https://angelthump.com/api/${stream.channel}`);
+    const data = await res.json();
+    const { live, thumbnail } = data;
+
+    // Only update database if data has changed.
+    if (stream.live !== live || stream.thumbnail !== thumbnail) {
+      await stream.update({ live, thumbnail });
+    }
+
+    return stream;
+  },
+
   'twitch': async stream => {
     let live = true;
     let thumbnail = null;
