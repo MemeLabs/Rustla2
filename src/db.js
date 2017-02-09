@@ -106,6 +106,7 @@ export const Stream = sequelize.define('stream', {
   // },
   viewers: { // amount of people the service reports is watching this stream
     type: Sequelize.INTEGER,
+    defaultValue: 0,
   },
 }, {
   classMethods: {
