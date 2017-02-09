@@ -18,7 +18,9 @@ const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustle
         <Link to={url}>
           <div>
             <span>{channel}</span>
-            <span className='pull-right label label-as-badge label-success'>
+            <span
+              className={`pull-right label label-as-badge
+                label-${live ? 'success' : 'danger'}`}>
               <span>{rustlers}</span>
               {'\u00a0'}
               <span className='glyphicon glyphicon-user' />
