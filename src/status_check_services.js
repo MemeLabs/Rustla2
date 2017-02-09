@@ -5,11 +5,13 @@ const services = {
   'angelthump': async stream => {
     const res = await fetch(`https://angelthump.com/api/${stream.channel}`);
     const data = await res.json();
-    const { live, thumbnail } = data;
+    const { live, thumbnail, viewers } = data;
 
     // Only update database if data has changed.
-    if (stream.live !== live || stream.thumbnail !== thumbnail) {
-      await stream.update({ live, thumbnail });
+    if (stream.live !== live
+      || stream.thumbnail !== thumbnail
+      || stream.viewers !== viewers) {
+      await stream.update({ live, thumbnail, viewers });
     }
 
     return stream;
