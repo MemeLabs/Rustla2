@@ -110,9 +110,17 @@ export const Stream = sequelize.define('stream', {
 }, {
   classMethods: {
     async findRustlersFor(id) {
-      const [[{ rustlers }]] = await sequelize.query('SELECT COUNT(`rustlers`.`stream_id`) AS `rustlers` FROM `streams` AS `stream` LEFT OUTER JOIN `rustlers` AS `rustlers` ON `stream`.`id` = `rustlers`.`stream_id` WHERE `stream`.`id` = ? GROUP BY `stream`.`id` LIMIT 1;', {
+      const res = await sequelize.query('SELECT COUNT(`rustlers`.`stream_id`) AS `rustlers` FROM `streams` AS `stream` LEFT OUTER JOIN `rustlers` AS `rustlers` ON `stream`.`id` = `rustlers`.`stream_id` WHERE `stream`.`id` = ? GROUP BY `stream`.`id` LIMIT 1;', {
         replacements: [id],
       });
+
+      // If the rustler count is undefined, then there are 0 rustlers watching
+      // this stream.
+      if (!res[0].length) {
+        return 0;
+      }
+
+      const [[{ rustlers }]] = res;
       return rustlers;
     },
     async findAllWithRustlers() {
