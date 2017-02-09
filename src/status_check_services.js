@@ -20,6 +20,7 @@ const services = {
   'twitch': async stream => {
     let live = true;
     let thumbnail = null;
+    let viewers = 0;
 
     // Twitch API v5: must convert channel name to numeric ID
     const twitchChannelIdResponse = await fetch(`https://api.twitch.tv/kraken/users?login=${stream.channel}`, {
@@ -59,10 +60,13 @@ const services = {
     }
     else {
       thumbnail = twitchStreamData.stream.preview.large;
+      viewers = twitchStreamData.stream.viewers;
     }
     // don't re-save if the data is the same
-    if (stream.live !== live || stream.thumbnail !== thumbnail) {
-      await stream.update({ live, thumbnail });
+    if (stream.live !== live
+      || stream.thumbnail !== thumbnail
+      || stream.viewers !== viewers) {
+      await stream.update({ live, thumbnail, viewers });
     }
     return stream;
   },
