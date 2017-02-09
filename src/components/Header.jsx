@@ -29,7 +29,7 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
       role='navigation'
     >
       <div className='container-fluid'>
-        <div className='navbar-header hidden-sm'>
+        <div className='navbar-header'>
           <Link className='navbar-brand' to='/'>OverRustle</Link>
         </div>
         <div className='collapse navbar-collapse'>
