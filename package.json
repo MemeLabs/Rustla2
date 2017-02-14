@@ -15,6 +15,7 @@
     "lint": "eslint *.js src/"
   },
   "dependencies": {
+    "bluebird": "^3.4.7",
     "body-parser": "^1.16.0",
     "bootstrap": "^3.3.7",
     "classnames": "^2.2.5",

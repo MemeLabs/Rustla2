@@ -1,5 +1,6 @@
 /* global __dirname process */
 require('dotenv').config();
+global.Promise = require('bluebird');
 
 import 'babel-polyfill';
 import 'isomorphic-fetch';
@@ -26,9 +27,7 @@ app.set('etag', false);
 app.set('trust proxy', true);
 
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
-
 app.use(bodyParser.json());
-
 app.use('/api', routes);
 
 // send user to authenticate their Twitch account
