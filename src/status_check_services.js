@@ -1,5 +1,8 @@
 /* global process */
 
+import querystring from 'querystring';
+
+
 // define functions to run for services that have status checking here
 const services = {
   'angelthump': async stream => {
@@ -68,6 +71,46 @@ const services = {
       || stream.viewers !== viewers) {
       await stream.update({ live, thumbnail, viewers });
     }
+    return stream;
+  },
+
+  'youtube': async stream => {
+    // 'liveStreamingDetails' gets concurrent viewer count for live streams.
+    // 'snippet' gets live status and thumbnail.
+    const query = {
+      key: process.env.GOOGLE_PUBLIC_API_KEY,
+      part: ['liveStreamingDetails', 'snippet'].toString(),
+      id: stream.channel,
+    };
+    const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?${querystring.stringify(query)}`);
+    const data = await res.json();
+
+    // If a video or livestream exists with the given ID, then we consider the
+    // "stream" to be live.
+    const live = Boolean(data.items.length);
+
+    // Default viewers to 0, for regular YouTube videos.
+    let viewers = 0;
+    let thumbnail = null;
+
+    if (live) {
+      const video = data.items[0];
+
+      // If this is a livestream, then get proper viewer count.
+      if (video.snippet.liveBroadcastContent === 'live') {
+        viewers = parseInt(video.liveStreamingDetails.concurrentViewers, 10);
+      }
+
+      thumbnail = video.snippet.thumbnails.medium.url;
+    }
+
+    // Save new information to database if something has changed.
+    if (stream.live !== live
+      || stream.viewers !== viewers
+      || stream.thumbnail !== thumbnail) {
+      await stream.update({ live, thumbnail, viewers });
+    }
+
     return stream;
   },
 };
