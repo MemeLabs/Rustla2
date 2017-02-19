@@ -9,8 +9,7 @@ import '../css/Header';
 import HeaderForm from './HeaderForm';
 
 
-// TODO - give this component `toggleSettings` dispatch-wrapped action that
-// toggles the settings dropdown
+// TODO - give this component `toggleSettings` dispatch-wrapped action that toggles the settings dropdown
 const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
   let rustlers = null;
   let viewers = null;
@@ -46,6 +45,13 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
             </li>
             <li>
               <div className='btn-group'>
+                {
+                  isLoggedIn ?
+                  <Link className='btn btn-default navbar-btn' to='/profile' title='Profile'>
+                    <span className='glyphicon glyphicon-user' />
+                  </Link>
+                  : null
+                }
                 <a
                   className='btn btn-default navbar-btn'
                   rel='noopener noreferrer'
@@ -82,7 +88,7 @@ Header.propTypes = {
 export default compose(
   connect(
     state => ({
-      isLoggedIn: state.profile.username !== null,
-    })
+      isLoggedIn: state.self.isLoggedIn,
+    }),
   ),
 )(Header);

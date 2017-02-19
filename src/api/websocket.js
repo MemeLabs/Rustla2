@@ -198,8 +198,7 @@ export default function makeWebSocketServer(server) {
         rustler_sockets.delete(id);
         const rustler = await Rustler.findById(id);
 
-        // This rustler is not in the database, so nothing needs to be done
-        // here.
+        // This rustler is not in the database, so nothing needs to be done here.
         if (!rustler) {
           debug('no known rustler with id', id);
           return;

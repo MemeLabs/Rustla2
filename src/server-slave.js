@@ -9,11 +9,10 @@ import path from 'path';
 import querystring from 'querystring';
 import express from 'express';
 import morgan from 'morgan';
-import Cookies from 'cookies';
-import jwt from 'jwt-simple';
 import bodyParser from 'body-parser';
 
-import routes from './api';
+import sessionMiddleware, { setSession } from './middleware/session';
+import api from './api';
 import errors from './http_errors';
 import makeWebSocketServer from './api/websocket';
 import { User } from './db';
@@ -28,7 +27,8 @@ app.set('trust proxy', true);
 
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
 app.use(bodyParser.json());
-app.use('/api', routes);
+app.use(sessionMiddleware);
+app.use('/api', api);
 
 // send user to authenticate their Twitch account
 app.use('/login', (req, res) => {
@@ -41,8 +41,8 @@ app.use('/login', (req, res) => {
   res.redirect(`https://api.twitch.tv/kraken/oauth2/authorize?${qs}`);
 });
 
-// Twitch will then redirect user to this path, with a code that we can use to
-// obtain the access token.
+
+// Twitch will then redirect user to this path, with a code that we can use to obtain the access token.
 app.use('/oauth', async (req, res, next) => {
   try {
     if (req.query.error) {
@@ -111,38 +111,13 @@ app.use('/oauth', async (req, res, next) => {
       });
     }
 
-    const payload = {
-      sub: getUserResult.name,
-    };
-
-    const token = jwt.encode(payload, process.env.JWT_SECRET);
-    const cookies = new Cookies(req, res);
-    cookies.set('jwt', token, {
-      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    });
+    setSession(req, res, getUserResult.name);
 
     res.redirect('/profile');
   }
   catch (err) {
     return next(err);
   }
-});
-
-app.use('/profile', (req, res, next) => {
-  const cookies = new Cookies(req, res);
-
-  // Catch decode failure (e.g., invalid payload or signature).
-  let token;
-  try {
-    token = jwt.decode(cookies.get('jwt'), process.env.JWT_SECRET);
-  }
-  catch (e) {
-    debug('got error decoding JWT: ', e.message);
-    res.redirect('/');
-    return;
-  }
-
-  next();
 });
 
 app.use(express.static(path.join(__dirname, '../public')));

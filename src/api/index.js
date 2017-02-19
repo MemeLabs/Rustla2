@@ -1,7 +1,4 @@
 import express from 'express';
-import jwt from 'jwt-simple';
-import process from 'process';
-import Cookies from 'cookies';
 
 import { User } from '../db';
 import errors from '../http_errors';
@@ -25,34 +22,23 @@ api.get('/streamer/:name', async (req, res, next) => {
   }
 });
 
-// Returns private information. Requires the "jwt" cookie to contain a valid
-// token.
+// Returns private information. Requires the "jwt" cookie to contain a valid token.
 api.get('/profile', async (req, res, next) => {
   try {
-    const cookies = new Cookies(req, res);
-    const token = cookies.get('jwt');
-
     // Unauthorized.
-    if (!token) {
+    if (!req.session) {
       throw new errors.Unauthorized();
     }
 
-    // Catch invalid token errors.
-    try {
-      const decoded = jwt.decode(token, process.env.JWT_SECRET);
-      const dbUser = await User.findById(decoded.sub);
-      if (!dbUser) {
-        throw new errors.NotFound();
-      }
-      res.json({
-        username: dbUser.id,
-        service: dbUser.service,
-        channel: dbUser.channel,
-      });
+    const dbUser = await User.findById(req.session.id);
+    if (!dbUser) {
+      throw new errors.NotFound();
     }
-    catch (e) {
-      throw new errors.Unauthorized();
-    }
+    res.json({
+      username: dbUser.id,
+      service: dbUser.service,
+      channel: dbUser.channel,
+    });
   }
   catch (err) {
     return next(err);
@@ -62,29 +48,20 @@ api.get('/profile', async (req, res, next) => {
 // Save changes to profile data. Returns updated profile data.
 api.post('/profile', async (req, res, next) => {
   try {
-    const cookies = new Cookies(req, res);
-    const token = cookies.get('jwt');
-
-    if (!token) {
+    if (!req.session) {
       throw new errors.Unauthorized();
     }
 
-    try {
-      const decoded = jwt.decode(token, process.env.JWT_SECRET);
-      const dbUser = await User.findById(decoded.sub);
-      if (!dbUser) {
-        throw new errors.NotFound();
-      }
-      dbUser.update(req.body);
-      res.json({
-        username: dbUser.id,
-        service: dbUser.service,
-        channel: dbUser.channel,
-      });
+    const dbUser = await User.findById(req.session.id);
+    if (!dbUser) {
+      throw new errors.NotFound();
     }
-    catch (error) {
-      throw new errors.Unauthorized();
-    }
+    dbUser.update(req.body);
+    res.json({
+      username: dbUser.id,
+      service: dbUser.service,
+      channel: dbUser.channel,
+    });
   }
   catch (error) {
     return next(error);

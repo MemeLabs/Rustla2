@@ -1,5 +1,6 @@
-/* global API */
-
+/* global API JWT_NAME */
+import { browserHistory } from 'react-router';
+import cookies from 'browser-cookies';
 import { emit } from './websocket';
 
 
@@ -9,7 +10,7 @@ export const setStream = (...args) => () => {
 
 export const STREAMER_FETCH = Symbol('STREAMER_FETCH');
 export const STREAMER_FETCH_FAILURE = Symbol('STREAMER_FETCH_FAILURE');
-export const fetchStreamer = (name) => async (dispatch) => {
+export const fetchStreamer = name => async dispatch => {
   const res = await fetch(`${API}/streamer/${name}`);
   if (res.status !== 200) {
     const err = await res.json();
@@ -26,7 +27,7 @@ export const fetchStreamer = (name) => async (dispatch) => {
 };
 
 export const SET_CHAT_SIZE = Symbol('SET_CHAT_SIZE');
-export const setChatSize = size => (dispatch) => {
+export const setChatSize = size => dispatch => {
   // clamp our chat size a bit
   if (size < 320) {
     size = 320;
@@ -50,11 +51,19 @@ export const setProfile = profile => {
   };
 };
 
+export const PROFILE_FETCH_START = Symbol('PROFILE_FETCH_START');
 export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
-export const fetchProfile = () => async (dispatch) => {
-  const res = await fetch(`${API}/profile`, {
-    credentials: 'same-origin',
+export const fetchProfile = () => async dispatch => {
+  dispatch({
+    type: PROFILE_FETCH_START,
+    payload: undefined,
   });
+  const res = await fetch(`${API}/profile`, {
+    credentials: 'include',
+  });
+  if (res.status === 401) {
+    return browserHistory.push('/login');
+  }
   if (res.status !== 200) {
     const error = await res.json();
     return dispatch({
@@ -67,10 +76,14 @@ export const fetchProfile = () => async (dispatch) => {
 };
 
 export const PROFILE_UPDATE_FAILURE = Symbol('PROFILE_UPDATE_FAILURE');
-export const updateProfile = (profile) => async (dispatch) => {
+export const updateProfile = profile => async dispatch => {
+  dispatch({
+    type: PROFILE_FETCH_START,
+    payload: undefined,
+  });
   const res = await fetch(`${API}/profile`, {
     method: 'POST',
-    credentials: 'same-origin',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -85,4 +98,13 @@ export const updateProfile = (profile) => async (dispatch) => {
   }
   const resProfile = await res.json();
   return dispatch(setProfile(resProfile));
+};
+
+export const LOGIN = Symbol('LOGIN');
+export const login = () => dispatch => {
+  const cookie = cookies.get(JWT_NAME);
+  dispatch({
+    type: LOGIN,
+    payload: Boolean(cookie),
+  });
 };

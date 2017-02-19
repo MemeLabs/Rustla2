@@ -1,14 +1,16 @@
 import { combineReducers } from 'redux';
 
-import profileReducer from './profile';
+import selfReducer from './self';
 import streamReducer from './stream';
 import streamsReducer from './streams';
 import uiReducer from './ui';
+import loadingReducer from './loading';
 
 
 export default combineReducers({
-  profile: profileReducer,
+  isLoading: loadingReducer,
   stream: streamReducer,
   streams: streamsReducer,
   ui: uiReducer,
+  self: selfReducer,
 });
