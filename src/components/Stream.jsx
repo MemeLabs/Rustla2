@@ -15,7 +15,8 @@ export const Stream = ({ params: { channel, service }, chatSize, setChatSize, ru
     <Resizeable
       className='grow-1'
       onResize={e => {
-        const newChatSize = window.innerWidth - e.screenX;
+        console.log(e);
+        const newChatSize = window.innerWidth - e.pageX;
         setChatSize(newChatSize);
       }}
       >

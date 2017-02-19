@@ -29,8 +29,12 @@ export const fetchStreamer = name => async dispatch => {
 export const SET_CHAT_SIZE = Symbol('SET_CHAT_SIZE');
 export const setChatSize = size => dispatch => {
   // clamp our chat size a bit
-  if (size < 320) {
-    size = 320;
+  const CLAMP_SIZE = 320;
+  if (size < CLAMP_SIZE) {
+    size = CLAMP_SIZE;
+  }
+  if (size > window.innerWidth - CLAMP_SIZE) {
+    size = window.innerWidth - CLAMP_SIZE;
   }
   // save it in localStorage if supported
   if (localStorage) {
