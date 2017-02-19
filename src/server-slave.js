@@ -1,9 +1,5 @@
 /* global __dirname process */
-require('dotenv').config();
-global.Promise = require('bluebird');
-
-import 'babel-polyfill';
-import 'isomorphic-fetch';
+import './bootstrap';
 import http from 'http';
 import path from 'path';
 import querystring from 'querystring';

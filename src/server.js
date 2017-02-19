@@ -1,4 +1,5 @@
 /* global __dirname */
+import './bootstrap';
 import cluster from 'cluster';
 import os from 'os';
 import cp from 'child_process';

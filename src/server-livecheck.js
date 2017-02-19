@@ -1,9 +1,5 @@
 /* global process */
-require('dotenv').config();
-
-import 'babel-polyfill';
-import 'isomorphic-fetch';
-
+import './bootstrap';
 import { Stream } from './db';
 import services from './status_check_services';
 
