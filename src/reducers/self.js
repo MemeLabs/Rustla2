@@ -1,6 +1,7 @@
 import INITIAL_STATE from '../INITIAL_STATE';
 import {
   LOGIN,
+  LOGOUT,
   SET_PROFILE,
   PROFILE_FETCH_START,
   PROFILE_FETCH_FAILURE,
@@ -39,6 +40,11 @@ function selfReducer(state = INITIAL_STATE.self, action) {
       return {
         ...state,
         isLoggedIn: action.payload,
+      };
+    case LOGOUT:
+      return {
+        ...state,
+        isLoggedIn: false,
       };
   }
   return state;

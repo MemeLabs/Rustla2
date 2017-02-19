@@ -15,7 +15,6 @@ export const Stream = ({ params: { channel, service }, chatSize, setChatSize, ru
     <Resizeable
       className='grow-1'
       onResize={e => {
-        console.log(e);
         const newChatSize = window.innerWidth - e.pageX;
         setChatSize(newChatSize);
       }}
@@ -61,18 +60,28 @@ export default compose(
   ),
   lifecycle({
     componentDidMount() {
-      const { channel, service } = this.props.params;
+      const { channel, service, streamer } = this.props.params;
+      if (streamer) {
+        return this.props.setStream(streamer);
+      }
       this.props.setStream(channel, service);
     },
 
     // Catch updates to this component, which usually happen when the user goes
     // to a another stream after having been watching one already.
     componentDidUpdate(prevProps) {
-      const { channel, service } = this.props.params;
+      const { channel, service, streamer } = this.props.params;
 
       // Only dispatch action if user has navigated to a different stream.
-      if (prevProps.params.channel !== channel
-        || prevProps.params.service !== service) {
+      const hasChanged = (
+        prevProps.params.channel !== channel ||
+        prevProps.params.service !== service ||
+        prevProps.params.streamer !== streamer
+      );
+      if (hasChanged) {
+        if (streamer) {
+          return this.props.setStream(streamer);
+        }
         this.props.setStream(channel, service);
       }
     },

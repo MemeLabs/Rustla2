@@ -30,7 +30,7 @@ const updateStreamInfo = async () => {
     return acc;
   }, new Map());
   // call the defined service functions above
-  return Promise.all(Array.from(streamsByService.entries()).map(([ service, streams ]) => {
+  await Promise.all(Array.from(streamsByService.entries()).map(([ service, streams ]) => {
     debug(`fetching status of ${streams.length} ${service} streams`);
     return Promise.all(streams.map(async stream => {
       try {
@@ -42,6 +42,13 @@ const updateStreamInfo = async () => {
       }
     }));
   }));
+  process.send({
+    type: 'forward',
+    payload: {
+      event: 'updateLobby',
+      args: undefined,
+    },
+  });
 };
 
 setInterval(updateStreamInfo, process.env.LIVECHECK_INTERVAL || 60 * 1000);

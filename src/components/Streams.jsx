@@ -10,21 +10,55 @@ import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
 
 
+const makeCategories = (categories, items) => {
+  const sortedStreams = categories.map(() => []);
+  for (const item of items) {
+    for (let i = 0; i < categories.length; i++) {
+      const { test } = categories[i];
+      if (test(item)) {
+        sortedStreams[i].push(item);
+        break;
+      }
+    }
+  }
+  return categories.map(({ header }, i) =>
+    sortedStreams[i].length ?
+    <div key={i}>
+      <h3 className='col-xs-12'>{header}</h3>
+      {sortedStreams[i].map(stream =>
+        <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+          <StreamThumbnail {...stream} />
+        </div>
+      )}
+    </div>
+    : null
+  );
+};
+
 const Streams = ({ streams }) => {
   let grid = null;
   const streams_arr = Object.values(streams);
   if (streams_arr.length) {
-    grid = streams_arr.map(stream =>
-      <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
-        <StreamThumbnail {...stream} />
-      </div>
-    );
+    grid = makeCategories([
+      {
+        header: 'Live OverRustle Streamers',
+        test: stream => Boolean(stream.overrustle_id) && stream.live,
+      },
+      {
+        header: 'Live Streams',
+        test: stream => stream.live,
+      },
+      {
+        header: 'Offline Streams',
+        test: () => true,
+      },
+    ], streams_arr);
   }
 
   return (
     <MainLayout>
       <h1 className='streams-heading'>See what {streams_arr.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
-      <div className='streams'>{grid}</div>
+      <div className='streams flex-column grow-1'>{grid}</div>
     </MainLayout>
   );
 };

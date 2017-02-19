@@ -4,7 +4,7 @@ import WebSocket from 'uws';
 import uuid from 'uuid/v4';
 import hash from 'string-hash';
 
-import { sequelize, Rustler, Stream } from '../db';
+import { Rustler, Stream, User } from '../db';
 
 
 const debug = require('debug')('overrustle:websocket');
@@ -46,12 +46,24 @@ export default function makeWebSocketServer(server) {
       await Stream.destroy({ where: { id: stream_id } });
     }
   };
+  const updateLobby = async () => {
+    // get all streams and count rustlers
+    const streams = await Stream.findAllWithRustlers();
+    // send `STREAMS_SET`
+    for (const ws of rustler_sockets.values()) {
+      ws.send(JSON.stringify([
+        'STREAMS_SET',
+        streams,
+      ]));
+    }
+  };
   // need to set up some relaying if we're multi-processing
   // set up basic eventing between master and slave
   if (cluster.isWorker) {
     // define events to listen to from master
     const events = {
       updateRustlers,
+      updateLobby,
     };
     // listen for events from master
     process.on('message', message => {
@@ -61,7 +73,7 @@ export default function makeWebSocketServer(server) {
         const handler = events[event];
         if (handler) {
           debug(`handling event from master "${event}"`);
-          handler(...args);
+          handler(...(args || []));
         }
       }
     });
@@ -104,7 +116,7 @@ export default function makeWebSocketServer(server) {
     // set the user's stream to [channel, service], or id, or null (for lobby)
     // eg, on client:
     // setStream('destiny', 'twitch');
-    // setStream('fee55b7e-fac7-46b8-a5dd-4e86b106e846');
+    // setStream('destiny'); // where `destiny` is the name of the overrustle user
     // setStream(null); // lobby
     async setStream(id, channel, service) {
       const ws = rustler_sockets.get(id);
@@ -128,15 +140,33 @@ export default function makeWebSocketServer(server) {
         }
         else {
           if (!service) {
-            // must be setting by id
+            // must be setting by overrustle user
             ([ stream ] = await Stream.findAll({
-              where: { id: channel },
-              attributes: ['Stream.*', [sequelize.fn('COUNT', 'Rustler.id'), 'rustlers']],
-              include: [ Rustler ],
+              where: { overrustle_id: channel },
+              include: [
+                {
+                  model: User,
+                  as: 'overrustle',
+                },
+              ],
               limit: 1,
             }));
             if (!stream) {
-              throw new Error(`unknown stream id "${channel}"`);
+              const user = await User.findById(channel);
+              // ensure that `channel` is a real overrustle user
+              if (!user) {
+                throw new Error(`User "${channel}" does not exist`);
+              }
+              // ensure that the user has a channel
+              if (!user.channel || !user.service) {
+                throw new Error(`User "${channel}" does not have a channel`);
+              }
+              stream = await Stream.create({
+                id: hash(`${user.service}/${user.channel}`),
+                channel: user.channel,
+                service: user.service,
+                overrustle_id: channel,
+              });
             }
           }
           else {
@@ -179,10 +209,10 @@ export default function makeWebSocketServer(server) {
             'STREAMS_SET',
             streams,
           ]));
-          if (prevStream) {
-            // update everyone else
-            await updateRustlers(prevStream.id);
-          }
+        }
+        // update everyone else
+        if (prevStream) {
+          await updateRustlers(prevStream.id);
         }
       }
       catch (err) {

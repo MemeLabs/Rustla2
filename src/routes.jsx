@@ -9,9 +9,8 @@ import Stream from './components/Stream';
 import Error404 from './components/Error404';
 import Profile from './components/Profile';
 
-import { fetchStreamer, setProfile, login } from './actions';
+import { fetchStreamer, login, logout } from './actions';
 import store from './store';
-import INITIAL_STATE from './INITIAL_STATE';
 
 
 const validServices = new Set(['angelthump', 'azubu', 'dailymotion', 'facebook', 'hitbox', 'hitbox-vod', 'mlg', 'nsfw-chaturbate', 'streamup', 'twitch', 'twitch-vod', 'ustream', 'vaughn', 'youtube', 'youtube-playlist']);
@@ -25,7 +24,7 @@ const routes =
       path='logout'
       onEnter={(nextState, replace) => {
         cookies.erase(JWT_NAME);
-        store.dispatch(setProfile(INITIAL_STATE.profile));
+        store.dispatch(logout());
         replace('/');
       }}
       />

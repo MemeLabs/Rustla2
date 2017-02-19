@@ -27,7 +27,16 @@ if (cluster.isMaster) {
   });
 
   // spawn livechecking server
-  cp.fork(`${__dirname}/server-livecheck`);
+  const livecheck = cp.fork(`${__dirname}/server-livecheck`);
+  // set up messaging between livecheck and workers
+  livecheck.on('message', message => {
+    if (message && message.type === 'forward') {
+      for (const id in cluster.workers) {
+        const worker = cluster.workers[id];
+        worker.send(message.payload);
+      }
+    }
+  });
 }
 else {
   // start working

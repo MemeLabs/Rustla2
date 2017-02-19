@@ -65,7 +65,7 @@ export const fetchProfile = () => async dispatch => {
   const res = await fetch(`${API}/profile`, {
     credentials: 'include',
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     return browserHistory.push('/login');
   }
   if (res.status !== 200) {
@@ -110,5 +110,14 @@ export const login = () => dispatch => {
   dispatch({
     type: LOGIN,
     payload: Boolean(cookie),
+  });
+};
+
+export const LOGOUT = Symbol('LOGOUT');
+export const logout = () => dispatch => {
+  cookies.erase(JWT_NAME);
+  dispatch({
+    type: LOGOUT,
+    payload: undefined,
   });
 };

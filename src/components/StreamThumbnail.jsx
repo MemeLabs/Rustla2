@@ -4,8 +4,9 @@ import { Link } from 'react-router';
 import '../css/StreamThumbnail';
 
 
-const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustlers, ...rest }) => {
-  const url = overrustle ? overrustle : `${service}/${channel}`;
+const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rustlers, ...rest }) => {
+  const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
+  const text = overrustle_id ? `${overrustle_id} via ${channel} on ${service}` : `${channel} on ${service}`;
   return (
     <div className='stream-thumbnail' {...rest}>
       <Link to={url}>
@@ -13,15 +14,12 @@ const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustle
       </Link>
       <div className='stream-caption'>
         <Link to={url}>
-          <div>
-            <span>{channel}</span>
-            <span className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
-              <span>{rustlers}</span>
-              {'\u00a0'}
-              <span className='glyphicon glyphicon-user' />
-            </span>
-          </div>
-          <div>on {service}</div>
+          <span className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
+            <span>{rustlers}</span>
+            {'\u00a0'}
+            <span className='glyphicon glyphicon-user' />
+          </span>
+          <span>{text}</span>
         </Link>
       </div>
     </div>
@@ -29,7 +27,7 @@ const StreamThumbnail = ({ overrustle, channel, service, thumbnail, live, rustle
 };
 
 StreamThumbnail.propTypes = {
-  overrustle: PropTypes.string,
+  overrustle_id: PropTypes.string,
   channel: PropTypes.string.isRequired,
   service: PropTypes.string.isRequired,
   thumbnail: PropTypes.string,

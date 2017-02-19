@@ -57,9 +57,13 @@ export const init = store => {
       // resend setStream on reconnect if we're watching one
       const state = store.getState();
       const stream = state.streams[state.stream];
-      console.log(stream);
       if (stream) {
-        store.dispatch(setStream(stream.channel, stream.service));
+        if (stream.overrustle_id) {
+          store.dispatch(setStream(stream.overrustle_id));
+        }
+        else {
+          store.dispatch(setStream(stream.channel, stream.service));
+        }
       }
     }
     wasReconnect = true;

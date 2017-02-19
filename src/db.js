@@ -90,9 +90,14 @@ export const Stream = sequelize.define('stream', {
       notEmpty: true,
     },
   },
-  // TODO - virtual getter for this
-  overrustle: {
+  overrustle_id: {
     type: Sequelize.STRING,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
   },
   thumbnail: {
     type: Sequelize.STRING,
@@ -101,9 +106,8 @@ export const Stream = sequelize.define('stream', {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
-  // special query for this
-  // rustlers: {
-  // },
+  // special query for this, see classMethods
+  // rustlers: {},
   viewers: { // amount of people the service reports is watching this stream
     type: Sequelize.INTEGER,
     defaultValue: 0,
@@ -165,3 +169,5 @@ Stream.sync({ force: true });
 
 Rustler.belongsTo(Stream, { as: 'stream' });
 Stream.hasMany(Rustler);
+
+Stream.belongsTo(User, { as: 'overrustle' });

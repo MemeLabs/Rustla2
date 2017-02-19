@@ -113,7 +113,7 @@ app.use('/oauth', async (req, res, next) => {
 
     setSession(req, res, getUserResult.name);
 
-    res.redirect('/profile');
+    res.redirect('/');
   }
   catch (err) {
     return next(err);
