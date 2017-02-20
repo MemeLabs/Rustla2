@@ -52,17 +52,16 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
                   </Link>
                   : null
                 }
-                <a
-                  className='btn btn-default navbar-btn'
-                  rel='noopener noreferrer'
-                  href={isLoggedIn ? '/logout' : '/login'}
-                  title={isLoggedIn ? 'Log Out' : 'Log In'}>
-                  <span
-                    className={
-                      `glyphicon glyphicon-log-${isLoggedIn ? 'out' : 'in'}`
-                    }
-                    />
-                </a>
+                {
+                  isLoggedIn ?
+                  <Link className='btn btn-default navbar-btn' to='/logout' title='Log Out'>
+                    <span className='glyphicon glyphicon-log-out' />
+                  </Link>
+                  :
+                  <a className='btn btn-default navbar-btn' href='/login' title='Log In'>
+                    <span className='glyphicon glyphicon-log-in' />
+                  </a>
+                }
                 <button
                   className='btn btn-default navbar-btn'
                   title='Settings'
