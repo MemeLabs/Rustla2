@@ -74,6 +74,37 @@ const services = {
     return stream;
   },
 
+  'twitch-vod': async stream => {
+    const res = await fetch(`https://api.twitch.tv/kraken/videos/v${stream.channel}`, {
+      headers: {
+        Accept: 'application/vnd.twitchtv.v5+json',
+        'Client-ID': process.env.TWITCH_CLIENT_ID,
+      },
+    });
+
+    const data = await res.json();
+
+    // If a Twitch VOD with this ID was found, then we consider this VOD to be
+    // "live".
+    const live = data.status !== 404;
+
+    let thumbnail = null;
+    let viewers = 0;
+    if (live) {
+      thumbnail = data.preview.large;
+      viewers = parseInt(data.views, 10);
+    }
+
+    // Save new information to database if something has changed.
+    if (stream.live !== live
+      || stream.thumbnail !== thumbnail
+      || stream.viewers !== viewers) {
+      await stream.update({ live, thumbnail, viewers });
+    }
+
+    return stream;
+  },
+
   'youtube': async stream => {
     // 'liveStreamingDetails' gets concurrent viewer count for live streams.
     // 'snippet' gets live status and thumbnail.
