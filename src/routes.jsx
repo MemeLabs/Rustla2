@@ -23,7 +23,6 @@ const routes =
     <Route
       path='logout'
       onEnter={(nextState, replace) => {
-        cookies.erase(JWT_NAME);
         store.dispatch(logout());
         replace('/');
       }}

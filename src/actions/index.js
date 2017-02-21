@@ -115,7 +115,9 @@ export const login = () => dispatch => {
 
 export const LOGOUT = Symbol('LOGOUT');
 export const logout = () => dispatch => {
-  cookies.erase(JWT_NAME);
+  cookies.erase(JWT_NAME, {
+    domain: `.${location.hostname}`,
+  });
   dispatch({
     type: LOGOUT,
     payload: undefined,
