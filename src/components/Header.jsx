@@ -35,9 +35,7 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
           <ul className='nav navbar-nav'>
             {rustlers}
             {viewers}
-            <li>
-              <a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL} />
-            </li>
+            {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
           </ul>
           <ul className='nav navbar-nav navbar-right'>
             <li>
