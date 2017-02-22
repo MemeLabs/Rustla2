@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import setPropTypes from 'recompose/setPropTypes';
 
 import '../css/Header';
 
@@ -77,12 +78,14 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
 };
 
 Header.propTypes = {
-  toggleSettings: PropTypes.func.isRequired,
-  rustlerCount: PropTypes.arrayOf(PropTypes.number), // [rustlers, viewers] tuple
   isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default compose(
+  setPropTypes({
+    toggleSettings: PropTypes.func.isRequired,
+    rustlerCount: PropTypes.arrayOf(PropTypes.number), // [rustlers, viewers] tuple
+  }),
   connect(
     state => ({
       isLoggedIn: state.self.isLoggedIn,

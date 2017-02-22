@@ -19,12 +19,7 @@ const MainLayout = ({ showHeader = true, showFooter = true, rustlerCount, childr
 MainLayout.propTypes = {
   showHeader: PropTypes.bool,
   showFooter: PropTypes.bool,
-
-  // Should match `Header.propTypes.rustleCount`. Can't access
-  // `Header.propTypes` here, however, because `Header` has been wrapped by
-  // recompose. TODO: fix this if possible.
-  rustlerCount: PropTypes.arrayOf(PropTypes.number),
-
+  rustlerCount: Header.propTypes.rustlerCount,
   children: PropTypes.node.isRequired,
 };
 

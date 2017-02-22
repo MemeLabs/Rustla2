@@ -1,8 +1,9 @@
 import React from 'react';
 
 
-const ServiceSelect = (props) =>
-  <select className='form-control' name='service' {...props}>
+const ServiceSelect = props =>
+  <select className='form-control' name='service' defaultValue='twitch' {...props}>
+    <option value='afreeca'>Afreeca</option>
     <option value='angelthump'>AngelThump</option>
     <option value='azubu'>azubu</option>
     <option value='dailymotion'>Dailymotion</option>

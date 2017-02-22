@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
+import setPropTypes from 'recompose/setPropTypes';
 
 import { setStream, setChatSize } from '../actions';
 
@@ -39,12 +40,11 @@ Stream.propTypes = {
     channel: PropTypes.string.isRequired,
     service: PropTypes.string.isRequired,
   }),
+
   chatSize: PropTypes.number.isRequired,
 
-  // Should match `MainLayout.propTypes.rustleCount`. Can't access
-  // `MainLayout.propTypes` here, however, because `MainLayout` has been wrapped
-  // by recompose. TODO: fix this if possible.
-  rustlerCount: PropTypes.arrayOf(PropTypes.number),
+  setChatSize: PropTypes.func.isRequired,
+  rustlerCount: MainLayout.propTypes.rustlerCount,
 };
 
 export default compose(
@@ -58,6 +58,18 @@ export default compose(
       setChatSize,
     },
   ),
+  setPropTypes({
+    params: PropTypes.shape({
+      channel: PropTypes.string.isRequired,
+      service: PropTypes.string.isRequired,
+    }),
+
+    chatSize: PropTypes.number.isRequired,
+    rustlerCount: MainLayout.propTypes.rustlerCount,
+
+    setChatSize: PropTypes.func.isRequired,
+    setStream: PropTypes.func.isRequired,
+  }),
   lifecycle({
     componentDidMount() {
       const { channel, service, streamer } = this.props.params;

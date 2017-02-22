@@ -1,7 +1,5 @@
-/* global JWT_NAME */
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
-import cookies from 'browser-cookies';
 
 import Loading from './components/Loading';
 import Streams from './components/Streams';
@@ -13,7 +11,27 @@ import { fetchStreamer, login, logout } from './actions';
 import store from './store';
 
 
-const validServices = new Set(['angelthump', 'azubu', 'dailymotion', 'facebook', 'hitbox', 'hitbox-vod', 'mlg', 'nsfw-chaturbate', 'streamup', 'twitch', 'twitch-vod', 'ustream', 'vaughn', 'youtube', 'youtube-playlist']);
+/**
+ * List of valid/supported services to validate against when deciding whether to 404 for a given route
+ */
+const validServices = new Set([
+  'afreeca',
+  'angelthump',
+  'azubu',
+  'dailymotion',
+  'facebook',
+  'hitbox',
+  'hitbox-vod',
+  'mlg',
+  'nsfw-chaturbate',
+  'streamup',
+  'twitch',
+  'twitch-vod',
+  'ustream',
+  'vaughn',
+  'youtube',
+  'youtube-playlist',
+]);
 
 const routes =
   <Route path='/' component={Loading} onEnter={() => store.dispatch(login())}>
@@ -28,8 +46,11 @@ const routes =
       }}
       />
     <Route
-      path=':service/:channel'
+      path=':service/:channel*'
       getComponent={(nextState, callback) => {
+        if (nextState.params.splat) {
+          nextState.params.channel += nextState.params.splat;
+        }
         const { service } = nextState.params;
         if (!validServices.has(service)) {
           return callback(null, Error404);
