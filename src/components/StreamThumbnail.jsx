@@ -32,9 +32,7 @@ StreamThumbnail.propTypes = {
   service: PropTypes.string.isRequired,
   thumbnail: PropTypes.string,
   live: PropTypes.bool.isRequired,
-  viewers: PropTypes.number,
   rustlers: PropTypes.number.isRequired,
-  twitch_channel_id: PropTypes.number,
 };
 
 export default StreamThumbnail;
