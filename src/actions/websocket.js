@@ -48,7 +48,11 @@ export const init = store => {
     }
   };
 
+  const ping = () => socket.send('');
+  let pingInterval;
+
   socket.onopen = function onopen(event) {
+    pingInterval = setInterval(ping, 20000);
     console.log('socket opened', event);
     messageQueue.forEach(args => emit(...args));
     messageQueue = [];
@@ -69,6 +73,10 @@ export const init = store => {
     wasReconnect = true;
   };
 
+  socket.onclose = function onclose(event) {
+    console.log('socket closed', event);
+    clearInterval(pingInterval);
+  };
 
   socket.onmessage = function onmessage(event) {
     console.log('socket message', event);

@@ -253,6 +253,10 @@ export default function makeWebSocketServer(server) {
       rustler_sockets.set(id, ws);
       const rustler_create = Rustler.create({ id, stream_id: null });
       ws.on('message', async message => {
+        // handle client 'ping', which is an empty string
+        if (!message) {
+          return;
+        }
         try {
           const [ event, ...args ] = JSON.parse(message);
           const handler = wsEventHandlers[event];
