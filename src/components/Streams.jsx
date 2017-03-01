@@ -25,10 +25,17 @@ const makeCategories = (categories, items) => {
     sortedStreams[i].length ?
     <div key={i}>
       <h3 className='col-xs-12'>{header}</h3>
-      {sortedStreams[i].map(stream =>
-        <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
-          <StreamThumbnail {...stream} />
-        </div>
+      {sortedStreams[i].map(stream => {
+        // Don't send stream properties that aren't required by StreamThumbnail.
+        // eslint-disable-next-line no-unused-vars
+        const { created_at, updated_at, viewers, ...rest } = stream;
+
+        return (
+          <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+            <StreamThumbnail {...rest} />
+          </div>
+        );
+      }
       )}
     </div>
     : null
