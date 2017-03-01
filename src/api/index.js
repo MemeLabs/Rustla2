@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { User } from '../db';
+import { Stream, User } from '../db';
 import errors from '../http_errors';
 
 
@@ -68,9 +68,34 @@ api.post('/profile', async (req, res, next) => {
   }
 });
 
-api.use((req, res) => {
+api.use(async (req, res) => {
+  const streams = await Stream.findAllWithRustlers();
+
   res.json({
-    memes: true,
+    // Array of streams. Called "stream_list" to maintain backwards
+    // compatibility with the old API (primarily for Bot).
+    stream_list: streams.map(stream => {
+      return {
+        channel: stream.channel,
+        live: stream.live,
+        rustlers: stream.rustlers,
+        service: stream.service,
+        thumbnail: stream.thumbnail,
+
+        // This begins with a forward slash because Bot expects it to.
+        url: `/${stream.service}/${stream.channel}`,
+
+        viewers: stream.viewers,
+      };
+    }),
+
+    // Map of URL to rustler count. Redundant since this information exists
+    // above, but this is used by bbdgg in the old API so it's here for
+    // backwards compatibility.
+    streams: streams.reduce((acc, stream) => {
+      acc[`/${stream.service}/${stream.channel}`] = stream.rustlers;
+      return acc;
+    }, {}),
   });
 });
 
