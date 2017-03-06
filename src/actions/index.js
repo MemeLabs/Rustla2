@@ -8,6 +8,7 @@ export const setStream = (...args) => () => {
   emit('setStream', ...args);
 };
 
+
 export const STREAMER_FETCH = Symbol('STREAMER_FETCH');
 export const STREAMER_FETCH_FAILURE = Symbol('STREAMER_FETCH_FAILURE');
 export const fetchStreamer = name => async dispatch => {
@@ -25,6 +26,7 @@ export const fetchStreamer = name => async dispatch => {
     payload: streamer,
   });
 };
+
 
 export const SET_CHAT_SIZE = Symbol('SET_CHAT_SIZE');
 export const setChatSize = size => dispatch => {
@@ -47,6 +49,7 @@ export const setChatSize = size => dispatch => {
   });
 };
 
+
 export const SET_PROFILE = Symbol('SET_PROFILE');
 export const setProfile = profile => {
   return {
@@ -54,6 +57,7 @@ export const setProfile = profile => {
     payload: profile,
   };
 };
+
 
 export const PROFILE_FETCH_START = Symbol('PROFILE_FETCH_START');
 export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
@@ -78,6 +82,7 @@ export const fetchProfile = () => async dispatch => {
   const profile = await res.json();
   return dispatch(setProfile(profile));
 };
+
 
 export const PROFILE_UPDATE_FAILURE = Symbol('PROFILE_UPDATE_FAILURE');
 export const updateProfile = profile => async dispatch => {
@@ -104,6 +109,7 @@ export const updateProfile = profile => async dispatch => {
   return dispatch(setProfile(resProfile));
 };
 
+
 export const LOGIN = Symbol('LOGIN');
 export const login = () => dispatch => {
   const cookie = cookies.get(JWT_NAME);
@@ -112,6 +118,7 @@ export const login = () => dispatch => {
     payload: Boolean(cookie),
   });
 };
+
 
 export const LOGOUT = Symbol('LOGOUT');
 export const logout = () => dispatch => {
@@ -122,4 +129,12 @@ export const logout = () => dispatch => {
     type: LOGOUT,
     payload: undefined,
   });
+};
+
+export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT');
+export const toggleChat = isOtherChatActive => {
+  return {
+    type: TOGGLE_CHAT,
+    payload: isOtherChatActive,
+  };
 };

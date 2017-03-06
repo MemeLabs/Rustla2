@@ -3,15 +3,19 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import cs from 'classnames';
 import setPropTypes from 'recompose/setPropTypes';
+import get from 'lodash/get';
 
 import '../css/Header';
 
+import { toggleChat } from '../actions';
 import HeaderForm from './HeaderForm';
+import { supportedChatServices } from './ChatEmbed';
 
 
 // TODO - give this component `toggleSettings` dispatch-wrapped action that toggles the settings dropdown
-const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
+const Header = ({ toggleSettings, rustlerCount, isLoggedIn, isOtherChatActive, currentStreamService, toggleChat }) => {
   let rustlers = null;
   let viewers = null;
   if (rustlerCount) {
@@ -39,6 +43,8 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
             {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
           </ul>
           <ul className='nav navbar-nav navbar-right'>
+            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(false)} className={cs({ active: !isOtherChatActive })}><a role='button'>Destiny Chat</a></li>}
+            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(true)} className={cs('text-capitalize', { 'active': isOtherChatActive })}><a role='button'>{currentStreamService} Chat</a></li>}
             <li>
               <HeaderForm />
             </li>
@@ -79,6 +85,9 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn }) => {
 
 Header.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
+  isOtherChatActive: PropTypes.bool.isRequired,
+  currentStreamService: PropTypes.string,
+  toggleChat: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -89,6 +98,9 @@ export default compose(
   connect(
     state => ({
       isLoggedIn: state.self.isLoggedIn,
+      isOtherChatActive: state.ui.isOtherChatActive,
+      currentStreamService: get(state, ['streams', state.stream, 'service']),
     }),
+    { toggleChat }
   ),
 )(Header);

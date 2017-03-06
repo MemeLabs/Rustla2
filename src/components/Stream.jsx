@@ -9,6 +9,7 @@ import { setStream, setChatSize } from '../actions';
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
 import StreamEmbed from './StreamEmbed';
+import ChatEmbed from './ChatEmbed';
 
 
 export const Stream = ({ params: { channel, service }, chatSize, setChatSize, rustlerCount }) =>
@@ -24,12 +25,7 @@ export const Stream = ({ params: { channel, service }, chatSize, setChatSize, ru
         <StreamEmbed channel={channel} service={service} />
       </div>
       <div style={{ width: chatSize }}>
-        <iframe
-          src='https://destiny.gg/embed/chat'
-          frameBorder='0'
-          width='100%'
-          height='100%'
-          />
+        <ChatEmbed />
       </div>
     </Resizeable>
   </MainLayout>
