@@ -204,7 +204,12 @@ export default function makeWebSocketServer(server) {
           await rustler.update({ stream_id: null });
           // get all streams and count rustlers
           const streams = await Stream.findAllWithRustlers();
-          // send `STREAMS_SET` acknowledgement
+          // send `SET_STREAM` acknowledgement
+          ws.send(JSON.stringify([
+            'STREAM_SET',
+            null,
+          ]));
+          // send `STREAMS_SET` now (because they're in the lobby)
           ws.send(JSON.stringify([
             'STREAMS_SET',
             streams,

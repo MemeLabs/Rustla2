@@ -16,10 +16,13 @@ function streamsReducer(state = INITIAL_STATE.streams, action) {
     case STREAM_GET:
     case STREAM_SET: {
       const [ stream ] = action.payload;
-      return {
-        ...state,
-        [stream.id]: stream,
-      };
+      if (stream) {
+        return {
+          ...state,
+          [stream.id]: stream,
+        };
+      }
+      return state;
     }
     case RUSTLERS_SET: {
       const [ id, rustlers ] = action.payload;

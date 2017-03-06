@@ -7,8 +7,11 @@ const { STREAM_SET } = actions;
 function streamReducer(state = INITIAL_STATE.stream, action) {
   switch (action.type) {
     case STREAM_SET: {
-      const [stream] = action.payload;
-      return stream.id;
+      const [ stream ] = action.payload;
+      if (stream) {
+        return stream.id;
+      }
+      return null;
     }
     default:
       return state;
