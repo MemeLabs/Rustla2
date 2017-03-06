@@ -14,8 +14,7 @@ import HeaderForm from './HeaderForm';
 import { supportedChatServices } from './ChatEmbed';
 
 
-// TODO - give this component `toggleSettings` dispatch-wrapped action that toggles the settings dropdown
-const Header = ({ toggleSettings, rustlerCount, isLoggedIn, isOtherChatActive, currentStreamService, toggleChat }) => {
+const Header = ({ rustlerCount, isLoggedIn, isOtherChatActive, currentStreamService, toggleChat }) => {
   let rustlers = null;
   let viewers = null;
   if (rustlerCount) {
@@ -67,13 +66,6 @@ const Header = ({ toggleSettings, rustlerCount, isLoggedIn, isOtherChatActive, c
                     <span className='glyphicon glyphicon-log-in' />
                   </a>
                 }
-                <button
-                  className='btn btn-default navbar-btn'
-                  title='Settings'
-                  type='button'
-                  onClick={toggleSettings}>
-                  <span className='glyphicon glyphicon-cog' />
-                </button>
               </div>
             </li>
           </ul>
@@ -92,7 +84,6 @@ Header.propTypes = {
 
 export default compose(
   setPropTypes({
-    toggleSettings: PropTypes.func.isRequired,
     rustlerCount: PropTypes.arrayOf(PropTypes.number), // [rustlers, viewers] tuple
   }),
   connect(
