@@ -20,13 +20,23 @@ const HeaderForm = () => {
       role='search'
       onSubmit={handleSubmit}
     >
-      <ServiceSelect />
+      <ServiceSelect
+        style={{
+          marginRight: -1,
+          borderBottomRightRadius: 0,
+          borderTopRightRadius: 0,
+        }}
+        />
       <div className='input-group'>
         <input
           className='form-control'
           placeholder='Stream/Video ID'
           type='text'
           name='channel'
+          style={{
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
+          }}
           />
         <span className='input-group-btn'>
           <button type='submit' className='btn btn-default'>Go</button>
