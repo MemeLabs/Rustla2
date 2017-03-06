@@ -38,6 +38,7 @@ api.get('/profile', async (req, res, next) => {
       username: dbUser.id,
       service: dbUser.service,
       channel: dbUser.channel,
+      left_chat: dbUser.left_chat,
     });
   }
   catch (err) {
@@ -61,6 +62,7 @@ api.post('/profile', async (req, res, next) => {
       username: dbUser.id,
       service: dbUser.service,
       channel: dbUser.channel,
+      left_chat: dbUser.left_chat,
     });
   }
   catch (error) {

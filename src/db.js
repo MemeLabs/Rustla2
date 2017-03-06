@@ -61,6 +61,10 @@ export const User = sequelize.define('user', {
       notEmpty: true,
     },
   },
+  left_chat: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 export const Stream = sequelize.define('stream', {

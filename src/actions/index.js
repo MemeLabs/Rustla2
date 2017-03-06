@@ -82,6 +82,12 @@ export const fetchProfile = () => async dispatch => {
   const profile = await res.json();
   return dispatch(setProfile(profile));
 };
+export const fetchProfileIfLoggedIn = () => async (dispatch, getState) => {
+  if (!getState().self.isLoggedIn) {
+    return;
+  }
+  return dispatch(fetchProfile());
+};
 
 
 export const PROFILE_UPDATE_FAILURE = Symbol('PROFILE_UPDATE_FAILURE');

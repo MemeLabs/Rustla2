@@ -19,9 +19,10 @@ const Profile = ({ profile, updateProfile }) =>
           onSubmit={event => {
             event.preventDefault();
             const payload = {
-              ...profile,
+              ...profile.data,
               service: event.target.elements.service.value,
               channel: event.target.elements.channel.value,
+              left_chat: Boolean(event.target.elements.left_chat.value),
             };
             // Disallow blank inputs. The ORM will disallow these anyways but
             // there's arguably no point in even making the request if it's known
@@ -36,20 +37,13 @@ const Profile = ({ profile, updateProfile }) =>
           }}
           >
           <div className='form-group'>
-            <label
-              htmlFor='profile-service-select'
-              className='col-sm-2 control-label'>Streaming Service</label>
+            <label htmlFor='profile-service-select' className='col-sm-2 control-label'>Streaming Service</label>
             <div className='col-sm-10'>
-              <ServiceSelect
-                id='profile-service-select'
-                defaultValue={profile.data.service}
-                />
+              <ServiceSelect id='profile-service-select' defaultValue={profile.data.service} />
             </div>
           </div>
           <div className='form-group'>
-            <label
-              htmlFor='profile-channel'
-              className='col-sm-2 control-label'>Channel/Video ID</label>
+            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Channel/Video ID</label>
             <div className='col-sm-10'>
               <input
                 className='form-control'
@@ -57,6 +51,18 @@ const Profile = ({ profile, updateProfile }) =>
                 type='text'
                 name='channel'
                 defaultValue={profile.data.channel}
+                />
+            </div>
+          </div>
+          <div className='form-group'>
+            <label htmlFor='profile-leftchat' className='col-sm-2 control-label'>Use Left Chat</label>
+            <div className='col-sm-10'>
+              <input
+                className='form-control'
+                id='profile-leftchat'
+                type='checkbox'
+                name='left_chat'
+                defaultChecked={profile.data.left_chat}
                 />
             </div>
           </div>
