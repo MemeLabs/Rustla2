@@ -117,6 +117,7 @@ module.exports = {
       'API_WS': process.env.API_WS ? `"${process.env.API_WS}"` : undefined,
       'JWT_NAME': process.env.JWT_NAME ? `"${process.env.JWT_NAME}"` : "'jwt'",
       'GITHUB_URL': process.env.GITHUB_URL ? `"${process.env.GITHUB_URL}"` : "'https://github.com/ILiedAboutCake/Rustla2'",
+      'DISCORD_URL': process.env.DISCORD_URL ? `"${process.env.DISCORD_URL}"` : "'https://discord.gg/qucCTxN'",
       'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : undefined,
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : undefined,
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : undefined,

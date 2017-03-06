@@ -1,4 +1,4 @@
-/* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL */
+/* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL DISCORD_URL */
 import React from 'react';
 
 import '../css/Footer';
@@ -29,7 +29,7 @@ const Footer = () =>
       <p className='text-muted'>
         OverRustle.com, a <a href='https://destiny.gg'>destiny.gg</a> community
         <br />
-        By <a href={`${GITHUB_URL}/graphs/contributors`}>memers</a>
+        By <a href={`${GITHUB_URL}/graphs/contributors`}>memers</a> on <a href={`${DISCORD_URL}`}>discord</a>
         <br />
         Support us via{'\u00a0'}
         {
