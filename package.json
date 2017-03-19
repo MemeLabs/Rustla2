@@ -64,7 +64,7 @@
     "node-sass": "^4.2.0",
     "postcss-loader": "^1.2.1",
     "sass-loader": "^6.0.1",
-    "style-loader": "^0.13.1",
+    "style-loader": "^0.14.1",
     "url-loader": "^0.5.7",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0",
