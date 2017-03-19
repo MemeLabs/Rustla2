@@ -8,7 +8,11 @@ import renderNothing from 'recompose/renderNothing';
 import branch from 'recompose/branch';
 import get from 'lodash/get';
 
-import { setStream, setChatSize, fetchProfileIfLoggedIn } from '../actions';
+import {
+  setStream,
+  setChatSize,
+  fetchProfileIfLoggedIn,
+} from '../actions';
 
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
@@ -16,7 +20,15 @@ import StreamEmbed from './StreamEmbed';
 import ChatEmbed from './ChatEmbed';
 
 
-export const Stream = ({ params: { channel, service }, chatSize, setChatSize, rustlerCount, showLeftChat = false }) => {
+export const Stream = ({
+  history,
+  service,
+  channel,
+  chatSize,
+  setChatSize,
+  rustlerCount,
+  showLeftChat = false,
+}) => {
   let left = (
     <div style={{ width: `calc(100% - ${chatSize}px)` }}>
       <StreamEmbed channel={channel} service={service} />
@@ -33,7 +45,7 @@ export const Stream = ({ params: { channel, service }, chatSize, setChatSize, ru
     right = temp;
   }
   return (
-    <MainLayout showFooter={false} rustlerCount={rustlerCount}>
+    <MainLayout history={history} showFooter={false} rustlerCount={rustlerCount}>
       <Resizeable
         className='grow-1'
         onResize={e => {
@@ -55,10 +67,11 @@ export const Stream = ({ params: { channel, service }, chatSize, setChatSize, ru
 };
 
 Stream.propTypes = {
-  params: PropTypes.shape({
-    channel: PropTypes.string.isRequired,
-    service: PropTypes.string.isRequired,
-  }),
+  history: PropTypes.object.isRequired,
+
+  streamer: PropTypes.string,
+  service: PropTypes.string.isRequired,
+  channel: PropTypes.string.isRequired,
 
   chatSize: PropTypes.number.isRequired,
   showLeftChat: PropTypes.bool,
@@ -82,10 +95,9 @@ export default compose(
     },
   ),
   setPropTypes({
-    params: PropTypes.shape({
-      channel: PropTypes.string.isRequired,
-      service: PropTypes.string.isRequired,
-    }),
+    streamer: PropTypes.string,
+    service: PropTypes.string.isRequired,
+    channel: PropTypes.string.isRequired,
 
     chatSize: PropTypes.number.isRequired,
     rustlerCount: MainLayout.propTypes.rustlerCount,
@@ -96,7 +108,7 @@ export default compose(
   }),
   lifecycle({
     componentDidMount() {
-      const { channel, service, streamer } = this.props.params;
+      const { channel, service, streamer } = this.props;
       if (streamer) {
         document.title = `${streamer} - OverRustle`;
         return this.props.setStream(streamer);
@@ -109,13 +121,13 @@ export default compose(
     // Catch updates to this component, which usually happen when the user goes
     // to a another stream after having been watching one already.
     componentDidUpdate(prevProps) {
-      const { channel, service, streamer } = this.props.params;
+      const { channel, service, streamer } = this.props;
 
       // Only dispatch action if user has navigated to a different stream.
       const hasChanged = (
-        prevProps.params.channel !== channel ||
-        prevProps.params.service !== service ||
-        prevProps.params.streamer !== streamer
+        prevProps.channel !== channel ||
+        prevProps.service !== service ||
+        prevProps.streamer !== streamer
       );
       if (hasChanged) {
         if (streamer) {

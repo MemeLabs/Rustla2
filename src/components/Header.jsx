@@ -1,7 +1,7 @@
 /* global DONATE_PAYPAL_URL */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import cs from 'classnames';
@@ -15,7 +15,14 @@ import HeaderForm from './HeaderForm';
 import { supportedChatServices } from './ChatEmbed';
 
 
-const Header = ({ rustlerCount, isLoggedIn, isOtherChatActive, currentStreamService, toggleChat }) => {
+const Header = ({
+  rustlerCount,
+  isLoggedIn,
+  isOtherChatActive,
+  currentStreamService,
+  toggleChat,
+  history,
+}) => {
   let rustlers = null;
   let viewers = null;
   if (rustlerCount) {
@@ -46,7 +53,7 @@ const Header = ({ rustlerCount, isLoggedIn, isOtherChatActive, currentStreamServ
             {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(false)} className={cs({ active: !isOtherChatActive })}><a role='button'>Destiny Chat</a></li>}
             {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(true)} className={cs('text-capitalize', { 'active': isOtherChatActive })}><a role='button'>{currentStreamService} Chat</a></li>}
             <li>
-              <HeaderForm />
+              <HeaderForm history={history} />
             </li>
             <li>
               <div className='btn-group'>
@@ -81,6 +88,7 @@ Header.propTypes = {
   isOtherChatActive: PropTypes.bool.isRequired,
   currentStreamService: PropTypes.string,
   toggleChat: PropTypes.func.isRequired,
+  history: PropTypes.object,
 };
 
 export default compose(

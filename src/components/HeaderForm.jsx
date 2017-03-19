@@ -1,19 +1,19 @@
 import React from 'react';
-import { browserHistory } from 'react-router';
+import PropTypes from 'prop-types';
 
 import ServiceSelect from './ServiceSelect';
 
 
-const handleSubmit = event => {
-  event.preventDefault();
-  const service = event.target.elements.service.value;
-  const channel = event.target.elements.channel.value;
-  if (channel && channel.length) {
-    browserHistory.push(`/${service}/${channel}`);
-  }
-};
+const HeaderForm = ({ history }) => {
+  const handleSubmit = event => {
+    event.preventDefault();
+    const service = event.target.elements.service.value;
+    const channel = event.target.elements.channel.value;
+    if (channel && channel.length) {
+      history.push(`/${service}/${channel}`);
+    }
+  };
 
-const HeaderForm = () => {
   return (
     <form
       className='navbar-form navbar-left'
@@ -44,6 +44,10 @@ const HeaderForm = () => {
       </div>
     </form>
   );
+};
+
+HeaderForm.propTypes = {
+  history: PropTypes.object.isRequired,
 };
 
 export default HeaderForm;

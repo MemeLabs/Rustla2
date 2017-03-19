@@ -1,5 +1,4 @@
 /* global API JWT_NAME */
-import { browserHistory } from 'react-router';
 import cookies from 'browser-cookies';
 import { emit } from './websocket';
 
@@ -61,7 +60,7 @@ export const setProfile = profile => {
 
 export const PROFILE_FETCH_START = Symbol('PROFILE_FETCH_START');
 export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
-export const fetchProfile = () => async dispatch => {
+export const fetchProfile = (history) => async dispatch => {
   dispatch({
     type: PROFILE_FETCH_START,
     payload: undefined,
@@ -70,7 +69,7 @@ export const fetchProfile = () => async dispatch => {
     credentials: 'include',
   });
   if (res.status === 401 || res.status === 404) {
-    return browserHistory.push('/login');
+    return history.push('/login');
   }
   if (res.status !== 200) {
     const error = await res.json();

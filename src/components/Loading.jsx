@@ -1,19 +1,20 @@
 import React from 'react';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
 
 
-export const LoadingScreen = ({ isLoading, children }) => {
+const Loading = ({ error, isLoading, pastDelay, timedOut }) => {
   if (isLoading) {
-    return <div className='jiggle-background fill-percentage' />;
+    if (timedOut) {
+      return <div>Loader timed out</div>;
+    }
+    if (pastDelay) {
+      return <div className='jiggle-background fill-percentage' />;
+    }
+    return null;
   }
-  return children;
+  if (error) {
+    console.log(error);
+  }
+  return null;
 };
 
-export default compose(
-  connect(
-    state => ({
-      isLoading: state.isLoading,
-    }),
-  ),
-)(LoadingScreen);
+export default Loading;

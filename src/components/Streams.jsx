@@ -52,7 +52,7 @@ const makeCategories = (categories, items) => {
   );
 };
 
-const Streams = ({ streams }) => {
+const Streams = ({ history, streams }) => {
   let grid = null;
   const streams_arr = Object.values(streams);
   if (streams_arr.length) {
@@ -73,7 +73,7 @@ const Streams = ({ streams }) => {
   }
 
   return (
-    <MainLayout>
+    <MainLayout history={history}>
       <h1 className='streams-heading'>See what {streams_arr.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
       <div className='flex-column grow-1'>{grid}</div>
     </MainLayout>
@@ -81,6 +81,7 @@ const Streams = ({ streams }) => {
 };
 
 Streams.propTypes = {
+  history: PropTypes.object,
   streams: PropTypes.objectOf(
     PropTypes.shape({
       ...StreamThumbnail.propTypes,

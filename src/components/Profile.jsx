@@ -9,8 +9,8 @@ import MainLayout from './MainLayout';
 import ServiceSelect from './ServiceSelect';
 
 
-const Profile = ({ profile, updateProfile }) =>
-  <MainLayout>
+const Profile = ({ history, profile, updateProfile }) =>
+  <MainLayout history={history}>
     <div className='container'>
       <h1 className='text-center'>Settings</h1>
       {profile.isFetching ? <div className='h3 text-center'>LOADING...</div> : null}
@@ -78,6 +78,7 @@ const Profile = ({ profile, updateProfile }) =>
   ;
 
 Profile.propTypes = {
+  history: PropTypes.object.isRequired,
   profile: PropTypes.shape({
     data: PropTypes.shape({
       username: PropTypes.string,
@@ -89,19 +90,27 @@ Profile.propTypes = {
   }),
 };
 
+function mapDispatchToProps(dispatch) {
+  return {
+    fetchProfile(history) {
+      return dispatch(fetchProfile(history));
+    },
+    updateProfile() {
+      return dispatch(updateProfile());
+    },
+  };
+}
+
 export default compose(
   connect(
     state => ({
       profile: state.self.profile,
     }),
-    {
-      fetchProfile,
-      updateProfile,
-    },
+    mapDispatchToProps,
   ),
   lifecycle({
     componentDidMount() {
-      this.props.fetchProfile();
+      this.props.fetchProfile(this.props.history);
     },
   }),
 )(Profile);

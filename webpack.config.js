@@ -24,8 +24,9 @@ module.exports = {
     ],
   },
   output: {
-    path: path.join(__dirname, './public/assets'),
+    path: path.resolve(__dirname, './public/assets'),
     filename: IS_PRODUCTION ? '[name].[chunkhash].js' : '[name].js',
+    chunkFilename: '[name].[chunkhash].js',
     publicPath: '/assets/',
     crossOriginLoading: 'anonymous',
   },
