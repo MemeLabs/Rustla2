@@ -4,7 +4,7 @@ import WebSocket from 'uws';
 import uuid from 'uuid/v4';
 import hash from 'string-hash';
 
-import { Rustler, Stream, User } from '../db';
+import { Rustler, Stream, BannedStream, User } from '../db';
 
 
 const debug = require('debug')('overrustle:websocket');
@@ -186,6 +186,18 @@ export default function makeWebSocketServer(server) {
         }
         const prevStream = rustler.stream ? rustler.stream.toJSON() : null;
         if (stream) {
+          const sChannel = stream.channel;
+          const sService = stream.service;
+          ([ bannedStream ] = await BannedStream.findAll({
+            where: { sChannel, sService },
+            limit: 1,
+          }));
+          if (bannedStream) {
+            banned = true;
+            stream = null;
+          }
+        }
+        if (stream && !banned) {
           debug('rustler set stream %j => %j', prevStream, stream.toJSON());
           // update rustler
           await rustler.update({ stream_id: stream.id });
@@ -214,6 +226,12 @@ export default function makeWebSocketServer(server) {
             'STREAMS_SET',
             streams,
           ]));
+          if (banned) {
+            ws.send(JSON.stringify([
+              'ERR',
+              'That stream is banned. Go somewhere else.',
+            ]));
+          }
         }
         // update everyone else
         if (prevStream) {
