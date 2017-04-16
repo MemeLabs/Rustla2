@@ -145,6 +145,31 @@ export const Stream = sequelize.define('stream', {
   },
 });
 
+export const BannedStream = sequelize.define('banned_stream', {
+  channel: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    allowNull: false,
+    unique: 'channel_service',
+    validate: {
+      notEmpty: true,
+    },
+  },
+  service: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    allowNull: false,
+    unique: 'channel_service',
+    validate: {
+      notEmpty: true,
+    },
+  },
+  reason: {
+    type: Sequelize.STRING,
+    allowNull: true
+  }
+});
+
 export const Rustler = sequelize.define('rustler', {
   id: {
     type: Sequelize.UUIDV4,
@@ -167,9 +192,27 @@ export const Rustler = sequelize.define('rustler', {
   },
 });
 
+export const BannedRustler = sequelize.define('banned_rustler', {
+  ip_address: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    unique: true,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  reason: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  }
+});
+
 User.sync();
 Rustler.sync({ force: true });
+BannedRustler.sync();
 Stream.sync({ force: true });
+BannedStream.sync();
 
 Rustler.belongsTo(Stream, { as: 'stream' });
 Stream.hasMany(Rustler);

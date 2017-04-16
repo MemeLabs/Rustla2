@@ -6,6 +6,7 @@ import Streams from './components/Streams';
 import Stream from './components/Stream';
 import Error404 from './components/Error404';
 import Profile from './components/Profile';
+import Banned from './components/Banned';
 
 import { fetchStreamer, login, logout } from './actions';
 import store from './store';
@@ -38,6 +39,7 @@ const routes =
     <IndexRoute component={Streams} />
     <Route path='strims' component={Streams} />
     <Route path='profile' component={Profile} />
+    <Route path='beand' component={Banned} />
     <Route
       path='logout'
       onEnter={(nextState, replace) => {
