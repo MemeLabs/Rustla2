@@ -186,10 +186,8 @@ export default function makeWebSocketServer(server) {
         }
         const prevStream = rustler.stream ? rustler.stream.toJSON() : null;
         if (stream) {
-          const sChannel = stream.channel;
-          const sService = stream.service;
           ([ bannedStream ] = await BannedStream.findAll({
-            where: { sChannel, sService },
+            where: { channel: stream.channel, service: stream.service },
             limit: 1,
           }));
           if (bannedStream) {
