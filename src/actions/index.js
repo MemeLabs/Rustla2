@@ -144,3 +144,13 @@ export const toggleChat = isOtherChatActive => {
     payload: isOtherChatActive,
   };
 };
+
+export const STREAM_BANNED = Symbol('STREAM_BANNED');
+export const streamBanned = () => dispatch => {
+  //browserHistory.push('/');
+  alert('stream banned or something');
+  dispatch({
+    type: STREAM_BANNED,
+    payload: null,
+  });
+};

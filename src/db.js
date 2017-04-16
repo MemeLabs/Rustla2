@@ -210,7 +210,9 @@ export const BannedRustler = sequelize.define('banned_rustler', {
 
 User.sync();
 Rustler.sync({ force: true });
+BannedRustler.sync();
 Stream.sync({ force: true });
+BannedStream.sync();
 
 Rustler.belongsTo(Stream, { as: 'stream' });
 Stream.hasMany(Rustler);

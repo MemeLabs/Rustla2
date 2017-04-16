@@ -134,6 +134,7 @@ export default function makeWebSocketServer(server) {
         });
         // get our stream
         let stream;
+        let bannedStream;
         if (!channel) {
           // we must be setting our stream to null (for lobby)
           stream = null;
@@ -185,6 +186,7 @@ export default function makeWebSocketServer(server) {
           }
         }
         const prevStream = rustler.stream ? rustler.stream.toJSON() : null;
+        let banned = false;
         if (stream) {
           ([ bannedStream ] = await BannedStream.findAll({
             where: { channel: stream.channel, service: stream.service },
@@ -226,8 +228,8 @@ export default function makeWebSocketServer(server) {
           ]));
           if (banned) {
             ws.send(JSON.stringify([
-              'ERR',
-              'That stream is banned. Go somewhere else.',
+              'STREAM_BANNED',
+              null,
             ]));
           }
         }
