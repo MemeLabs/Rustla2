@@ -194,7 +194,6 @@ export default function makeWebSocketServer(server) {
           }));
           if (bannedStream) {
             banned = true;
-            stream = null;
           }
         }
         if (stream && !banned) {
@@ -214,6 +213,13 @@ export default function makeWebSocketServer(server) {
           debug('rustler set stream %j => null', prevStream);
           // update rustler
           await rustler.update({ stream_id: null });
+          if (banned) {
+            await stream.destroy();
+            ws.send(JSON.stringify([
+              'STREAM_BANNED',
+              null,
+            ]));
+          }
           // get all streams and count rustlers
           const streams = await Stream.findAllWithRustlers();
           // send `SET_STREAM` acknowledgement
@@ -226,12 +232,7 @@ export default function makeWebSocketServer(server) {
             'STREAMS_SET',
             streams,
           ]));
-          if (banned) {
-            ws.send(JSON.stringify([
-              'STREAM_BANNED',
-              null,
-            ]));
-          }
+
         }
         // update everyone else
         if (prevStream) {

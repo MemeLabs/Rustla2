@@ -36,7 +36,7 @@ const thunks = {
     }
   },
   STREAM_BANNED: () => (dispatch) => {
-    browserHistory.push('/');
+    browserHistory.push('/beand');
     dispatch({
       type: actions.STREAM_BANNED,
       payload: null,
