@@ -65,6 +65,15 @@ export const User = sequelize.define('user', {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  is_banned: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  ban_reason: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
 });
 
 export const Stream = sequelize.define('stream', {
@@ -166,8 +175,23 @@ export const BannedStream = sequelize.define('banned_stream', {
   },
   reason: {
     type: Sequelize.STRING,
-    allowNull: true
-  }
+    allowNull: true,
+  },
+});
+
+export const BannedIP = sequelize.define('banned_ip', {
+  ip_address: {
+    type: Sequelize.STRING,
+    primaryKey: true,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  reason: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
 });
 
 export const Rustler = sequelize.define('rustler', {
@@ -192,25 +216,9 @@ export const Rustler = sequelize.define('rustler', {
   },
 });
 
-export const BannedRustler = sequelize.define('banned_rustler', {
-  ip_address: {
-    type: Sequelize.STRING,
-    primaryKey: true,
-    unique: true,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-  reason: {
-    type: Sequelize.STRING,
-    allowNull: true,
-  }
-});
-
 User.sync();
 Rustler.sync({ force: true });
-BannedRustler.sync();
+BannedIP.sync();
 Stream.sync({ force: true });
 BannedStream.sync();
 
