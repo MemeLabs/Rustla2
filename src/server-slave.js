@@ -7,6 +7,7 @@ import express from 'express';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
 
+import ipBanCheckMiddleware from './middleware/ipBanCheck';
 import sessionMiddleware, { setSession } from './middleware/session';
 import api from './api';
 import errors from './http_errors';
@@ -23,6 +24,7 @@ app.set('trust proxy', true);
 
 app.use(morgan(':method :url :status :response-time ms - :res[content-length] - :remote-addr'));
 app.use(bodyParser.json());
+app.use(ipBanCheckMiddleware);
 app.use(sessionMiddleware);
 app.use('/api', api);
 
