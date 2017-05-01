@@ -232,7 +232,6 @@ export default function makeWebSocketServer(server) {
             'STREAMS_SET',
             streams,
           ]));
-
         }
         // update everyone else
         if (prevStream) {
