@@ -15,7 +15,7 @@
     "build:production": "NODE_ENV=production npm run build",
     "dev-server": "npm run build &&  webpack-dev-server --inline --hot",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint *.js src/"
+    "lint": "eslint webpack.config.js --ext .js --ext .jsx src"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
