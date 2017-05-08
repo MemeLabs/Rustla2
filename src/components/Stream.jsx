@@ -89,7 +89,7 @@ export default compose(
 
     chatSize: PropTypes.number.isRequired,
     rustlerCount: MainLayout.propTypes.rustlerCount,
-    showLeftChat: PropTypes.bool.isRequired,
+    showLeftChat: PropTypes.bool,
 
     setChatSize: PropTypes.func.isRequired,
     setStream: PropTypes.func.isRequired,
