@@ -966,9 +966,7 @@ module.exports = {
     'react/jsx-sort-props': [
       'off',
     ],
-    'react/jsx-space-before-closing': [
-      'error',
-    ],
+    'react/jsx-tag-spacing': ['error', { beforeSelfClosing: 'always' }],
     'react/jsx-uses-react': [
       'error',
     ],
@@ -981,6 +979,7 @@ module.exports = {
         'declaration': false,
         'assignment': false,
         'return': true,
+        'arrow': false
       },
     ],
 
