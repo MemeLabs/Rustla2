@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "OverRustle",
   "private": true,
+  "engines": {
+    "node": ">=4"
+  },
   "scripts": {
     "start": "node ./lib/server.js",
     "clean": "rm -rf lib public/assets public/index.html",

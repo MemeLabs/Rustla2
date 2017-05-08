@@ -4,7 +4,7 @@ Livestream viewing with `destiny.gg` chat.
 
 ## Setup
 
-First, ensure that you have Node.js 7 and `npm@4` installed. Then,
+First, ensure that you have Node.js (version 4 or greater) and `npm@4` installed. Then,
 
 ``` bash
 $ git clone https://github.com/ILiedAboutCake/Rustla2.git
