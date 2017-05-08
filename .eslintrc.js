@@ -617,7 +617,7 @@ module.exports = {
       'error',
       {
         'initialized': 'never',
-        'uninitialized': 'always',
+        'uninitialized': 'never',
       },
     ],
     'operator-assignment': [
