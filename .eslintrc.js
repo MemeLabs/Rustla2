@@ -9,7 +9,6 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
   ],
-  'installedESLint': true,
   'parserOptions': {
     'ecmaFeatures': {
       'impliedStrict': true,
