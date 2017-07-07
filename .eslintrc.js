@@ -456,7 +456,7 @@ module.exports = {
     'id-match': [
       'off',
     ],
-    'indent': [
+    'indent-legacy': [
       'error',
       2,
       {
