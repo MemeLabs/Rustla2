@@ -1,5 +1,6 @@
 /* global process */
 import Cookies from 'cookies';
+import isLocal from 'is-local-ip';
 import jwt from 'jwt-simple';
 
 
@@ -20,7 +21,9 @@ const getCookie = (req, res) => {
 const setCookie = (req, res, value) => {
   const cookies = new Cookies(req, res);
   cookies.set(JWT_NAME, value, {
-    domain: req.hostname === 'localhost' ? '' : `.${req.hostname}`,
+    domain: req.hostname === 'localhost' || isLocal(req.hostname)
+      ? ''
+      : `.${req.hostname}`,
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1 week
     httpOnly: false,
   });
