@@ -23,7 +23,7 @@ const Profile = ({ profile, updateProfile }) =>
               ...profile.data,
               service: event.target.elements.service.value,
               channel: event.target.elements.channel.value,
-              left_chat: Boolean(event.target.elements.left_chat.value),
+              left_chat: event.target.elements.left_chat.checked,
             };
             // Disallow blank inputs. The ORM will disallow these anyways but
             // there's arguably no point in even making the request if it's known
