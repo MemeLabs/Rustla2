@@ -26,7 +26,6 @@ module.exports = {
     path: path.join(__dirname, './public/assets'),
     filename: IS_PRODUCTION ? '[name].[chunkhash].js' : '[name].js',
     publicPath: '/assets',
-    sourceMapFilename: '[name].[chunkhash].js.map',
     crossOriginLoading: 'anonymous',
   },
   devServer: {
