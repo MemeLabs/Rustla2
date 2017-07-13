@@ -1,4 +1,5 @@
 import express from 'express';
+import { sortBy } from 'lodash';
 
 import { Stream, User } from '../db';
 import errors from '../http_errors';
@@ -76,7 +77,7 @@ api.use(async (req, res) => {
   res.json({
     // Array of streams. Called "stream_list" to maintain backwards
     // compatibility with the old API (primarily for Bot).
-    stream_list: streams.map(stream => {
+    stream_list: sortBy(streams, s => -s.rustlers).map(stream => {
       return {
         channel: stream.channel,
         live: stream.live,
