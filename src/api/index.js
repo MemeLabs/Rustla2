@@ -72,12 +72,13 @@ api.post('/profile', async (req, res, next) => {
 });
 
 api.use(async (req, res) => {
-  const streams = await Stream.findAllWithRustlers();
+  let streams = await Stream.findAllWithRustlers();
+  streams = sortBy(streams, s => -s.rustlers);
 
   res.json({
     // Array of streams. Called "stream_list" to maintain backwards
     // compatibility with the old API (primarily for Bot).
-    stream_list: sortBy(streams, s => -s.rustlers).map(stream => {
+    stream_list: streams.map(stream => {
       return {
         channel: stream.channel,
         live: stream.live,
