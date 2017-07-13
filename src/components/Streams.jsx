@@ -17,7 +17,16 @@ const makeCategories = (categories, items) => {
     for (let i = 0; i < categories.length; i++) {
       const { test } = categories[i];
       if (test(item)) {
-        sortedStreams[i].push(item);
+
+        // Find position to insert this stream at in order to keep this list
+        // sorted.
+        let position = 0;
+        for (; position < sortedStreams[i].length; position++) {
+          if (item.rustlers > sortedStreams[i][position].rustlers) {
+            break;
+          }
+        }
+        sortedStreams[i].splice(position, 0, item);
         break;
       }
     }
