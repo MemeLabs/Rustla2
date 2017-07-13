@@ -33,7 +33,7 @@ const makeCategories = (categories, items) => {
   }
   return categories.map(({ header }, i) =>
     sortedStreams[i].length ?
-    <div key={i}>
+    <div key={i} className='streams'>
       <h3 className='col-xs-12'>{header}</h3>
       {sortedStreams[i].map(stream => {
         // Don't send stream properties that aren't required by StreamThumbnail.
@@ -75,7 +75,7 @@ const Streams = ({ streams }) => {
   return (
     <MainLayout>
       <h1 className='streams-heading'>See what {streams_arr.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
-      <div className='streams flex-column grow-1'>{grid}</div>
+      <div className='flex-column grow-1'>{grid}</div>
     </MainLayout>
   );
 };
