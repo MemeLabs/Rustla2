@@ -121,6 +121,10 @@ export default function makeWebSocketServer(server) {
     async setStream(id, channel, service) {
       const ws = rustler_sockets.get(id);
       try {
+        // basic channel name sanitization
+        if (!/^[a-zA-Z0-9\-_]{1,64}$/.test(channel)){
+          channel = null;
+        }
         // get our rustler and their stream from the db
         const [ rustler ] = await Rustler.findAll({
           where: { id },
