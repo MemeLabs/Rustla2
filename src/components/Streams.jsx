@@ -87,6 +87,7 @@ export default compose(
   ),
   lifecycle({
     componentDidMount() {
+      document.title = 'OverRustle';
       this.props.setStream(null);
     },
   }),
