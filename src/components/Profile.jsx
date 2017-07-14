@@ -95,8 +95,8 @@ function mapDispatchToProps(dispatch) {
     fetchProfile(history) {
       return dispatch(fetchProfile(history));
     },
-    updateProfile() {
-      return dispatch(updateProfile());
+    updateProfile(data) {
+      return dispatch(updateProfile(data));
     },
   };
 }
