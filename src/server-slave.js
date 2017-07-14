@@ -103,7 +103,7 @@ app.use('/oauth', async (req, res, next) => {
       });
     }
     else {
-      dbUser.update({
+      await dbUser.update({
         last_ip: req.connection.remoteAddress,
         last_seen: new Date(),
       });

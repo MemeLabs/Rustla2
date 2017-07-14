@@ -63,7 +63,7 @@ api.post('/profile', async (req, res, next) => {
     if (!/^[a-zA-Z0-9\-_]{1,64}$/.test(channel)){
       channel = null;
     }
-    dbUser.update({
+    await dbUser.update({
         service: req.body.service || dbUser.service,
         channel: channel || dbUser.channel,
         left_chat: req.body.left_chat || dbUser.left_chat
