@@ -64,9 +64,9 @@ api.post('/profile', async (req, res, next) => {
       channel = null;
     }
     await dbUser.update({
-        service: req.body.service || dbUser.service,
-        channel: channel || dbUser.channel,
-        left_chat: req.body.left_chat || dbUser.left_chat
+      service: req.body.service || dbUser.service,
+      channel: channel || dbUser.channel,
+      left_chat: req.body.left_chat || dbUser.left_chat,
     });
     res.json({
       username: dbUser.id,
