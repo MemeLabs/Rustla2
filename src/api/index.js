@@ -58,7 +58,16 @@ api.post('/profile', async (req, res, next) => {
     if (!dbUser) {
       throw new errors.NotFound();
     }
-    dbUser.update(req.body);
+    // basic channel name sanitization
+    let channel = req.body.channel;
+    if (!/^[a-zA-Z0-9\-_]{1,64}$/.test(channel)){
+      channel = null;
+    }
+    dbUser.update({
+        service: req.body.service || dbUser.service,
+        channel: channel || dbUser.channel,
+        left_chat: req.body.left_chat || dbUser.left_chat
+    });
     res.json({
       username: dbUser.id,
       service: dbUser.service,
