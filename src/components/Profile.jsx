@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
 
 import { fetchProfile, updateProfile } from '../actions';
+import Checkbox from './Checkbox';
 import MainLayout from './MainLayout';
 import ServiceSelect from './ServiceSelect';
 
@@ -58,10 +59,9 @@ const Profile = ({ history, profile, updateProfile }) =>
           <div className='form-group'>
             <label htmlFor='profile-leftchat' className='col-sm-2 control-label'>Use Left Chat</label>
             <div className='col-sm-10'>
-              <input
+              <Checkbox
                 className='form-control'
                 id='profile-leftchat'
-                type='checkbox'
                 name='left_chat'
                 defaultChecked={profile.data.left_chat}
                 />
