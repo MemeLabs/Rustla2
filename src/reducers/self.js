@@ -44,6 +44,7 @@ function selfReducer(state = INITIAL_STATE.self, action) {
     case LOGOUT:
       return {
         ...state,
+        profile: INITIAL_STATE.self.profile,
         isLoggedIn: false,
       };
   }
