@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import lifecycle from 'recompose/lifecycle';
 import get from 'lodash/get';
 import cs from 'classnames';
 
+import { toggleChat } from '../actions';
 
 const supportedChats = {
   'azubu': channel => `https://www.azubu.tv/${channel}/chatpopup`,
@@ -77,5 +79,15 @@ export default compose(
         service: get(state, ['streams', state.stream, 'service']),
       };
     },
+    {
+      toggleChat,
+    },
   ),
+  lifecycle({
+    componentWillMount() {
+      if (this.props.isOtherChatActive && !supportedChatServices.has(this.props.service)) {
+        this.props.toggleChat(false);
+      }
+    },
+  }),
 )(ChatEmbed);
