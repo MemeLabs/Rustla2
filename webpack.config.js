@@ -6,6 +6,7 @@ require('dotenv').config({ silent: true });
 const webpack = require('webpack');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const gitHash = require('helper-git-hash');
 
 const { NODE_ENV } = process.env;
 const IS_PRODUCTION = NODE_ENV === 'production';
@@ -122,6 +123,8 @@ module.exports = {
       'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : undefined,
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : undefined,
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : undefined,
+      'GIT_COMMIT_HASH': `"${gitHash()}"`,
+      'GIT_SHORT_COMMIT_HASH': `"${gitHash({ short: true })}"`,
     }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),

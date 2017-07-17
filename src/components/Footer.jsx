@@ -1,7 +1,9 @@
-/* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL DISCORD_URL */
+/* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL
+          DISCORD_URL GIT_COMMIT_HASH GIT_SHORT_COMMIT_HASH */
 import React from 'react';
 
 import '../css/Footer';
+import GitHubCommitLink from './GitHubCommitLink';
 
 
 const external_links = [
@@ -46,6 +48,8 @@ const Footer = () =>
         }
         <br />
         <a href='/api'>API</a>
+        &nbsp; &bull; &nbsp;
+        <GitHubCommitLink hash={GIT_COMMIT_HASH} short={GIT_SHORT_COMMIT_HASH} />
       </p>
     </div>
   </footer>
