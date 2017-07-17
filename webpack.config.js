@@ -59,12 +59,6 @@ module.exports = {
         include: path.resolve(__dirname, 'src'),
         loader: 'babel-loader',
         options: {
-          babelrc: false,
-          presets: [
-            require.resolve('babel-preset-es2015'),
-            require.resolve('babel-preset-react'),
-            require.resolve('babel-preset-stage-0'),
-          ],
           cacheDirectory: true,
         },
       },
