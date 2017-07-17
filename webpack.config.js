@@ -60,6 +60,7 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           cacheDirectory: true,
+          forceEnv: NODE_ENV || 'development',
         },
       },
       {

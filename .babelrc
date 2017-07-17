@@ -1,4 +1,18 @@
 {
   "presets": ["es2015", "react", "stage-0"],
-  "plugins": []
+  "plugins": [],
+  "env": {
+    "development": {},
+    "production": {
+      "plugins": [
+        [
+          "transform-react-remove-prop-types",
+          {
+            "mode": "remove",
+            "removeImport": true
+          }
+        ]
+      ]
+    }
+  }
 }
