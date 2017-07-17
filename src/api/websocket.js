@@ -9,6 +9,21 @@ import { Rustler, Stream, BannedStream, User } from '../db';
 
 const debug = require('debug')('overrustle:websocket');
 
+// Services whose channel names are case insensitive. Channel names on these
+// services are lowercased in the database in order to prevent duplicates from
+// arising due to differences in casing. For example, if one user is watching
+// "twitch/Destiny", and another is watching "twitch/destiny", we track this as
+// being two users watching "twitch/destiny", since they are both actually
+// watching the same stream on this particular service. An example of a
+// case-sensitive service would be YouTube.
+const CASE_INSENSITIVE_SERVICES = [
+  'angelthump',
+  'hitbox',
+  'twitch',
+  'ustream',
+];
+
+
 export default function makeWebSocketServer(server) {
 
   const wss = new WebSocket.Server({ server });
@@ -175,6 +190,10 @@ export default function makeWebSocketServer(server) {
             }
           }
           else {
+            if (CASE_INSENSITIVE_SERVICES.includes(service)) {
+              channel = channel.toLowerCase();
+            }
+
             // must be setting by channel-service pair
             ([ stream ] = await Stream.findAll({
               where: { channel, service },
