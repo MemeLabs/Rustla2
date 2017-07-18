@@ -16,16 +16,13 @@ const App = ({ store }) => (
   </Provider>
 );
 
-function mapDispatchToProps(dispatch) {
-  return {
-    login() {
-      return dispatch(login());
-    },
-  };
-}
-
 export default compose(
-  connect(null, mapDispatchToProps),
+  connect(
+    null,
+    {
+      login,
+    },
+  ),
   lifecycle({
     componentDidMount() {
       this.props.login();

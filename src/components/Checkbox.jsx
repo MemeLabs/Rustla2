@@ -5,6 +5,7 @@ import compose from 'recompose/compose';
 import withHandlers from 'recompose/withHandlers';
 import withState from 'recompose/withState';
 
+
 const Checkbox = ({
   checked,
   className,

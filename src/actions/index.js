@@ -27,15 +27,15 @@ export const fetchStreamer = name => async dispatch => {
 };
 
 
+const CHAT_CLAMP_SIZE = 320;
 export const SET_CHAT_SIZE = Symbol('SET_CHAT_SIZE');
 export const setChatSize = size => dispatch => {
   // clamp our chat size a bit
-  const CLAMP_SIZE = 320;
-  if (size < CLAMP_SIZE) {
-    size = CLAMP_SIZE;
+  if (size < CHAT_CLAMP_SIZE) {
+    size = CHAT_CLAMP_SIZE; // eslint-disable-line no-param-reassign
   }
-  if (size > window.innerWidth - CLAMP_SIZE) {
-    size = window.innerWidth - CLAMP_SIZE;
+  if (size > window.innerWidth - CHAT_CLAMP_SIZE) {
+    size = window.innerWidth - CHAT_CLAMP_SIZE; // eslint-disable-line no-param-reassign
   }
   // save it in localStorage if supported
   if (localStorage) {
@@ -81,6 +81,8 @@ export const fetchProfile = (history) => async dispatch => {
   const profile = await res.json();
   return dispatch(setProfile(profile));
 };
+
+
 export const fetchProfileIfLoggedIn = () => async (dispatch, getState) => {
   if (!getState().self.isLoggedIn) {
     return;

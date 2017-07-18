@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import MainLayout from './MainLayout';
 
+
 const Banned = ({ history }) =>
   <MainLayout history={history}>
     <div className='text-center'>

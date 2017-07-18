@@ -8,6 +8,7 @@ import cs from 'classnames';
 
 import { toggleChat } from '../actions';
 
+
 const supportedChats = {
   'azubu': channel => `https://www.azubu.tv/${channel}/chatpopup`,
   'hitbox': channel => `https://www.hitbox.tv/embedchat/${channel}`,

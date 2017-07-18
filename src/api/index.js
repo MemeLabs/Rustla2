@@ -1,5 +1,5 @@
 import express from 'express';
-import { isNil, sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 
 import { Stream, User } from '../db';
 import errors from '../http_errors';
@@ -66,9 +66,7 @@ api.post('/profile', async (req, res, next) => {
     await dbUser.update({
       service: req.body.service || dbUser.service,
       channel: channel || dbUser.channel,
-      left_chat: !isNil(req.body.left_chat)
-        ? req.body.left_chat
-        : dbUser.left_chat,
+      left_chat: req.body.hasOwnProperty('left_chat') && typeof req.body.left_chat === 'boolean' ? req.body.left_chat : dbUser.left_chat,
     });
     res.json({
       username: dbUser.id,
