@@ -1,0 +1,27 @@
+.advanced-stream-warning {
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+
+  &:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    filter: blur(2px);
+    background-image: url('/image/pepos.png');
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    // background-size: cover;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  button, h2, p, span {
+    z-index: 2;
+    position: relative;
+  }
+}
