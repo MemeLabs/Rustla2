@@ -1,6 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
+import AdvancedStreamEmbed from './AdvancedStreamEmbed';
+
+// Use `window.URL` as our WHATWG `URL` implementation. See
+// <http://caniuse.com/#feat=url> for the browsers which do not support this.
+const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(window.URL);
 
 const getSrc = (channel, service) => {
   switch (service) {
@@ -40,6 +46,13 @@ const getSrc = (channel, service) => {
 };
 
 const StreamEmbed = ({ channel, service, ...rest }) => {
+  if (service === 'advanced') {
+    if (isValidAdvancedUrl(channel)) {
+      return <AdvancedStreamEmbed channel={channel} />;
+    }
+    return <Redirect to='/' />;
+  }
+
   const src = getSrc(channel, service);
   if (src) {
     return (
@@ -64,6 +77,7 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
 StreamEmbed.propTypes = {
   channel: PropTypes.string,
   service: PropTypes.oneOf([
+    'advanced',
     'afreeca',
     'angelthump',
     'azubu',

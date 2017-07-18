@@ -3,8 +3,10 @@ import cluster from 'cluster';
 import WebSocket from 'uws';
 import uuid from 'uuid/v4';
 import hash from 'string-hash';
+import { URL } from 'url';
 
 import { Rustler, Stream, BannedStream, User } from '../db';
+const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(URL);
 
 
 const debug = require('debug')('overrustle:websocket');
@@ -136,8 +138,10 @@ export default function makeWebSocketServer(server) {
     async setStream(id, channel, service) {
       const ws = rustler_sockets.get(id);
       try {
-        // basic channel name sanitization
-        if (!/^[a-zA-Z0-9\-_]{1,64}$/.test(channel)){
+        // Basic channel name sanitization.
+        if ((service === 'advanced' && !isValidAdvancedUrl(channel))
+          || (service !== 'advanced' && !/^[a-zA-Z0-9\-_]{1,64}$/.test(channel))) {
+          debug(`rejecting ${service}/${channel} as invalid`);
           channel = null;
         }
         // get our rustler and their stream from the db

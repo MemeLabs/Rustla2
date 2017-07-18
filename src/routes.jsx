@@ -17,7 +17,7 @@ const Routes = () =>
       <Route path='/profile' component={AsyncProfile} />
       <Route path='/logout' component={Logout} />
       <Route path='/beand' component={Banned} />
-      <Route path='/:service/:channel' component={AsyncStream} />
+      <Route path='/:service/:channel(.+)' component={AsyncStream} />
       <Route path='/:streamer' component={AsyncStream} />
       <Route component={Error404} />
     </Switch>

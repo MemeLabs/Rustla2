@@ -1,9 +1,10 @@
 import express from 'express';
 import sortBy from 'lodash/sortBy';
+import { URL } from 'url';
 
 import { Stream, User } from '../db';
 import errors from '../http_errors';
-
+const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(URL);
 
 const api = express.Router();
 
@@ -58,11 +59,14 @@ api.post('/profile', async (req, res, next) => {
     if (!dbUser) {
       throw new errors.NotFound();
     }
-    // basic channel name sanitization
-    let channel = req.body.channel;
-    if (!/^[a-zA-Z0-9\-_]{1,64}$/.test(channel)){
-      channel = null;
+
+    // Basic channel name sanitization
+    const { channel, service } = req.body;
+    if ((service !== 'advanced' && !/^[a-zA-Z0-9\-_]{1,64}$/.test(channel))
+      || (service === 'advanced' && !isValidAdvancedUrl(channel))) {
+      throw new errors.BadRequest('Invalid channel for the selected service');
     }
+
     await dbUser.update({
       service: req.body.service || dbUser.service,
       channel: channel || dbUser.channel,

@@ -35,6 +35,7 @@ const Profile = ({ history, profile, updateProfile }) =>
             if (!payload.channel || !payload.channel.length) {
               return;
             }
+
             updateProfile(payload);
           }}
           >
@@ -71,7 +72,9 @@ const Profile = ({ history, profile, updateProfile }) =>
         </form>
       : null}
       {profile.err ?
-        <div className='alert alert-danger'>Error: {profile.err || 'Failed to fetch profile'}</div>
+          <div className='alert alert-danger' role='alert'>
+            Error: {profile.err.message || 'Failed to fetch profile'}
+          </div>
       : null}
     </div>
   </MainLayout>

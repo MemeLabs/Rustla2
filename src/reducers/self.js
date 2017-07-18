@@ -5,6 +5,7 @@ import {
   SET_PROFILE,
   PROFILE_FETCH_START,
   PROFILE_FETCH_FAILURE,
+  PROFILE_UPDATE_FAILURE,
 } from '../actions';
 
 
@@ -28,6 +29,7 @@ function selfReducer(state = INITIAL_STATE.self, action) {
         },
       };
     case PROFILE_FETCH_FAILURE:
+    case PROFILE_UPDATE_FAILURE:
       return {
         ...state,
         profile: {
