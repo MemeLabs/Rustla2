@@ -1,3 +1,4 @@
+/* global process */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -16,6 +17,7 @@ const supportedChats = {
   'twitch': channel => `https://www.twitch.tv/${channel}/chat?popout=`,
   'ustream': channel => `https://www.ustream.tv/socialstream/${channel}`,
   'vaughn': channel => `https://vaughnlive.tv/popout/chat/${channel}`,
+  'youtube': channel => `https://gaming.youtube.com/live_chat?v=${channel}&output=embed&embed_domain=${process.env.NODE_ENV === 'production' ? 'overrustle.com' : 'localhost'}`,
 };
 
 export const supportedChatServices = new Set(Object.keys(supportedChats));

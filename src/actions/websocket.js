@@ -62,10 +62,8 @@ export const init = store => {
 
   socket.onopen = function onopen(event) {
     pingInterval = setInterval(ping, 20000);
-    console.log('socket opened', event);
     messageQueue.forEach(args => emit(...args));
     messageQueue = [];
-    console.log(wasReconnect);
     if (wasReconnect) {
       // resend setStream on reconnect if we're watching one
       const state = store.getState();
@@ -83,7 +81,6 @@ export const init = store => {
   };
 
   socket.onclose = function onclose(event) {
-    console.log('socket closed', event);
     clearInterval(pingInterval);
   };
 
