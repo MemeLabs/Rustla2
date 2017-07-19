@@ -144,6 +144,11 @@ export default function makeWebSocketServer(server) {
           debug(`rejecting ${service}/${channel} as invalid`);
           channel = null;
         }
+
+        if (service === 'advanced') {
+          channel = new URL(channel).href;
+        }
+
         // get our rustler and their stream from the db
         const [ rustler ] = await Rustler.findAll({
           where: { id },
