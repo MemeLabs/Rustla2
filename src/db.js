@@ -74,6 +74,10 @@ export const User = sequelize.define('user', {
     type: Sequelize.STRING,
     allowNull: true,
   },
+  is_admin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 export const Stream = sequelize.define('stream', {
