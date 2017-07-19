@@ -61,10 +61,17 @@ api.post('/profile', async (req, res, next) => {
     }
 
     // Basic channel name sanitization
-    const { channel, service } = req.body;
+    let { channel, service } = req.body;
     if ((service !== 'advanced' && !/^[a-zA-Z0-9\-_]{1,64}$/.test(channel))
       || (service === 'advanced' && !isValidAdvancedUrl(channel))) {
       throw new errors.BadRequest('Invalid channel for the selected service');
+    }
+
+    // Encode any Unicode symbols in advanced channel URLs into a Punycode
+    // string of ASCII symbols. This prevents users from cluttering up the
+    // streams page with tons of emojis.
+    if (service === 'advanced') {
+      channel = new URL(channel).href;
     }
 
     await dbUser.update({
