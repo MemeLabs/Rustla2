@@ -26,7 +26,7 @@ const MainLayout = ({
 MainLayout.propTypes = {
   showHeader: PropTypes.bool,
   showFooter: PropTypes.bool,
-  rustlerCount: Header.propTypes.rustlerCount,
+  rustlerCount: PropTypes.arrayOf(PropTypes.number),
   children: PropTypes.node.isRequired,
   history: PropTypes.object.isRequired,
 };

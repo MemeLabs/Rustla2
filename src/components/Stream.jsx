@@ -77,7 +77,7 @@ Stream.propTypes = {
   showLeftChat: PropTypes.bool,
 
   setChatSize: PropTypes.func.isRequired,
-  rustlerCount: MainLayout.propTypes.rustlerCount,
+  rustlerCount: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default compose(
@@ -100,7 +100,7 @@ export default compose(
     channel: PropTypes.string.isRequired,
 
     chatSize: PropTypes.number.isRequired,
-    rustlerCount: MainLayout.propTypes.rustlerCount,
+    rustlerCount: PropTypes.arrayOf(PropTypes.number),
     showLeftChat: PropTypes.bool,
 
     setChatSize: PropTypes.func.isRequired,
