@@ -66,6 +66,11 @@ a {
   }
 }
 
+.form-control[disabled] {
+  background-color: $background-gray;
+  color: $text-gray;
+}
+
 .img-top-margin {
   margin-top: 50px;
 }
