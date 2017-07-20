@@ -41,7 +41,7 @@ api.get('/profile', async (req, res, next) => {
       throw new errors.NotFound();
     }
     res.json({
-      username: dbUser.id,
+      username: dbUser.username,
       service: dbUser.service,
       channel: dbUser.channel,
       left_chat: dbUser.left_chat,
