@@ -148,3 +148,55 @@ export const toggleChat = host => {
     payload: host,
   };
 };
+
+export const redirectIfNotAdmin = (history) => async (dispatch) => {
+  dispatch({
+    type: PROFILE_FETCH_START,
+  });
+
+  const res = await fetch(`${API}/profile`, {
+    credentials: 'include',
+  });
+
+  if (res.status === 401 || res.status === 404) {
+    history.push('/login');
+    return;
+  }
+
+  if (res.status !== 200) {
+    const error = await res.json();
+    dispatch({
+      type: PROFILE_FETCH_FAILURE,
+      error,
+    });
+    history.push('/');
+    return;
+  }
+
+  const profile = await res.json();
+  if (profile.is_admin) {
+    return;
+  }
+  history.push('/');
+};
+
+export const GET_USERS = Symbol('GET_USERS');
+export const GET_USERS_FAILURE = Symbol('GET_USERS_FAILURE');
+export const getUsers = () => async (dispatch) => {
+  const res = await fetch(`${API}/users`, {
+    credentials: 'include',
+  });
+
+  if (res.status !== 200) {
+    return dispatch({
+      type: GET_USERS_FAILURE,
+      payload: res.status,
+    });
+  }
+
+  const users = await res.json();
+  return dispatch({
+    type: GET_USERS,
+    payload: users,
+  });
+};

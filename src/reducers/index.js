@@ -5,6 +5,7 @@ import streamReducer from './stream';
 import streamsReducer from './streams';
 import uiReducer from './ui';
 import loadingReducer from './loading';
+import usersReducer from './users';
 
 
 export default combineReducers({
@@ -13,4 +14,5 @@ export default combineReducers({
   streams: streamsReducer,
   ui: uiReducer,
   self: selfReducer,
+  users: usersReducer,
 });

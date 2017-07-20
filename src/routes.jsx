@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
+import AsyncAdmin from './components/AsyncAdmin';
 import AsyncProfile from './components/AsyncProfile';
 import AsyncStream from './components/AsyncStream';
 import AsyncStreams from './components/AsyncStreams';
@@ -17,6 +18,7 @@ const Routes = () =>
       <Route path='/profile' component={AsyncProfile} />
       <Route path='/logout' component={Logout} />
       <Route path='/beand' component={Banned} />
+      <Route path='/admin' component={AsyncAdmin} />
       <Route path='/:service/:channel(.+)' component={AsyncStream} />
       <Route path='/:streamer' component={AsyncStream} />
       <Route component={Error404} />

@@ -16,4 +16,5 @@ export default {
       data: null,
     },
   },
+  users: [],
 };
