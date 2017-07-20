@@ -10,7 +10,11 @@ const api = express.Router();
 
 api.get('/streamer/:name', async (req, res, next) => {
   try {
-    const dbUser = await User.findById(req.params.name);
+    const dbUser = await User.findOne({
+      where: {
+        username: req.params.name,
+      },
+    });
     if (!dbUser) {
       throw new errors.NotFound();
     }
