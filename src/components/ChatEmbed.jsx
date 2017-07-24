@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import cs from 'classnames';
 
 import { toggleChat } from '../actions';
+import LazyLoadOnce from './LazyLoadOnce';
 
 
 const supportedChats = {
@@ -61,7 +62,9 @@ const ChatEmbed = ({ channel, service, isOtherChatActive }) => {
       <Chat style={{ visibility: isOtherChatActive ? 'hidden' : undefined }} src='https://destiny.gg/embed/chat' />
       {
         src ?
-        <Chat style={{ visibility: isOtherChatActive ? undefined : 'hidden' }} src={src} />
+          <LazyLoadOnce visible={isOtherChatActive}>
+            <Chat style={{ visibility: isOtherChatActive ? undefined : 'hidden' }} src={src} />
+          </LazyLoadOnce>
         : null
       }
     </div>
