@@ -5,9 +5,9 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
 import get from 'lodash/get';
-import cs from 'classnames';
 
 import { toggleChat } from '../actions';
+import Chat from './Chat';
 import LazyLoadOnce from './LazyLoadOnce';
 
 
@@ -22,35 +22,6 @@ const supportedChats = {
 };
 
 export const supportedChatServices = new Set(Object.keys(supportedChats));
-
-const Chat = ({ src, ...rest }) =>
-  <div
-    {...rest}
-    className={cs('fill-percentage', rest.className)}
-    style={{
-      position: 'absolute',
-      ...rest.style,
-    }}
-    >
-    <div>
-      <a href={src} target='_blank' rel='noopener noreferrer'>
-        <span className='glyphicon glyphicon-share-alt pull-right' />
-      </a>
-    </div>
-    <iframe
-      style={{
-        height: 'calc(100% - 1em)',
-      }}
-      width='100%'
-      height='100%'
-      marginHeight='0'
-      marginWidth='0'
-      frameBorder='0'
-      scrolling='no'
-      src={src}
-      />
-  </div>
-  ;
 
 const ChatEmbed = ({ channel, service, isOtherChatActive }) => {
   let src;
