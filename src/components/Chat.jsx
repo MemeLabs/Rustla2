@@ -1,13 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import cs from 'classnames';
 
-const Chat = ({ src, ...rest }) =>
+const Chat = ({ className, src, style, ...rest }) =>
   <div
     {...rest}
-    className={cs('fill-percentage', rest.className)}
+    className={cs('fill-percentage', className)}
     style={{
       position: 'absolute',
-      ...rest.style,
+      ...style,
     }}
     >
     <div>
@@ -29,5 +30,11 @@ const Chat = ({ src, ...rest }) =>
       />
   </div>
   ;
+
+Chat.propTypes = {
+  className: PropTypes.string,
+  src: PropTypes.string.isRequired,
+  style: PropTypes.object,
+};
 
 export default Chat;
