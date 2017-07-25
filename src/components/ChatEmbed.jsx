@@ -1,4 +1,3 @@
-/* global process */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -7,21 +6,10 @@ import lifecycle from 'recompose/lifecycle';
 import get from 'lodash/get';
 
 import { toggleChat } from '../actions';
+import supportedChats, { supportedChatServices } from '../util/supported-chats';
 import Chat from './Chat';
 import LazyLoadOnce from './LazyLoadOnce';
 
-
-const supportedChats = {
-  'azubu': channel => `https://www.azubu.tv/${channel}/chatpopup`,
-  'hitbox': channel => `https://www.hitbox.tv/embedchat/${channel}`,
-  'twitch-vod': channel => `https://www.twitch.tv/${channel}/chat?popout=`,
-  'twitch': channel => `https://www.twitch.tv/${channel}/chat?popout=`,
-  'ustream': channel => `https://www.ustream.tv/socialstream/${channel}`,
-  'vaughn': channel => `https://vaughnlive.tv/popout/chat/${channel}`,
-  'youtube': channel => `https://gaming.youtube.com/live_chat?v=${channel}&output=embed&embed_domain=${process.env.NODE_ENV === 'production' ? 'overrustle.com' : 'localhost'}`,
-};
-
-export const supportedChatServices = new Set(Object.keys(supportedChats));
 
 const ChatEmbed = ({ channel, onClose, service, isOtherChatActive }) => {
   let src;
