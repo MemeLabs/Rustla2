@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
 import setPropTypes from 'recompose/setPropTypes';
 import renderNothing from 'recompose/renderNothing';
+import withHandlers from 'recompose/withHandlers';
+import withState from 'recompose/withState';
 import branch from 'recompose/branch';
 import get from 'lodash/get';
 
@@ -21,6 +23,8 @@ import ChatEmbed from './ChatEmbed';
 
 
 export const Stream = ({
+  chatClosed,
+  closeChat,
   history,
   service,
   channel,
@@ -30,13 +34,13 @@ export const Stream = ({
   showLeftChat = false,
 }) => {
   let left = (
-    <div style={{ width: `calc(100% - ${chatSize}px)` }}>
+    <div style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` }}>
       <StreamEmbed channel={channel} service={service} />
     </div>
   );
-  let right = (
+  let right = chatClosed ? null : (
     <div style={{ width: chatSize }}>
-      <ChatEmbed />
+      <ChatEmbed onClose={closeChat} />
     </div>
   );
   if (showLeftChat) {
@@ -67,6 +71,8 @@ export const Stream = ({
 };
 
 Stream.propTypes = {
+  chatClosed: PropTypes.bool,
+  closeChat: PropTypes.func,
   history: PropTypes.object.isRequired,
 
   streamer: PropTypes.string,
@@ -142,4 +148,8 @@ export default compose(
     renderNothing,
     Component => Component,
   ),
+  withState('chatClosed', 'setChatClosed', false),
+  withHandlers({
+    closeChat: ({ setChatClosed }) => () => setChatClosed(true),
+  }),
 )(Stream);
