@@ -23,18 +23,27 @@ const supportedChats = {
 
 export const supportedChatServices = new Set(Object.keys(supportedChats));
 
-const ChatEmbed = ({ channel, service, isOtherChatActive }) => {
+const ChatEmbed = ({ channel, onClose, service, isOtherChatActive }) => {
   let src;
   if (channel && service && typeof supportedChats[service] === 'function') {
     src = supportedChats[service](channel) || src;
   }
+
   return (
     <div className='fill-percentage' style={{ position: 'relative' }}>
-      <Chat style={{ visibility: isOtherChatActive ? 'hidden' : undefined }} src='https://destiny.gg/embed/chat' />
+      <Chat
+        onClose={onClose}
+        style={{ visibility: isOtherChatActive ? 'hidden' : undefined }}
+        src='https://destiny.gg/embed/chat'
+        />
       {
         src ?
           <LazyLoadOnce visible={isOtherChatActive}>
-            <Chat style={{ visibility: isOtherChatActive ? undefined : 'hidden' }} src={src} />
+            <Chat
+              onClose={onClose}
+              style={{ visibility: isOtherChatActive ? undefined : 'hidden' }}
+              src={src}
+              />
           </LazyLoadOnce>
         : null
       }
@@ -44,6 +53,7 @@ const ChatEmbed = ({ channel, service, isOtherChatActive }) => {
 
 ChatEmbed.propTypes = {
   channel: PropTypes.string,
+  onClose: PropTypes.func,
   service: PropTypes.string,
 };
 

@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
 
-const Chat = ({ className, src, style, ...rest }) =>
+/* eslint-disable no-empty-function */
+function noop() {}
+/* eslint-enable no-empty-function */
+
+const Chat = ({ className, onClose = noop, src, style, ...rest }) =>
   <div
     {...rest}
     className={cs('fill-percentage', className)}
@@ -12,6 +16,9 @@ const Chat = ({ className, src, style, ...rest }) =>
     }}
     >
     <div>
+      <a title='Close' onClick={onClose}>
+        <span className='glyphicon glyphicon-remove pull-right' />
+      </a>
       <a href={src} target='_blank' rel='noopener noreferrer'>
         <span className='glyphicon glyphicon-share-alt pull-right' />
       </a>
@@ -33,6 +40,7 @@ const Chat = ({ className, src, style, ...rest }) =>
 
 Chat.propTypes = {
   className: PropTypes.string,
+  onClose: PropTypes.func,
   src: PropTypes.string.isRequired,
   style: PropTypes.object,
 };
