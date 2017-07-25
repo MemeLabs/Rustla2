@@ -11,8 +11,8 @@ import get from 'lodash/get';
 import '../css/Header';
 
 import { toggleChat } from '../actions';
+import { supportedChatServices } from '../util/supported-chats';
 import HeaderForm from './HeaderForm';
-import { supportedChatServices } from './ChatEmbed';
 
 
 const Header = ({
