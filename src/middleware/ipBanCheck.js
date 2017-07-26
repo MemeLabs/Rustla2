@@ -10,7 +10,7 @@ const ipBanCheckMiddleware = async (req, res, next) => {
     throw new errors.Forbidden('you\'re banned. go cuck around somewhere else.');
   }
   catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
