@@ -10,6 +10,8 @@ const gitHash = require('helper-git-hash');
 
 const { NODE_ENV } = process.env;
 const IS_PRODUCTION = NODE_ENV === 'production';
+
+// eslint-disable-next-line no-console
 console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
 
 

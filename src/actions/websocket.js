@@ -85,7 +85,9 @@ export const init = store => {
   };
 
   socket.onmessage = function onmessage(event) {
+    // eslint-disable-next-line no-console
     console.log('socket message', event);
+
     const { data } = event;
     try {
       const [ ws_action, ...args ] = JSON.parse(data);
