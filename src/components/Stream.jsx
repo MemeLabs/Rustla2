@@ -75,7 +75,6 @@ Stream.propTypes = {
   closeChat: PropTypes.func,
   history: PropTypes.object.isRequired,
 
-  streamer: PropTypes.string,
   service: PropTypes.string.isRequired,
   channel: PropTypes.string.isRequired,
 
