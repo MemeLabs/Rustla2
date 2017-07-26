@@ -38,7 +38,9 @@ class Resizeable extends React.Component {
   }
 
   render() {
+    // eslint-disable-next-line no-unused-vars
     const { children, barSize = 5, axis = 'x', onResize, ...rest } = this.props;
+
     if (children.length !== 2) {
       throw new Error('Resizeable: unsupported children length');
     }
