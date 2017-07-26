@@ -36,7 +36,9 @@ const services = {
     if (!twitchChannelIdData.users || !twitchChannelIdData.users[0] || !twitchChannelIdData.users[0]._id) {
       throw new Error(`Unexpected twitch response from '/users': ${JSON.stringify(twitchChannelIdData)}`);
     }
-    // TODO: figure out why Twitch returns an array of users
+
+    // Note that Twitch returns an array of users here, although this array
+    // should probably only contain the one user anyways.
     const twitch_channel_id = twitchChannelIdData.users[0]._id;
 
     const twitchStreamResponse = await fetch(`https://api.twitch.tv/kraken/streams/${twitch_channel_id}`, {
