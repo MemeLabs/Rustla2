@@ -358,9 +358,7 @@ module.exports = {
     'no-undefined': [
       'off',
     ],
-    'no-unused-vars': [
-      'warn'
-    ],
+    'no-unused-vars': ['warn', { args: 'none' }],
     'no-use-before-define': [
       'error',
     ],
