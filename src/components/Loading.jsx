@@ -12,7 +12,7 @@ const Loading = ({ error, isLoading, pastDelay, timedOut }) => {
     return null;
   }
   if (error) {
-    console.log(error);
+    return <p>Error!</p>;
   }
   return null;
 };
