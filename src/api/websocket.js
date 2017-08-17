@@ -37,7 +37,7 @@ export default function makeWebSocketServer(server) {
     if (!stream_id) {
       return;
     }
-    const [ rustlers, rustler_count ] = await Promise.all([ // we can do this in parallel
+    const [ rustlers, rustler_count, stream ] = await Promise.all([ // we can do this in parallel
       // send this update to everyone on this stream and everyone in the lobby
       Rustler.findAll({
         where: {
@@ -49,8 +49,11 @@ export default function makeWebSocketServer(server) {
       }),
       // need to get the amount of rustlers watching this stream too
       Stream.findRustlersFor(stream_id),
+      Stream.findById(stream_id),
     ]);
+
     // send update to these rustlers
+    debug(`updating the ${rustlers.length} rustlers on stream ${stream.service}/${stream.channel} (${stream_id})`);
     for (const rustler of rustlers) {
       const ws = rustler_sockets.get(rustler.id);
       // check that we have this rustler, they might be using another websocket server
@@ -58,6 +61,7 @@ export default function makeWebSocketServer(server) {
         ws.send(JSON.stringify(['RUSTLERS_SET', stream_id, rustler_count]));
       }
     }
+
     // get rid of the stream if no one's watching it anymore
     if (rustler_count === 0) {
       await Stream.destroy({ where: { id: stream_id } });
