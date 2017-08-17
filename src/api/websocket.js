@@ -335,7 +335,6 @@ export default function makeWebSocketServer(server) {
           ]));
         }
       });
-      ws.on('error', () => wsEventHandlers.disconnect(id));
       ws.on('close', () => wsEventHandlers.disconnect(id));
     }
     catch (err) {
