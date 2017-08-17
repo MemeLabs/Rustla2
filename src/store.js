@@ -8,11 +8,17 @@ import reducer from './reducers';
 import INITIAL_STATE from './INITIAL_STATE';
 import { init as wsInit } from './actions/websocket';
 
+// For those using <https://github.com/zalmoxisus/redux-devtools-extension>.
+const composeEnhancers = process.env.NODE_ENV !== 'production'
+  && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+    // Ensure that the Symbol action types are properly serialized.
+    serialize: true,
+  }) || compose;
 
 const store = createStore(
   reducer,
   INITIAL_STATE,
-  compose(
+  composeEnhancers(
     applyMiddleware(
       thunk,
       createLogger({
