@@ -1,0 +1,10 @@
+{
+  "development": {
+    "dialect": "sqlite",
+    "storage": "./overrustle.sqlite"
+  },
+  "production": {
+    "dialect": "sqlite",
+    "storage": "./overrustle.sqlite"
+  }
+}
