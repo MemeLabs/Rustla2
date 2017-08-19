@@ -23,21 +23,10 @@ export const sequelize = new Sequelize(DB_DB, null, null, {
 });
 
 export const User = sequelize.define('user', {
-  // Twitch ID
+  // Twitch username
   id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    unique: true,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-
-  // Initially the user's Twitch username, but may be changed once by the user,
-  // or multiple times by an admin.
-  username: {
     type: Sequelize.STRING,
+    primaryKey: true,
     unique: true,
     allowNull: false,
     validate: {
@@ -122,7 +111,7 @@ export const Stream = sequelize.define('stream', {
     type: Sequelize.STRING,
     references: {
       model: 'users',
-      key: 'username',
+      key: 'id',
     },
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL',

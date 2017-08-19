@@ -40,21 +40,6 @@ const Profile = ({ history, profile, updateProfile }) =>
           }}
           >
           <div className='form-group'>
-            <label htmlFor='profile-username' className='col-sm-2 control-label'>
-              Username
-            </label>
-            <div className='col-sm-10'>
-              <input
-                className='form-control'
-                id='profile-username'
-                type='text'
-                name='username'
-                defaultValue={profile.data.username}
-                disabled
-                />
-            </div>
-          </div>
-          <div className='form-group'>
             <label htmlFor='profile-service-select' className='col-sm-2 control-label'>Streaming Service</label>
             <div className='col-sm-10'>
               <ServiceSelect id='profile-service-select' defaultValue={profile.data.service} />

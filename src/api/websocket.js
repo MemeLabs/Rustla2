@@ -181,11 +181,7 @@ export default function makeWebSocketServer(server) {
               limit: 1,
             }));
             if (!stream) {
-              const user = await User.findOne({
-                where: {
-                  username: channel,
-                },
-              });
+              const user = await User.findById(channel);
               // ensure that `channel` is a real overrustle user
               if (!user) {
                 throw new Error(`User "${channel}" does not exist`);

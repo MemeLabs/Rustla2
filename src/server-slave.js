@@ -91,12 +91,11 @@ app.use('/oauth', async (req, res, next) => {
     });
     const getUserResult = await getUserRequest.json();
 
-    let dbUser = await User.findById(getUserResult._id);
+    let dbUser = await User.findById(getUserResult.name);
     if (!dbUser) {
       debug(`user with Twitch username ${getUserResult.name} does not exist, creating new one`);
       dbUser = await User.create({
-        id: getUserResult._id,
-        username: getUserResult.name,
+        id: getUserResult.name,
         service: 'twitch',
         channel: getUserResult.name,
         last_ip: req.connection.remoteAddress,
@@ -110,7 +109,7 @@ app.use('/oauth', async (req, res, next) => {
       });
     }
 
-    setSession(req, res, getUserResult._id);
+    setSession(req, res, getUserResult.name);
 
     res.redirect('/');
   }

@@ -10,11 +10,7 @@ const api = express.Router();
 
 api.get('/streamer/:name', async (req, res, next) => {
   try {
-    const dbUser = await User.findOne({
-      where: {
-        username: req.params.name,
-      },
-    });
+    const dbUser = await User.findById(req.params.name);
     if (!dbUser) {
       throw new errors.NotFound();
     }
@@ -41,7 +37,7 @@ api.get('/profile', async (req, res, next) => {
       throw new errors.NotFound();
     }
     res.json({
-      username: dbUser.username,
+      username: dbUser.id,
       service: dbUser.service,
       channel: dbUser.channel,
       left_chat: dbUser.left_chat,
