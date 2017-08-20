@@ -1,0 +1,21 @@
+[Unit]
+Description=Rustla2 - A PepoThink production
+#Requires=After=mysql.service       # Requires the mysql service to run first
+
+[Service]
+ExecStart=/usr/bin/node /srv/rustla2/lib/server.js
+WorkingDirectory=/srv/rustla2/
+Restart=always
+RestartSec=10
+LimitNOFILE=50000
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rustla2
+
+User=rustla2
+Group=rustla2
+#Environment=NODE_ENV=production PORT=1337
+
+[Install]
+WantedBy=multi-user.target
