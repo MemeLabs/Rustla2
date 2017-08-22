@@ -53,7 +53,7 @@ export default function makeWebSocketServer(server) {
     ]);
 
     // send update to these rustlers
-    debug(`updating the ${rustlers.length} rustlers on stream ${stream.service}/${stream.channel} (${stream_id})`);
+    debug(`updating the ${rustler_count} rustlers on stream ${stream.service}/${stream.channel} (${stream_id})`);
     for (const rustler of rustlers) {
       const ws = rustler_sockets.get(rustler.id);
       // check that we have this rustler, they might be using another websocket server
