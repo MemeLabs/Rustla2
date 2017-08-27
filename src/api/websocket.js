@@ -335,7 +335,11 @@ export default function makeWebSocketServer(server) {
           ]));
         }
       });
-      ws.on('close', () => wsEventHandlers.disconnect(id));
+      ws.on('close', async () => {
+        // ensure we've created this rustler first
+        await Promise.resolve(rustler_create);
+        wsEventHandlers.disconnect(id);
+      });
     }
     catch (err) {
       debug('Failed to handle incoming websocket connection', err);
