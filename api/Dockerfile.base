@@ -1,0 +1,12 @@
+FROM ubuntu:16.04
+MAINTAINER Overrustle
+
+COPY . ./rustla2_api
+
+RUN apt-get update && \
+    cd rustla2_api && \
+    ./deps.sh && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf ./rustla2_api
+
+ENTRYPOINT ["bash"]
