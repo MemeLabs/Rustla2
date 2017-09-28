@@ -1,18 +1,19 @@
 import React from 'react';
 import { connect, Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { compose } from 'redux';
 import lifecycle from 'recompose/lifecycle';
 
 import { login } from '../actions';
 import Routes from '../routes';
+import history from '../history';
 
 
 const App = ({ store }) => (
   <Provider store={store}>
-    <BrowserRouter>
+    <Router history={history}>
       <Routes />
-    </BrowserRouter>
+    </Router>
   </Provider>
 );
 

@@ -1,7 +1,7 @@
 /* global API_WS */
 import WebSocket from 'reconnecting-websocket';
-import { browserHistory } from 'react-router';
 
+import history from '../history';
 import { setStream } from '.';
 
 
@@ -36,7 +36,7 @@ const thunks = {
     }
   },
   STREAM_BANNED: () => (dispatch) => {
-    browserHistory.push('/beand');
+    history.push('/beand');
     dispatch({
       type: actions.STREAM_BANNED,
       payload: null,
