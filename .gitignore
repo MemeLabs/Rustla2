@@ -5,3 +5,4 @@ public/index.html
 .env
 *.log
 *.sqlite
+.vscode
