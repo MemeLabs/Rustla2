@@ -1,6 +1,8 @@
 #include "Config.h"
 
+#include <folly/String.h>
 #include <folly/Uri.h>
+#include <glog/logging.h>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -65,11 +67,17 @@ void Config::Init(const std::string& config_path) {
     std::cin >> ssl_key_password_;
   }
 
-  jwt_secure_ = folly::Uri(twitch_redirect_url_).scheme() == "https";
+  try {
+    jwt_secure_ = folly::Uri(twitch_redirect_url_).scheme() == "https";
+  } catch (const std::invalid_argument& e) {
+    LOG(FATAL) << "invalid TWITCH_REDIRECT_URI: " << twitch_redirect_url_;
+  }
 }
 
 const std::unordered_map<std::string, std::string> Config::ReadConfigFile(
     const std::string& path) {
+  LOG(INFO) << "loading config from " << path;
+
   std::ifstream file(path);
   std::unordered_map<std::string, std::string> config;
 
@@ -79,11 +87,18 @@ const std::unordered_map<std::string, std::string> Config::ReadConfigFile(
     std::string key;
     if (std::getline(line_strema, key, '=')) {
       std::string value;
-      if (std::getline(line_strema, value)) {
+      if (isalnum(key[0]) && std::getline(line_strema, value)) {
         config[key] = value;
       }
     }
   }
+
+  std::vector<std::string> config_keys;
+  for (const auto& it : config) {
+    config_keys.push_back(it.first);
+  }
+  LOG(INFO) << "loaded " << config.size() << " keys ("
+            << folly::join(", ", config_keys) << ")";
 
   return config;
 }
@@ -108,6 +123,8 @@ bool Config::AssignString(
     prop->assign(fallback);
     return true;
   }
+
+  LOG(WARNING) << "no config value for " << key;
 
   return false;
 }
