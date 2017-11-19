@@ -5,6 +5,7 @@
 
 #include "APIClient.h"
 #include "Config.h"
+#include "Status.h"
 
 namespace rustla2 {
 namespace youtube {
@@ -49,7 +50,7 @@ class Client {
  public:
   explicit Client(ClientConfig config) : config_(config) {}
 
-  APIStatus GetVideosByID(const std::string& id, VideosResult* result);
+  Status GetVideosByID(const std::string& id, VideosResult* result);
 
  private:
   ClientConfig config_;

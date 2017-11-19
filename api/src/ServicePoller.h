@@ -5,6 +5,7 @@
 
 #include "APIClient.h"
 #include "DB.h"
+#include "Status.h"
 #include "TwitchClient.h"
 #include "YoutubeClient.h"
 
@@ -24,14 +25,13 @@ class ServicePoller {
 
   void Run();
 
-  const APIStatus CheckAngelThump(const std::string& name, ChannelState* state);
+  const Status CheckAngelThump(const std::string& name, ChannelState* state);
 
-  const APIStatus CheckTwitchStream(const std::string& name,
-                                    ChannelState* state);
+  const Status CheckTwitchStream(const std::string& name, ChannelState* state);
 
-  const APIStatus CheckTwitchVOD(const std::string& name, ChannelState* state);
+  const Status CheckTwitchVOD(const std::string& name, ChannelState* state);
 
-  const APIStatus CheckYouTube(const std::string& name, ChannelState* state);
+  const Status CheckYouTube(const std::string& name, ChannelState* state);
 
  private:
   std::shared_ptr<DB> db_;

@@ -38,4 +38,4 @@ class DB {
   std::shared_ptr<Streams> streams_;
 };
 
-}  // rustla2
+}  // namespace rustla2

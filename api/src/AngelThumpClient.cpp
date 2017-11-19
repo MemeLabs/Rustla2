@@ -1,6 +1,7 @@
 #include "AngelThumpClient.h"
 
 #include "Curl.h"
+#include "JSON.h"
 
 namespace rustla2 {
 namespace angelthump {
@@ -27,24 +28,23 @@ rapidjson::Document ChannelResult::GetSchema() {
 bool ChannelResult::GetLive() const { return GetData()["live"].GetBool(); }
 
 std::string ChannelResult::GetThumbnail() const {
-  return std::string(GetData()["thumbnail"].GetString(),
-                     GetData()["thumbnail"].GetStringLength());
+  return json::StringRef(GetData()["thumbnail"]);
 }
 
 uint64_t ChannelResult::GetViewers() const {
   return GetData()["viewers"].GetUint64();
 }
 
-APIStatus Client::GetChannelByName(const std::string& name,
-                                   ChannelResult* result) {
+Status Client::GetChannelByName(const std::string& name,
+                                ChannelResult* result) {
   CurlRequest req("https://api.angelthump.com/" + name);
   req.Submit();
 
   if (!req.Ok()) {
-    return APIStatus(StatusCode::HTTP_ERROR, req.GetErrorMessage());
+    return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
   }
   if (req.GetResponseCode() != 200) {
-    return APIStatus(
+    return Status(
         StatusCode::API_ERROR, "received non 200 response",
         "api returned status code " + std::to_string(req.GetResponseCode()));
   }
