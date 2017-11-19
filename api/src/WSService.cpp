@@ -4,6 +4,7 @@
 
 #include "Config.h"
 #include "HTTPRequest.h"
+#include "JSON.h"
 
 namespace rustla2 {
 
@@ -56,8 +57,8 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
       return;
     }
 
-    const std::string method(command[0].GetString(),
-                             command[0].GetStringLength());
+    const json::StringRef method(command[0]);
+
     if (method == "setStream") {
       SetStream(ws, input);
     } else if (method == "getStream") {
@@ -154,16 +155,14 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
   if (command.Size() == 3 && command[1].IsString() && command[2].IsString()) {
     // handle ["setStream", "channel", "service"]
 
-    SetStreamToChannel(
-        std::string(command[1].GetString(), command[1].GetStringLength()),
-        std::string(command[2].GetString(), command[2].GetStringLength()),
-        &writer, &stream_id);
+    const json::StringRef channel(command[1]);
+    const json::StringRef service(command[2]);
+    SetStreamToChannel(channel, service, &writer, &stream_id);
   } else if (command.Size() == 2 && command[1].IsString()) {
     // handle ["setStream", "overrustle_id"]
 
-    SetStreamToOverRustleID(
-        std::string(command[1].GetString(), command[1].GetStringLength()),
-        &writer, &stream_id);
+    const json::StringRef overrustle_id(command[1]);
+    SetStreamToOverRustleID(overrustle_id, &writer, &stream_id);
   } else if (command.Size() == 2 && command[1].IsNull()) {
     // handle ["setStream", null]
 
@@ -184,38 +183,15 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
 inline void WSService::SetStreamToChannel(
     const std::string& channel, const std::string& service,
     rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id) {
-  SetStreamToChannel(channel, service, "", writer, stream_id);
-}
-
-/**
- * Handle stream upsert for all stream requests.
- *
- * TODO: this should probably be the model's responsibility...
- */
-void WSService::SetStreamToChannel(
-    const std::string& channel, const std::string& service,
-    const std::string& overrustle_id,
-    rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id) {
-  if (db_->GetBannedStreams()->Contains(channel, service)) {
-    writer->String("STREAM_BANNED");
-    writer->Null();
+  Status status;
+  auto stream_channel = Channel::Create(channel, service, &status);
+  if (!status.Ok()) {
+    writer->String("ERR");
+    writer->String(status.GetErrorMessage().c_str());
     return;
   }
 
-  auto stream = db_->GetStreams()->GetByChannel(channel, service);
-  if (stream == nullptr) {
-    stream = db_->GetStreams()->Emplace(channel, service, overrustle_id);
-    if (stream == nullptr) {
-      writer->String("ERR");
-      writer->String("Invalid stream channel or service");
-      return;
-    }
-  }
-
-  writer->String("STREAM_SET");
-  stream->WriteJSON(writer);
-  *stream_id = stream->GetID();
-  stream->IncrRustlerCount();
+  SetStreamToChannel(stream_channel, "", writer, stream_id);
 }
 
 /**
@@ -232,14 +208,38 @@ void WSService::SetStreamToOverRustleID(
   }
 
   auto channel = user->GetChannel();
-  auto service = user->GetService();
-  if (channel.empty() || service.empty()) {
+  if (channel->IsEmpty()) {
     writer->String("ERR");
     writer->String("OverRustle user has no channel configured");
     return;
   }
 
-  SetStreamToChannel(channel, service, overrustle_id, writer, stream_id);
+  SetStreamToChannel(*channel, overrustle_id, writer, stream_id);
+}
+
+/**
+ * Handle stream upsert for all stream requests.
+ *
+ * TODO: this should probably be the model's responsibility...
+ */
+void WSService::SetStreamToChannel(
+    const Channel& channel, const std::string& overrustle_id,
+    rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id) {
+  if (db_->GetBannedStreams()->Contains(channel)) {
+    writer->String("STREAM_BANNED");
+    writer->Null();
+    return;
+  }
+
+  auto stream = db_->GetStreams()->GetByChannel(channel);
+  if (stream == nullptr) {
+    stream = db_->GetStreams()->Emplace(channel, overrustle_id);
+  }
+
+  writer->String("STREAM_SET");
+  stream->WriteJSON(writer);
+  *stream_id = stream->GetID();
+  stream->IncrRustlerCount();
 }
 
 /**

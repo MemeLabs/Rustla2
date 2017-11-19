@@ -6,6 +6,7 @@
 #include <uWS/uWS.h>
 #include <memory>
 
+#include "Channel.h"
 #include "DB.h"
 
 namespace rustla2 {
@@ -32,15 +33,14 @@ class WSService {
       const std::string& channel, const std::string& service,
       rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id);
 
-  void SetStreamToChannel(const std::string& channel,
-                          const std::string& service,
-                          const std::string& overrustle_id,
-                          rapidjson::Writer<rapidjson::StringBuffer>* writer,
-                          uint64_t* stream_id);
-
   void SetStreamToOverRustleID(
       const std::string& overrustle_id,
       rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id);
+
+  void SetStreamToChannel(const Channel& channel,
+                          const std::string& overrustle_id,
+                          rapidjson::Writer<rapidjson::StringBuffer>* writer,
+                          uint64_t* stream_id);
 
   void SetStreamToNull(rapidjson::Writer<rapidjson::StringBuffer>* writer,
                        uint64_t* stream_id);

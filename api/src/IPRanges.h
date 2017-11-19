@@ -49,4 +49,4 @@ class IPRanges {
   ValueRanges data_;
 };
 
-}  // rustla2
+}  // namespace rustla2

@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pthread -D RAPIDJSON_HAS_STDSTRING=1")
 
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
@@ -59,27 +59,29 @@ set(LIB
         ${WANGLE_LIBRARIES})
 
 set(SOURCE_FILES
-        src/main.cpp
-        src/MIMETypes.cpp
-        src/ServicePoller.cpp
-        src/YoutubeClient.cpp
-        src/TwitchClient.cpp
         src/APIClient.cpp
-        src/AngelThumpClient.cpp
-        src/Session.cpp
         src/APIHTTPService.cpp
+        src/AngelThumpClient.cpp
         src/AuthHTTPService.cpp
+        src/BannedStreams.cpp
+        src/Channel.cpp
         src/Config.cpp
         src/Curl.cpp
         src/HTTPRequest.cpp
         src/HTTPResponseWriter.cpp
-        src/StaticHTTPService.cpp
         src/HTTPService.cpp
-        src/BannedStreams.cpp
         src/IPRanges.cpp
+        src/MIMETypes.cpp
+        src/ServicePoller.cpp
+        src/Session.cpp
+        src/StaticHTTPService.cpp
+        src/Status.cpp
         src/Streams.cpp
+        src/TwitchClient.cpp
         src/Users.cpp
-        src/WSService.cpp)
+        src/WSService.cpp
+        src/YoutubeClient.cpp
+        src/main.cpp)
 add_executable(rustla2_api ${SOURCE_FILES})
 
 target_include_directories(rustla2_api PRIVATE ${LIB_HEADER})

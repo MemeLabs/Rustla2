@@ -6,15 +6,9 @@
 #include <memory>
 #include <unordered_set>
 
-#include "Streams.h"
+#include "Channel.h"
 
 namespace rustla2 {
-
-class BannedStream {
- private:
-  std::string channel_;
-  std::string service_;
-};
 
 class BannedStreams {
  public:
@@ -22,13 +16,12 @@ class BannedStreams {
 
   void InitTable();
 
-  inline bool Contains(const std::string& channel, const std::string& service) {
+  inline bool Contains(const Channel& channel) {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return data_.count(std::make_tuple(channel, service));
+    return data_.count(channel);
   }
 
-  bool Emplace(const std::string& channel, const std::string& service,
-               const std::string& reason = "");
+  bool Emplace(const Channel& channel, const std::string& reason = "");
 
  private:
   sqlite::database db_;
@@ -36,4 +29,4 @@ class BannedStreams {
   std::unordered_set<Channel, ChannelHash, ChannelEqual> data_;
 };
 
-}  // rustla2
+}  // namespace rustla2

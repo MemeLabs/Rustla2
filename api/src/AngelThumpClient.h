@@ -21,7 +21,7 @@ class ChannelResult : public APIResult {
 
 class Client {
  public:
-  APIStatus GetChannelByName(const std::string& name, ChannelResult* result);
+  Status GetChannelByName(const std::string& name, ChannelResult* result);
 };
 
 }  // namespace angelthump

@@ -1,11 +1,6 @@
 #include "Users.h"
 
 #include <glog/logging.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
-#include <boost/thread/locks.hpp>
-
-#include "Streams.h"
 
 namespace rustla2 {
 
@@ -17,9 +12,9 @@ std::string User::GetStreamJSON() {
 
   writer.StartObject();
   writer.Key("service");
-  writer.String(service_.c_str());
+  writer.String(channel_->GetService());
   writer.Key("channel");
-  writer.String(channel_.c_str());
+  writer.String(channel_->GetChannel());
   writer.EndObject();
 
   return buf.GetString();
@@ -33,11 +28,11 @@ std::string User::GetProfileJSON() {
 
   writer.StartObject();
   writer.Key("username");
-  writer.String(id_.c_str());
+  writer.String(id_);
   writer.Key("service");
-  writer.String(service_.c_str());
+  writer.String(channel_->GetService());
   writer.Key("channel");
-  writer.String(channel_.c_str());
+  writer.String(channel_->GetChannel());
   writer.Key("left_chat");
   writer.Bool(left_chat_);
   writer.EndObject();
@@ -45,19 +40,29 @@ std::string User::GetProfileJSON() {
   return buf.GetString();
 }
 
-bool User::SetChannelAndService(const std::string &channel,
-                                const std::string &service) {
+void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
+  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+
+  writer->StartObject();
+  writer->Key("username");
+  writer->String(id_);
+  writer->Key("channel");
+  channel_->WriteJSON(writer);
+  writer->Key("left_chat");
+  writer->Bool(left_chat_);
+  writer->Key("last-ip");
+  writer->String(last_ip_);
+  writer->Key("last_seen");
+  writer->Int(last_seen_);
+  writer->Key("is_admin");
+  writer->Bool(is_admin_);
+  writer->EndObject();
+}
+
+bool User::SetChannel(const Channel &channel) {
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-
-  std::string clean_channel;
-  if (Stream::IsValidService(service) &&
-      Stream::SanitizeChannel(channel, service, &clean_channel)) {
-    service_ = service;
-    channel_ = clean_channel;
-    return true;
-  }
-
-  return false;
+  channel_ = std::make_shared<Channel>(channel);
+  return true;
 }
 
 bool User::SetLeftChat(bool left_chat) {
@@ -92,13 +97,13 @@ bool User::Save() {
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
-    db_ << sql << service_ << channel_ << last_ip_ << last_seen_ << left_chat_
-        << is_admin_ << id_;
+    db_ << sql << channel_->GetService() << channel_->GetChannel() << last_ip_
+        << last_seen_ << left_chat_ << is_admin_ << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating user "
                << "id: " << id_ << ", "
-               << "service: " << service_ << ", "
-               << "channel: " << channel_ << ", "
+               << "service: " << channel_->GetService() << ", "
+               << "channel: " << channel_->GetChannel() << ", "
                << "last_ip: " << last_ip_ << ", "
                << "last_seen: " << last_seen_ << ", "
                << "left_chat: " << left_chat_ << ", "
@@ -140,13 +145,13 @@ bool User::SaveNew() {
           datetime()
         )
       )sql";
-    db_ << sql << id_ << service_ << channel_ << last_ip_ << last_seen_
-        << left_chat_ << is_admin_;
+    db_ << sql << id_ << channel_->GetService() << channel_->GetChannel()
+        << last_ip_ << last_seen_ << left_chat_ << is_admin_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user "
                << "id: " << id_ << ", "
-               << "service: " << service_ << ", "
-               << "channel: " << channel_ << ", "
+               << "service: " << channel_->GetService() << ", "
+               << "channel: " << channel_->GetChannel() << ", "
                << "last_ip: " << last_ip_ << ", "
                << "last_seen: " << last_seen_ << ", "
                << "left_chat: " << left_chat_ << ", "
@@ -168,7 +173,7 @@ Users::Users(sqlite::database db) : db_(db) {
         `service`,
         `channel`,
         `last_ip`,
-        `last_seen`,
+        strftime('%s', `last_seen`),
         `left_chat`,
         `is_admin`
       FROM `users`
@@ -179,7 +184,8 @@ Users::Users(sqlite::database db) : db_(db) {
                const std::string &channel, const std::string &last_ip,
                const time_t last_seen, const bool left_chat,
                const bool is_admin) {
-    data_[id] = std::make_shared<User>(db_, id, service, channel, last_ip,
+    auto stream_channel = Channel::Create(channel, service);
+    data_[id] = std::make_shared<User>(db_, id, stream_channel, last_ip,
                                        last_seen, left_chat, is_admin);
   };
 
@@ -217,10 +223,9 @@ std::shared_ptr<User> Users::GetByName(const std::string &name) {
 }
 
 std::shared_ptr<User> Users::Emplace(const std::string &name,
-                                     const std::string &service,
-                                     const std::string &channel,
+                                     const Channel &channel,
                                      const std::string &ip) {
-  auto user = std::make_shared<User>(db_, name, service, channel, ip);
+  auto user = std::make_shared<User>(db_, name, channel, ip);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
@@ -237,4 +242,14 @@ std::shared_ptr<User> Users::Emplace(const std::string &name,
   return user;
 }
 
-}  // rustla2
+void Users::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
+  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+
+  writer->StartArray();
+  for (const auto &it : data_) {
+    it.second->WriteJSON(writer);
+  }
+  writer->EndArray();
+}
+
+}  // namespace rustla2

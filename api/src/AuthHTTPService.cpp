@@ -1,6 +1,7 @@
 #include "AuthHTTPService.h"
 
 #include <sstream>
+#include <string>
 
 #include "Config.h"
 #include "HTTPResponseWriter.h"
@@ -86,9 +87,11 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
 
   auto user = db_->GetUsers()->GetByName(name);
   if (user == nullptr) {
-    user = db_->GetUsers()->Emplace(name, "twitch", name, ip);
+    auto channel = Channel::Create(name, kTwitchService.toString());
+    user = db_->GetUsers()->Emplace(name, channel, ip);
   } else {
     user->SetLastIP(ip);
+    user->Save();
   }
 
   writer.Status(302, "Redirect");
