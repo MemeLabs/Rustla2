@@ -21,18 +21,17 @@ void ServicePoller::Run() {
   auto streams = db_->GetStreams()->GetAllWithRustlers();
   for (const auto& stream : streams) {
     ChannelState state;
-    APIStatus status;
+    Status status;
 
-    auto service = stream->GetService();
     auto channel = stream->GetChannel();
-    if (service == kTwitchService) {
-      status = CheckTwitchStream(channel, &state);
-    } else if (service == kTwitchVODService) {
-      status = CheckTwitchVOD(channel, &state);
-    } else if (service == kAngelThumpService) {
-      status = CheckAngelThump(channel, &state);
-    } else if (service == kYouTubeService) {
-      status = CheckYouTube(channel, &state);
+    if (channel->GetService() == kTwitchService) {
+      status = CheckTwitchStream(channel->GetChannel(), &state);
+    } else if (channel->GetService() == kTwitchVODService) {
+      status = CheckTwitchVOD(channel->GetChannel(), &state);
+    } else if (channel->GetService() == kAngelThumpService) {
+      status = CheckAngelThump(channel->GetChannel(), &state);
+    } else if (channel->GetService() == kYouTubeService) {
+      status = CheckYouTube(channel->GetChannel(), &state);
     }
 
     if (status.Ok()) {
@@ -44,8 +43,8 @@ void ServicePoller::Run() {
   }
 }
 
-const APIStatus ServicePoller::CheckAngelThump(const std::string& name,
-                                               ChannelState* state) {
+const Status ServicePoller::CheckAngelThump(const std::string& name,
+                                            ChannelState* state) {
   angelthump::Client client;
   angelthump::ChannelResult channel;
   auto status = client.GetChannelByName(name, &channel);
@@ -59,8 +58,8 @@ const APIStatus ServicePoller::CheckAngelThump(const std::string& name,
   state->viewers = channel.GetViewers();
 }
 
-const APIStatus ServicePoller::CheckTwitchStream(const std::string& name,
-                                                 ChannelState* state) {
+const Status ServicePoller::CheckTwitchStream(const std::string& name,
+                                              ChannelState* state) {
   twitch::UsersResult users;
   auto user_status = twitch_->GetUsersByName(name, &users);
   if (!user_status.Ok()) {
@@ -68,8 +67,8 @@ const APIStatus ServicePoller::CheckTwitchStream(const std::string& name,
   }
 
   if (users.IsEmpty()) {
-    return APIStatus(StatusCode::ERROR, "Invalid login: " + name,
-                     "Twitch API did not return a user matching this login");
+    return Status(StatusCode::ERROR, "Invalid login: " + name,
+                  "Twitch API did not return a user matching this login");
   }
 
   auto user_id = users.GetUser(0).GetID();
@@ -95,11 +94,11 @@ const APIStatus ServicePoller::CheckTwitchStream(const std::string& name,
     state->viewers = 0;
   }
 
-  return APIStatus::OK;
+  return Status::OK;
 }
 
-const APIStatus ServicePoller::CheckTwitchVOD(const std::string& name,
-                                              ChannelState* state) {
+const Status ServicePoller::CheckTwitchVOD(const std::string& name,
+                                           ChannelState* state) {
   twitch::VideosResult videos;
   auto status = twitch_->GetVideosByID("v" + name, &videos);
 
@@ -112,8 +111,8 @@ const APIStatus ServicePoller::CheckTwitchVOD(const std::string& name,
   return status;
 }
 
-const APIStatus ServicePoller::CheckYouTube(const std::string& name,
-                                            ChannelState* state) {
+const Status ServicePoller::CheckYouTube(const std::string& name,
+                                         ChannelState* state) {
   youtube::VideosResult videos;
   auto status = youtube_->GetVideosByID(name, &videos);
 

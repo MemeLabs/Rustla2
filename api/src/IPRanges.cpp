@@ -5,7 +5,6 @@
 #include <glog/logging.h>
 #include <rapidjson/document.h>
 #include <boost/asio/ip/address.hpp>
-#include <boost/thread/locks.hpp>
 #include <limits>
 #include <vector>
 
@@ -103,4 +102,4 @@ unsigned __int128 IPRanges::GetAddressValue(
   return 0;
 }
 
-}  // rustla2
+}  // namespace rustla2

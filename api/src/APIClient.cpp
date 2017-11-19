@@ -7,6 +7,8 @@
 #include <sstream>
 #include <string>
 
+#include "Status.h"
+
 namespace rustla2 {
 
 namespace {
@@ -20,24 +22,21 @@ std::string GetDemangledClassName(T* ptr) {
 
 }  // namespace
 
-const APIStatus& APIStatus::OK = APIStatus(StatusCode::OK, "");
-const APIStatus& APIStatus::ERROR = APIStatus(StatusCode::ERROR, "");
-
-APIStatus APIResult::Validate(const rapidjson::Document& data) {
+Status APIResult::Validate(const rapidjson::Document& data) {
   auto schema = GetSchema();
   if (schema.HasParseError()) {
-    return APIStatus(StatusCode::JSON_SCHEMA_ERROR,
-                     "invalid json schema in " + GetDemangledClassName(this),
-                     rapidjson::GetParseError_En(schema.GetParseError()));
+    return Status(StatusCode::JSON_SCHEMA_ERROR,
+                  "invalid json schema in " + GetDemangledClassName(this),
+                  rapidjson::GetParseError_En(schema.GetParseError()));
   }
 
   auto schema_doc = rapidjson::SchemaDocument(schema);
   rapidjson::SchemaValidator validator(schema_doc);
 
   if (data_.HasParseError()) {
-    return APIStatus(StatusCode::JSON_PARSE_ERROR,
-                     "invalid json response in " + GetDemangledClassName(this),
-                     rapidjson::GetParseError_En(data_.GetParseError()));
+    return Status(StatusCode::JSON_PARSE_ERROR,
+                  "invalid json response in " + GetDemangledClassName(this),
+                  rapidjson::GetParseError_En(data_.GetParseError()));
   }
   if (!data_.Accept(validator)) {
     rapidjson::StringBuffer doc_uri;
@@ -50,14 +49,14 @@ APIStatus APIResult::Validate(const rapidjson::Document& data) {
                   << "document at " << doc_uri.GetString() << " "
                   << "does not match schema at " << schema_uri.GetString();
 
-    return APIStatus(StatusCode::JSON_VALIDATION_ERROR,
-                     "json validation failed", error_details.str());
+    return Status(StatusCode::VALIDATION_ERROR, "json validation failed",
+                  error_details.str());
   }
 
-  return APIStatus::OK;
+  return Status::OK;
 }
 
-APIStatus APIResult::SetData(const char* data, size_t length) {
+Status APIResult::SetData(const char* data, size_t length) {
   data_.Parse(data, length);
   return Validate(data_);
 }

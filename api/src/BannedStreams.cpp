@@ -1,7 +1,6 @@
 #include "BannedStreams.h"
 
 #include <glog/logging.h>
-#include <boost/thread/locks.hpp>
 
 namespace rustla2 {
 
@@ -10,7 +9,7 @@ BannedStreams::BannedStreams(sqlite::database db) : db_(db) {
 
   db_ << "SELECT `channel`, `service` FROM `banned_streams`" >>
       [&](const std::string& channel, const std::string& service) {
-        data_.insert(std::make_tuple(channel, service));
+        data_.insert(Channel::Create(channel, service));
       };
 
   LOG(INFO) << "read " << data_.size() << " banned streams";
@@ -31,19 +30,17 @@ void BannedStreams::InitTable() {
   db_ << query;
 }
 
-bool BannedStreams::Emplace(const std::string& channel,
-                            const std::string& service,
-                            const std::string& reason) {
+bool BannedStreams::Emplace(const Channel& channel, const std::string& reason) {
   try {
     auto sql = R"sql(
         INSERT INTO `banned_streams`
         VALUES (?, ?, ?, datetime(), datetime())
       )sql";
-    db_ << sql << channel << service << reason;
+    db_ << sql << channel.GetChannel() << channel.GetService() << reason;
   } catch (const sqlite::errors::error& e) {
     LOG(ERROR) << "error storing banned stream "
-               << "channel: " << channel << ", "
-               << "service: " << service << ", "
+               << "channel: " << channel.GetChannel() << ", "
+               << "service: " << channel.GetService() << ", "
                << "reason: " << reason << ", "
                << "error: " << e.what();
 
@@ -51,9 +48,9 @@ bool BannedStreams::Emplace(const std::string& channel,
   }
 
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-  data_.insert(std::make_tuple(channel, service));
+  data_.insert(channel);
 
   return true;
 }
 
-}  // rustla2
+}  // namespace rustla2

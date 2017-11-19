@@ -13,6 +13,7 @@
 namespace rustla2 {
 
 namespace {
+
 constexpr char kDefaultAPI[] = "/api";
 constexpr char kDefaultDBPath[] = "./overrustle.sqlite";
 constexpr char kDefaultGithubURL[] =
@@ -26,7 +27,8 @@ constexpr char kDefaultIPAddressHeader[] = "x-client-ip";
 constexpr time_t kDefaultStreamBroadcastInterval = 60000;
 constexpr time_t kDefaultRustlerBroadcastInterval = 100;
 constexpr char kDefaultPublicPath[] = "./public";
-}
+
+}  // namespace
 
 void Config::Init(const std::string& config_path) {
   const auto config = ReadConfigFile(config_path);

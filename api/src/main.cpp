@@ -14,6 +14,8 @@
 #include "ServicePoller.h"
 #include "WSService.h"
 
+DEFINE_uint64(concurrency, 0, "Server thread count (defaults to core count)");
+
 namespace rustla2 {
 
 class Runner {
@@ -29,7 +31,11 @@ class Runner {
         "ServicePoller");
     scheduler.start();
 
-    std::vector<std::thread *> threads(std::thread::hardware_concurrency());
+    auto concurrency = FLAGS_concurrency ? FLAGS_concurrency
+                                         : std::thread::hardware_concurrency();
+    LOG(INFO) << "starting " << concurrency << " server thread(s)";
+
+    std::vector<std::thread *> threads(concurrency);
     std::transform(threads.begin(), threads.end(), threads.begin(),
                    [&](std::thread *t) { return CreateThread(); });
 

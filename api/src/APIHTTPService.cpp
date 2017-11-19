@@ -4,6 +4,7 @@
 
 #include "Config.h"
 #include "HTTPResponseWriter.h"
+#include "JSON.h"
 
 namespace rustla2 {
 
@@ -80,27 +81,28 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
 
     rapidjson::SchemaDocument profile_update_schema(profile_update_schema_);
     rapidjson::SchemaValidator validator(profile_update_schema);
-    rapidjson::Document json;
-    json.Parse(data, length);
+    rapidjson::Document input;
+    input.Parse(data, length);
 
-    if (json.HasParseError() || !json.Accept(validator)) {
+    if (input.HasParseError() || !input.Accept(validator)) {
       writer.Status(400, "Invalid Request");
       writer.JSON("{\"error\": \"malformed or invalid json\"}");
       return;
     }
 
-    const std::string channel(json["channel"].GetString(),
-                              json["channel"].GetStringLength());
-    const std::string service(json["service"].GetString(),
-                              json["service"].GetStringLength());
-    if (!user->SetChannelAndService(channel, service)) {
+    Status status;
+    auto channel = Channel::Create(json::StringRef(input["channel"]),
+                                   json::StringRef(input["service"]), &status);
+
+    if (!status.Ok()) {
       writer.Status(400, "Invalid Request");
-      writer.JSON("{\"error\": \"invalid channel or service\"}");
+      writer.JSON(json::Serialize(status));
       return;
     }
 
-    if (json.HasMember("left_chat")) {
-      user->SetLeftChat(json["left_chat"].GetBool());
+    user->SetChannel(channel);
+    if (input.HasMember("left_chat")) {
+      user->SetLeftChat(input["left_chat"].GetBool());
     }
 
     if (!user->Save()) {

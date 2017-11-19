@@ -5,19 +5,18 @@
 #include <sstream>
 
 #include "Curl.h"
+#include "JSON.h"
 
 namespace rustla2 {
 namespace youtube {
 
 uint64_t VideosResult::Video::GetViewers() const {
-  const auto& viewers = data_["liveStreamingDetails"]["concurrentViewers"];
-  return std::stoull(
-      std::string(viewers.GetString(), viewers.GetStringLength()));
+  return std::stoull(std::string(
+      json::StringRef(data_["liveStreamingDetails"]["concurrentViewers"])));
 }
 
 std::string VideosResult::Video::GetMediumThumbnail() const {
-  const auto& preview = data_["snippet"]["thumbnails"]["medium"]["url"];
-  return std::string(preview.GetString(), preview.GetStringLength());
+  return json::StringRef(data_["snippet"]["thumbnails"]["medium"]["url"]);
 }
 
 rapidjson::Document VideosResult::GetSchema() {
@@ -117,11 +116,10 @@ uint64_t ErrorResult::GetErrorCode() const {
 }
 
 std::string ErrorResult::GetMessage() const {
-  const auto& message = GetData()["error"]["message"];
-  return std::string(message.GetString(), message.GetStringLength());
+  return json::StringRef(GetData()["error"]["message"]);
 }
 
-APIStatus Client::GetVideosByID(const std::string& id, VideosResult* result) {
+Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
   std::stringstream url;
   url << "https://www.googleapis.com/youtube/v3/videos"
       << "?key=" << config_.public_api_key
@@ -132,7 +130,7 @@ APIStatus Client::GetVideosByID(const std::string& id, VideosResult* result) {
   req.Submit();
 
   if (!req.Ok()) {
-    return APIStatus(StatusCode::HTTP_ERROR, req.GetErrorMessage());
+    return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
   }
 
   const auto& response = req.GetResponse();
@@ -140,12 +138,12 @@ APIStatus Client::GetVideosByID(const std::string& id, VideosResult* result) {
   if (req.GetResponseCode() != 200) {
     ErrorResult error;
     if (error.SetData(response.c_str(), response.size()).Ok()) {
-      return APIStatus(
+      return Status(
           StatusCode::API_ERROR,
           "received error code " + std::to_string(error.GetErrorCode()),
           error.GetMessage());
     }
-    return APIStatus::ERROR;
+    return Status::ERROR;
   }
 
   return result->SetData(response.c_str(), response.size());
