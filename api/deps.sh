@@ -1,6 +1,11 @@
 #! /bin/bash
 
-JOBS=8
+# Set the `JOBS` environment variable to configure how many `make` jobs can be
+# executed simultaneously. If `JOBS` is not set, then the default is the number
+# of cores on the system.
+nproc=$(getconf _NPROCESSORS_ONLN)
+JOBS=${JOBS:-$nproc}
+
 BASE_DIR="$(/bin/pwd)/third-party"
 
 set -e
