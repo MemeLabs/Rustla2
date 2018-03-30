@@ -24,7 +24,7 @@ find_package(Folly REQUIRED)
 find_package(CURL REQUIRED)
 find_package(GLog REQUIRED)
 find_package(GFlags REQUIRED)
-find_package(Wangle REQUIRED)
+# find_package(Wangle REQUIRED)
 
 set(LIB_HEADER
         ${UWS_INCLUDE_DIR}
@@ -40,7 +40,8 @@ set(LIB_HEADER
         ${CURL_INCLUDE_DIRS}
         ${GLOG_INCLUDE_DIRS}
         ${GFLAGS_INCLUDE_DIRS}
-        ${WANGLE_INCLUDE_DIRS})
+        # ${WANGLE_INCLUDE_DIRS}
+)
 
 set(LIB
         ${UWS_LIBRARIES}
@@ -56,7 +57,8 @@ set(LIB
         ${CURL_LIBRARIES}
         ${GLOG_LIBRARIES}
         ${GFLAGS_LIBRARIES}
-        ${WANGLE_LIBRARIES})
+        # ${WANGLE_LIBRARIES}
+)
 
 set(SOURCE_FILES
         src/APIClient.cpp

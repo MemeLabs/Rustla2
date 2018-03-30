@@ -4,15 +4,9 @@
 [submodule "api/third-party/googletest"]
 	path = api/third-party/googletest
 	url = https://github.com/google/googletest.git
-[submodule "api/third-party/jansson"]
-	path = api/third-party/jansson
-	url = https://github.com/akheron/jansson.git
 [submodule "api/third-party/jwt-cpp"]
 	path = api/third-party/jwt-cpp
 	url = https://github.com/pokowaka/jwt-cpp.git
-[submodule "api/third-party/rapidjson"]
-	path = api/third-party/rapidjson
-	url = https://github.com/Tencent/rapidjson.git
 [submodule "api/third-party/sqlite_modern_cpp"]
 	path = api/third-party/sqlite_modern_cpp
 	url = https://github.com/aminroosta/sqlite_modern_cpp.git
@@ -22,6 +16,12 @@
 [submodule "api/third-party/wangle"]
 	path = api/third-party/wangle
 	url = https://github.com/facebook/wangle.git
-[submodule "api/third-party/openssl"]
-	path = api/third-party/openssl
-	url = https://github.com/openssl/openssl.git
+[submodule "api/third-party/gflags"]
+	path = api/third-party/gflags
+	url = https://github.com/gflags/gflags.git
+[submodule "api/third-party/double-conversion"]
+	path = api/third-party/double-conversion
+	url = https://github.com/google/double-conversion.git
+[submodule "api/third-party/file"]
+	path = api/third-party/file
+	url = https://github.com/file/file.git
