@@ -65,9 +65,9 @@ void HTTPResponseWriter::Cookie(const std::string& name,
 }
 
 void HTTPResponseWriter::SessionCookie(const std::string& id) {
-  Cookie(Config::Get().GetJWTName(), EncodeSessionCookie(id), "",
-         Config::Get().GetJWTTTL(), false /* http_only */,
-         Config::Get().GetJWTSecure());
+  Cookie(Config::Get().GetJWTName(), EncodeSessionCookie(id),
+         Config::Get().GetJWTDomain(), Config::Get().GetJWTTTL(),
+         false /* http_only */, Config::Get().GetJWTSecure());
 }
 
 void HTTPResponseWriter::Body(const char* body, const size_t size) {

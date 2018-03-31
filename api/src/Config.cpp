@@ -18,8 +18,7 @@ namespace {
 
 constexpr char kDefaultAPI[] = "/api";
 constexpr char kDefaultDBPath[] = "./overrustle.sqlite";
-constexpr char kDefaultGithubURL[] =
-    "https://github.com/ILiedAboutCake/Rustla2";
+constexpr char kDefaultGithubURL[] = "https://github.com/MemeLabs/Rustla2";
 constexpr char kDefaultJWTSecret[] = "PepoThink";
 constexpr char kDefaultJWTName[] = "jwt";
 constexpr time_t kDefaultJWTTTL = 60 * 60 * 24 * 7;
@@ -45,6 +44,7 @@ void Config::Init(const std::string& config_path) {
   AssignString(&github_url_, "GITHUB_URL", config, kDefaultGithubURL);
   AssignString(&jwt_secret_, "JWT_SECRET", config, kDefaultJWTSecret);
   AssignString(&jwt_name_, "JWT_NAME", config, kDefaultJWTName);
+  AssignString(&jwt_domain_, "JWT_DOMAIN", config);
   AssignUint(&jwt_ttl_, "JWT_TTL", config, kDefaultJWTTTL);
   AssignUint(&port_, "PORT", config, kDefaultPort);
   AssignUint(&livecheck_interval_, "LIVECHECK_INTERVAL", config,
