@@ -37,6 +37,8 @@ class Config {
 
   const std::string& GetJWTName() { return jwt_name_; }
 
+  const std::string& GetJWTDomain() { return jwt_domain_; }
+
   time_t GetJWTTTL() { return jwt_ttl_; }
 
   bool GetJWTSecure() { return jwt_secure_; }
@@ -103,6 +105,7 @@ class Config {
   std::string github_url_;
   std::string jwt_secret_;
   std::string jwt_name_;
+  std::string jwt_domain_;
   time_t jwt_ttl_;
   bool jwt_secure_;
   uint16_t port_;
