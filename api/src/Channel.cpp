@@ -1,7 +1,9 @@
 #include "Channel.h"
 
-#include <folly/Uri.h>
 #include <algorithm>
+#include <iostream>
+
+#include <folly/Uri.h>
 #include <boost/regex.hpp>
 
 namespace rustla2 {
@@ -80,6 +82,12 @@ void Channel::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("service");
   writer->String(service_);
   writer->EndObject();
+}
+
+std::ostream &operator<<(std::ostream &os, const Channel &channel) {
+  os << "service: " << channel.service_ << ", "
+     << "channel: " << channel.channel_;
+  return os;
 }
 
 }  // namespace rustla2

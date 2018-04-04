@@ -22,21 +22,19 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 class Stream {
  public:
   Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         const std::string &overrustle_id, const std::string &thumbnail = "",
+         const std::string &path, const std::string &thumbnail = "",
          const bool live = false, const uint64_t viewer_count = 0)
       : db_(db),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
-        overrustle_id_(overrustle_id),
+        path_(path),
         thumbnail_(thumbnail),
         live_(live),
         nsfw_(false),
         viewer_count_(viewer_count) {}
 
-  Stream(sqlite::database db, const Channel &channel,
-         const std::string &overrustle_id)
-      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel,
-               overrustle_id) {}
+  Stream(sqlite::database db, const Channel &channel, const std::string &path)
+      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel, path) {}
 
   inline uint64_t GetID() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -48,9 +46,9 @@ class Stream {
     return channel_;
   }
 
-  inline std::string GetOverrustleID() {
+  inline std::string GetPath() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return overrustle_id_;
+    return path_;
   }
 
   inline std::string GetThumbnail() {
@@ -132,7 +130,7 @@ class Stream {
     return true;
   }
 
-  inline bool SetThumbnail(const std::string thumbnail) {
+  inline bool SetThumbnail(const std::string &thumbnail) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
     thumbnail_ = thumbnail;
     return true;
@@ -159,7 +157,7 @@ class Stream {
   boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
-  std::string overrustle_id_;
+  std::string path_;
   std::string thumbnail_;
   bool live_;
   bool nsfw_;
@@ -198,7 +196,7 @@ class Streams {
   }
 
   std::shared_ptr<Stream> Emplace(const Channel &channel,
-                                  const std::string &overrustle_id);
+                                  const std::string &path);
 
  private:
   sqlite::database db_;

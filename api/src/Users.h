@@ -3,40 +3,88 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <sqlite_modern_cpp.h>
-#include <boost/thread/shared_mutex.hpp>
+#include <iostream>
 #include <memory>
+#include <string>
 #include <unordered_map>
 
+#include <boost/functional/hash.hpp>
+#include <boost/thread/shared_mutex.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include "Channel.h"
+#include "Status.h"
 
 namespace rustla2 {
 
 class User {
  public:
-  User(sqlite::database db, const std::string &id, const Channel &channel,
+  User(sqlite::database db, const boost::uuids::uuid id,
+       const int64_t twitch_id, const std::string &name,
+       const std::string &stream_path, const Channel &channel,
        const std::string &last_ip, const time_t last_seen, const bool left_chat,
        const bool is_admin)
       : db_(db),
         id_(id),
+        twitch_id_(twitch_id),
+        name_(name),
+        stream_path_(stream_path),
         channel_(std::shared_ptr<Channel>(channel)),
         last_ip_(last_ip),
         last_seen_(last_seen),
         left_chat_(left_chat),
         is_admin_(is_admin) {}
 
-  User(sqlite::database db, const std::string &id, const Channel &channel,
-       const std::string &last_ip)
+  User(sqlite::database db, const uint64_t twitch_id, const std::string &name,
+       const Channel &channel, const std::string &last_ip)
       : db_(db),
-        id_(id),
+        id_(boost::uuids::random_generator()()),
+        twitch_id_(twitch_id),
+        name_(name),
+        stream_path_(name),
         channel_(std::shared_ptr<Channel>(channel)),
         last_ip_(last_ip),
         last_seen_(time(nullptr)),
         left_chat_(false),
         is_admin_(false) {}
 
-  inline std::string GetID() {
+  User(const User &user)
+      : db_(user.db_),
+        id_(user.id_),
+        twitch_id_(user.twitch_id_),
+        name_(user.name_),
+        stream_path_(user.stream_path_),
+        channel_(user.channel_),
+        last_ip_(user.last_ip_),
+        last_seen_(user.last_seen_),
+        left_chat_(user.left_chat_),
+        is_admin_(user.is_admin_) {}
+
+  inline boost::uuids::uuid GetID() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return id_;
+  }
+
+  inline const std::string GetIDString() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return boost::uuids::to_string(id_);
+  }
+
+  inline uint64_t GetTwitchID() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return twitch_id_;
+  }
+
+  inline std::string GetName() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return name_;
+  }
+
+  inline std::string GetStreamPath() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return stream_path_;
   }
 
   inline std::shared_ptr<Channel> GetChannel() {
@@ -70,6 +118,10 @@ class User {
 
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
 
+  Status SetStreamPath(const std::string &stream_path);
+
+  Status SetName(const std::string &name);
+
   bool SetChannel(const Channel &channel);
 
   bool SetLeftChat(bool left_chat);
@@ -85,31 +137,56 @@ class User {
  private:
   sqlite::database db_;
   boost::shared_mutex lock_;
-  std::string id_;
+  boost::uuids::uuid id_;
+  uint64_t twitch_id_;
+  std::string name_;
+  std::string stream_path_;
   std::shared_ptr<Channel> channel_;
   std::string last_ip_;
   time_t last_seen_;
   bool left_chat_;
   bool is_admin_;
+
+  friend class Users;
+  friend std::ostream &operator<<(std::ostream &os, const User &user);
 };
 
 class Users {
  public:
-  Users(sqlite::database db);
+  explicit Users(sqlite::database db);
 
   void InitTable();
 
+  std::shared_ptr<User> GetByID(const std::string &id) {
+    return GetByID(boost::uuids::string_generator()(id));
+  }
+
+  std::shared_ptr<User> GetByID(const boost::uuids::uuid &id);
+
+  std::shared_ptr<User> GetByTwitchID(const uint64_t twitch_id);
+
   std::shared_ptr<User> GetByName(const std::string &name);
 
-  std::shared_ptr<User> Emplace(const std::string &name, const Channel &channel,
+  std::shared_ptr<User> GetByStreamPath(const std::string &stream_path);
+
+  std::shared_ptr<User> Emplace(const uint64_t twitch_id,
+                                const std::string &name, const Channel &channel,
                                 const std::string &ip);
+
+  Status Save(std::shared_ptr<User> user);
 
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
 
  private:
   sqlite::database db_;
   boost::shared_mutex lock_;
-  std::unordered_map<std::string, std::shared_ptr<User>> data_;
+
+  std::unordered_map<boost::uuids::uuid, std::shared_ptr<User>,
+                     boost::hash<boost::uuids::uuid>>
+      data_by_id_;
+  std::unordered_map<uint64_t, std::shared_ptr<User>> data_by_twitch_id_;
+  std::unordered_map<std::string, std::shared_ptr<User>> data_by_name_;
+  std::unordered_map<std::string, std::shared_ptr<User>> data_by_stream_path_;
 };
 
 }  // namespace rustla2

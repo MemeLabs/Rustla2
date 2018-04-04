@@ -24,7 +24,7 @@ class VideosResult : public APIResult {
     const rapidjson::Value& data_;
   };
 
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   bool IsEmpty() const;
 
@@ -35,7 +35,7 @@ class VideosResult : public APIResult {
 
 class ErrorResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   uint64_t GetErrorCode() const;
 

@@ -5,6 +5,7 @@
 #include <ctime>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace rustla2 {
 
@@ -30,6 +31,8 @@ class Config {
   const std::string& GetDonateLinodeURL() { return donate_linode_url_; }
 
   const std::string& GetDonatePaypalURL() { return donate_paypal_url_; }
+
+  const std::vector<std::string>& GetEmotes() { return emotes_; }
 
   const std::string& GetGithubURL() { return github_url_; }
 
@@ -102,6 +105,7 @@ class Config {
   std::string donate_do_url_;
   std::string donate_linode_url_;
   std::string donate_paypal_url_;
+  std::vector<std::string> emotes_;
   std::string github_url_;
   std::string jwt_secret_;
   std::string jwt_name_;

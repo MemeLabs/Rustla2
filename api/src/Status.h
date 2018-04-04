@@ -36,6 +36,8 @@ class Status {
 
   bool Ok() const { return code_ == StatusCode::OK; }
 
+  StatusCode GetCode() const { return code_; }
+
   std::string GetErrorMessage() const { return error_message_; }
 
   std::string GetErrorDetails() const { return error_details_; }

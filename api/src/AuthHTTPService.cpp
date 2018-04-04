@@ -81,21 +81,22 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
     writer.Body("Twitch API failure while retrieving user");
     return;
   }
+  auto twitch_id = twitch_user.GetID();
   auto name = twitch_user.GetName();
 
   auto ip = req->GetClientIPHeader().toString();
 
-  auto user = db_->GetUsers()->GetByName(name);
+  auto user = db_->GetUsers()->GetByTwitchID(twitch_id);
   if (user == nullptr) {
     auto channel = Channel::Create(name, kTwitchService.toString());
-    user = db_->GetUsers()->Emplace(name, channel, ip);
+    user = db_->GetUsers()->Emplace(twitch_id, name, channel, ip);
   } else {
     user->SetLastIP(ip);
     user->Save();
   }
 
   writer.Status(302, "Redirect");
-  writer.SessionCookie(name);
+  writer.SessionCookie(user->GetIDString());
   writer.Header("Location", "/");
   writer.Body();
 }

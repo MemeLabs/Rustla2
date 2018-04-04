@@ -12,7 +12,7 @@ namespace twitch {
 
 class ErrorResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   std::string GetError() const;
 
@@ -21,7 +21,7 @@ class ErrorResult : public APIResult {
 
 class UserResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   uint64_t GetID() const;
 
@@ -40,7 +40,7 @@ class UsersResult : public APIResult {
     const rapidjson::Value& data_;
   };
 
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   bool IsEmpty() const;
 
@@ -51,14 +51,14 @@ class UsersResult : public APIResult {
 
 class AuthTokenResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   std::string GetAccessToken() const;
 };
 
 class StreamsResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   bool IsEmpty() const;
 
@@ -69,14 +69,14 @@ class StreamsResult : public APIResult {
 
 class ChannelsResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   std::string GetVideoBanner() const;
 };
 
 class VideosResult : public APIResult {
  public:
-  rapidjson::Document GetSchema() override final;
+  rapidjson::Document GetSchema() final;
 
   std::string GetLargePreview() const;
 

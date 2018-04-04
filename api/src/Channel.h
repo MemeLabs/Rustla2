@@ -4,6 +4,7 @@
 #include <folly/String.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -87,6 +88,8 @@ class Channel {
 
   std::string channel_;
   std::string service_;
+
+  friend std::ostream &operator<<(std::ostream &os, const Channel &channel);
 };
 
 struct ChannelHash : public std::unary_function<Channel, std::size_t> {

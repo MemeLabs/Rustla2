@@ -63,6 +63,10 @@ void Config::Init(const std::string& config_path) {
   AssignString(&ssl_key_path_, "SSL_KEY_PATH", config);
   AssignString(&public_path_, "PUBLIC_PATH", config, kDefaultPublicPath);
 
+  std::string emotes;
+  AssignString(&emotes, "EMOTES", config);
+  folly::split(",", emotes, emotes_);
+
   if (!ssl_cert_path_.empty() && !ssl_key_path_.empty() &&
       !AssignString(&ssl_key_password_, "SSL_KEY_PASSWORD", config)) {
     std::cout << "Enter a password for the SSL key:" << std::endl;

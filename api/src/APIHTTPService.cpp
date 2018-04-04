@@ -14,11 +14,12 @@ APIHTTPService::APIHTTPService(std::shared_ptr<DB> db) : db_(db) {
         "type": "object",
         "properties": {
           "username": {"type": "string"},
+          "stream_path": {"type": "string"},
           "service": {"type": "string"},
           "channel": {"type": "string"},
           "left_chat": {"type": "boolean"}
         },
-        "required": ["service", "channel"]
+        "required": ["username", "stream_path", "service", "channel"]
       }
     )json");
 }
@@ -41,7 +42,7 @@ void APIHTTPService::GetAPI(uWS::HttpResponse *res, HTTPRequest *req) {
 void APIHTTPService::GetStreamer(uWS::HttpResponse *res, HTTPRequest *req) {
   HTTPResponseWriter writer(res);
 
-  auto user = db_->GetUsers()->GetByName(req->GetPathPart(3).toString());
+  auto user = db_->GetUsers()->GetByStreamPath(req->GetPathPart(3).toString());
   if (user == nullptr) {
     writer.Status(404, "Not Found");
     writer.JSON("{\"error\": \"invalid user\"}");
@@ -54,9 +55,9 @@ void APIHTTPService::GetStreamer(uWS::HttpResponse *res, HTTPRequest *req) {
 void APIHTTPService::GetProfile(uWS::HttpResponse *res, HTTPRequest *req) {
   HTTPResponseWriter writer(res);
 
-  const auto name = req->GetSessionID();
-  auto user = db_->GetUsers()->GetByName(name);
-  if (name == "" || user == nullptr) {
+  const auto id = req->GetSessionID();
+  auto user = db_->GetUsers()->GetByID(id);
+  if (id == "" || user == nullptr) {
     writer.Status(401, "Unauthorized");
     writer.JSON("{\"error\": \"unauthorized\"}");
   } else {
@@ -66,8 +67,8 @@ void APIHTTPService::GetProfile(uWS::HttpResponse *res, HTTPRequest *req) {
 }
 
 void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
-  const auto name = req->GetSessionID();
-  auto user = name == "" ? nullptr : db_->GetUsers()->GetByName(name);
+  const auto id = req->GetSessionID();
+  auto user = id == "" ? nullptr : db_->GetUsers()->GetByID(id);
 
   if (user == nullptr) {
     HTTPResponseWriter writer(res);
@@ -75,6 +76,8 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
     writer.JSON("{\"error\": \"unauthorized\"}");
     return;
   }
+
+  auto newUser = std::make_shared<User>(*user);
 
   req->OnPostData([=](const char *data, const size_t length) {
     HTTPResponseWriter writer(res);
@@ -91,28 +94,42 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
     }
 
     Status status;
-    auto channel = Channel::Create(json::StringRef(input["channel"]),
-                                   json::StringRef(input["service"]), &status);
 
-    if (!status.Ok()) {
+    if (input.HasMember("left_chat")) {
+      newUser->SetLeftChat(input["left_chat"].GetBool());
+    }
+
+    newUser->SetChannel(Channel::Create(json::StringRef(input["channel"]),
+                                        json::StringRef(input["service"]),
+                                        &status));
+
+    if (status.Ok()) {
+      status = newUser->SetName(json::StringRef(input["username"]));
+    }
+
+    if (status.Ok()) {
+      status = newUser->SetStreamPath(json::StringRef(input["stream_path"]));
+    }
+
+    if (status.Ok()) {
+      status = db_->GetUsers()->Save(newUser);
+    }
+
+    if (status.Ok()) {
+      writer.Status(200, "OK");
+      writer.JSON(newUser->GetProfileJSON());
+      return;
+    }
+
+    if (status.GetCode() == StatusCode::VALIDATION_ERROR) {
       writer.Status(400, "Invalid Request");
       writer.JSON(json::Serialize(status));
       return;
     }
 
-    user->SetChannel(channel);
-    if (input.HasMember("left_chat")) {
-      user->SetLeftChat(input["left_chat"].GetBool());
-    }
-
-    if (!user->Save()) {
-      writer.Status(500, "Internal Error");
-      writer.JSON("{\"error\": \"error saving changes\"}");
-      return;
-    }
-
-    writer.Status(200, "OK");
-    writer.JSON(user->GetProfileJSON());
+    writer.Status(500, "Internal Error");
+    writer.JSON("{\"error\": \"error saving changes\"}");
+    return;
   });
 }
 

@@ -159,10 +159,10 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
     const json::StringRef service(command[2]);
     SetStreamToChannel(channel, service, &writer, &stream_id);
   } else if (command.Size() == 2 && command[1].IsString()) {
-    // handle ["setStream", "overrustle_id"]
+    // handle ["setStream", "stream_path"]
 
-    const json::StringRef overrustle_id(command[1]);
-    SetStreamToOverRustleID(overrustle_id, &writer, &stream_id);
+    const json::StringRef stream_path(command[1]);
+    SetStreamToStreamPath(stream_path, &writer, &stream_id);
   } else if (command.Size() == 2 && command[1].IsNull()) {
     // handle ["setStream", null]
 
@@ -195,12 +195,12 @@ inline void WSService::SetStreamToChannel(
 }
 
 /**
- * Handle request for stream by overrustle user name
+ * Handle request for stream by overrustle vanity url
  */
-void WSService::SetStreamToOverRustleID(
-    const std::string& overrustle_id,
+void WSService::SetStreamToStreamPath(
+    const std::string& stream_path,
     rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id) {
-  auto user = db_->GetUsers()->GetByName(overrustle_id);
+  auto user = db_->GetUsers()->GetByStreamPath(stream_path);
   if (user == nullptr) {
     writer->String("ERR");
     writer->String("Invalid OverRustle ID");
@@ -214,7 +214,7 @@ void WSService::SetStreamToOverRustleID(
     return;
   }
 
-  SetStreamToChannel(*channel, overrustle_id, writer, stream_id);
+  SetStreamToChannel(*channel, stream_path, writer, stream_id);
 }
 
 /**
@@ -223,7 +223,7 @@ void WSService::SetStreamToOverRustleID(
  * TODO: this should probably be the model's responsibility...
  */
 void WSService::SetStreamToChannel(
-    const Channel& channel, const std::string& overrustle_id,
+    const Channel& channel, const std::string& stream_path,
     rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id) {
   if (db_->GetBannedStreams()->Contains(channel)) {
     writer->String("STREAM_BANNED");
@@ -233,7 +233,7 @@ void WSService::SetStreamToChannel(
 
   auto stream = db_->GetStreams()->GetByChannel(channel);
   if (stream == nullptr) {
-    stream = db_->GetStreams()->Emplace(channel, overrustle_id);
+    stream = db_->GetStreams()->Emplace(channel, stream_path);
   }
 
   writer->String("STREAM_SET");

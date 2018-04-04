@@ -2,6 +2,7 @@
 
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include <string>
 
 #include "JSON.h"
 
@@ -49,7 +50,9 @@ rapidjson::Document UserResult::GetSchema() {
   return schema;
 }
 
-uint64_t UserResult::GetID() const { return GetData()["_id"].GetUint64(); }
+uint64_t UserResult::GetID() const {
+  return std::stoull(std::string(json::StringRef(GetData()["_id"])));
+}
 
 std::string UserResult::GetName() const {
   return json::StringRef(GetData()["name"]);

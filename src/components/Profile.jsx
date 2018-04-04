@@ -24,6 +24,8 @@ const Profile = ({ history, profile, updateProfile }) =>
               ...profile.data,
               service: event.target.elements.service.value,
               channel: event.target.elements.channel.value,
+              stream_path: event.target.elements.stream_path.value,
+              username: event.target.elements.username.value,
               left_chat: event.target.elements.left_chat.checked,
             };
             // Disallow blank inputs. The ORM will disallow these anyways but
@@ -54,6 +56,30 @@ const Profile = ({ history, profile, updateProfile }) =>
                 type='text'
                 name='channel'
                 defaultValue={profile.data.channel}
+                />
+            </div>
+          </div>
+          <div className='form-group'>
+            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Stream Path</label>
+            <div className='col-sm-10'>
+              <input
+                className='form-control'
+                id='profile-stream-path'
+                type='text'
+                name='stream_path'
+                defaultValue={profile.data.stream_path}
+                />
+            </div>
+          </div>
+          <div className='form-group'>
+            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Chat Name</label>
+            <div className='col-sm-10'>
+              <input
+                className='form-control'
+                id='profile-username'
+                type='text'
+                name='username'
+                defaultValue={profile.data.username}
                 />
             </div>
           </div>

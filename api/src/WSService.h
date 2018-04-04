@@ -33,12 +33,12 @@ class WSService {
       const std::string& channel, const std::string& service,
       rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id);
 
-  void SetStreamToOverRustleID(
-      const std::string& overrustle_id,
-      rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id);
+  void SetStreamToStreamPath(const std::string& stream_path,
+                             rapidjson::Writer<rapidjson::StringBuffer>* writer,
+                             uint64_t* stream_id);
 
   void SetStreamToChannel(const Channel& channel,
-                          const std::string& overrustle_id,
+                          const std::string& stream_path,
                           rapidjson::Writer<rapidjson::StringBuffer>* writer,
                           uint64_t* stream_id);
 

@@ -1,12 +1,15 @@
 #include "Users.h"
 
 #include <glog/logging.h>
+#include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
+
+#include "Config.h"
+#include "Strings.h"
 
 namespace rustla2 {
 
 std::string User::GetStreamJSON() {
-  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-
   rapidjson::StringBuffer buf;
   rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
 
@@ -21,14 +24,14 @@ std::string User::GetStreamJSON() {
 }
 
 std::string User::GetProfileJSON() {
-  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-
   rapidjson::StringBuffer buf;
   rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
 
   writer.StartObject();
   writer.Key("username");
-  writer.String(id_);
+  writer.String(name_);
+  writer.Key("stream_path");
+  writer.String(stream_path_);
   writer.Key("service");
   writer.String(channel_->GetService());
   writer.Key("channel");
@@ -41,11 +44,11 @@ std::string User::GetProfileJSON() {
 }
 
 void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
-  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-
   writer->StartObject();
   writer->Key("username");
-  writer->String(id_);
+  writer->String(name_);
+  writer->Key("stream_path");
+  writer->String(stream_path_);
   writer->Key("channel");
   channel_->WriteJSON(writer);
   writer->Key("left_chat");
@@ -57,6 +60,82 @@ void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("is_admin");
   writer->Bool(is_admin_);
   writer->EndObject();
+}
+
+Status User::SetStreamPath(const std::string &stream_path) {
+  const boost::regex valid_path_regex("^[a-z0-9_]{3,32}$");
+  if (!boost::regex_match(stream_path, valid_path_regex)) {
+    return Status(StatusCode::VALIDATION_ERROR,
+                  "Username may only contain a-z 0-9 or underscores and must "
+                  "be betwee 3 and 32 characters in length.");
+  }
+
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  stream_path_ = stream_path;
+  return Status::OK;
+}
+
+Status User::SetName(const std::string &name) {
+  // based on destinygg/website username validation
+  // https://github.com/destinygg/website/blob/0e984436d2d381f02666272e8bf38eb9ebda476a/lib/Destiny/Common/Authentication/AuthenticationCredentials.php
+
+  const boost::regex valid_name_regex("^[A-Za-z0-9_]{3,20}$");
+  if (!boost::regex_match(name, valid_name_regex)) {
+    return Status(StatusCode::VALIDATION_ERROR,
+                  "Username may only contain A-z 0-9 or underscores and must "
+                  "be betwee 3 and 20 characters in length.");
+  }
+
+  std::string name_norm = name;
+  folly::toLowerAscii(name_norm);
+  auto name_start = name_norm.substr(0, 2);
+
+  for (const auto &emote : Config::Get().GetEmotes()) {
+    std::string emote_norm = emote;
+    folly::toLowerAscii(emote_norm);
+
+    if (folly::StringPiece(name_norm).contains(emote_norm)) {
+      return Status(StatusCode::VALIDATION_ERROR,
+                    "Username cannot contain emote.", "Contains " + emote);
+    }
+
+    if (emote.size() < 4) {
+      continue;
+    }
+
+    auto emote_start = emote_norm.substr(0, 2);
+    auto name_trunc = name_norm.substr(0, std::min(emote.size(), name.size()));
+
+    if (emote_start == name_start &&
+        levenshtein_distance(emote_norm, name_trunc) <= 2) {
+      return Status(StatusCode::VALIDATION_ERROR,
+                    "Username too similar to an emote, try changing the first "
+                    "characters.");
+    }
+  }
+
+  const boost::regex repeated_number_regex("[0-9]{3}");
+  if (boost::regex_match(name, repeated_number_regex)) {
+    return Status(StatusCode::VALIDATION_ERROR,
+                  "Too many numbers in a row in username.");
+  }
+
+  const boost::regex repeated_underscore_regex("[_]{2}|(_.*_.*_)");
+  if (boost::regex_match(name, repeated_underscore_regex)) {
+    return Status(StatusCode::VALIDATION_ERROR,
+                  "Too many underscores in username.");
+  }
+
+  const boost::regex non_numbers_regex("[^0-9]");
+  auto name_numbers = boost::regex_replace(name, non_numbers_regex, "");
+  if (name_numbers.size() > (name.size() + 1) / 2) {
+    return Status(StatusCode::VALIDATION_ERROR,
+                  "Number ratio is too high in username.");
+  }
+
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  name_ = name;
+  return Status::OK;
 }
 
 bool User::SetChannel(const Channel &channel) {
@@ -88,6 +167,8 @@ bool User::Save() {
   try {
     const auto sql = R"sql(
         UPDATE `users` SET
+          `name` = ?,
+          `stream_path` = ?,
           `service` = ?,
           `channel` = ?,
           `last_ip` = ?,
@@ -97,17 +178,11 @@ bool User::Save() {
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
-    db_ << sql << channel_->GetService() << channel_->GetChannel() << last_ip_
-        << last_seen_ << left_chat_ << is_admin_ << id_;
+    db_ << sql << name_ << stream_path_ << channel_->GetService()
+        << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
+        << is_admin_ << GetIDString();
   } catch (const sqlite::sqlite_exception &e) {
-    LOG(ERROR) << "error updating user "
-               << "id: " << id_ << ", "
-               << "service: " << channel_->GetService() << ", "
-               << "channel: " << channel_->GetChannel() << ", "
-               << "last_ip: " << last_ip_ << ", "
-               << "last_seen: " << last_seen_ << ", "
-               << "left_chat: " << left_chat_ << ", "
-               << "is_admin: " << is_admin_ << ", "
+    LOG(ERROR) << "error updating user " << this << ", "
                << "error: " << e.what() << ", "
                << "code: " << e.get_extended_code();
 
@@ -122,6 +197,9 @@ bool User::SaveNew() {
     const auto sql = R"sql(
         INSERT INTO `users` (
           `id`,
+          `twitch_id`,
+          `name`,
+          `stream_path`,
           `service`,
           `channel`,
           `last_ip`,
@@ -137,6 +215,9 @@ bool User::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
+          ?,
+          ?,
           datetime(?, 'unixepoch'),
           ?,
           ?,
@@ -145,17 +226,11 @@ bool User::SaveNew() {
           datetime()
         )
       )sql";
-    db_ << sql << id_ << channel_->GetService() << channel_->GetChannel()
-        << last_ip_ << last_seen_ << left_chat_ << is_admin_;
+    db_ << sql << GetIDString() << twitch_id_ << name_ << stream_path_
+        << channel_->GetService() << channel_->GetChannel() << last_ip_
+        << last_seen_ << left_chat_ << is_admin_;
   } catch (const sqlite::sqlite_exception &e) {
-    LOG(ERROR) << "error creating user "
-               << "id: " << id_ << ", "
-               << "service: " << channel_->GetService() << ", "
-               << "channel: " << channel_->GetChannel() << ", "
-               << "last_ip: " << last_ip_ << ", "
-               << "last_seen: " << last_seen_ << ", "
-               << "left_chat: " << left_chat_ << ", "
-               << "is_admin: " << is_admin_ << ", "
+    LOG(ERROR) << "error creating user " << this << ", "
                << "error: " << e.what() << ", "
                << "code: " << e.get_extended_code();
 
@@ -164,12 +239,28 @@ bool User::SaveNew() {
   return true;
 }
 
+std::ostream &operator<<(std::ostream &os, const User &user) {
+  os << "id: " << user.id_ << ", "
+     << "twitch_id: " << user.twitch_id_ << ", "
+     << "name: " << user.name_ << ", "
+     << "stream_path: " << user.stream_path_ << ", "
+     << "channel: " << user.channel_ << ", "
+     << "last_ip: " << user.last_ip_ << ", "
+     << "last_seen: " << user.last_seen_ << ", "
+     << "left_chat: " << user.left_chat_ << ", "
+     << "is_admin: " << user.is_admin_;
+  return os;
+}
+
 Users::Users(sqlite::database db) : db_(db) {
   InitTable();
 
   auto sql = R"sql(
       SELECT
         `id`,
+        `twitch_id`,
+        `name`,
+        `stream_path`,
         `service`,
         `channel`,
         `last_ip`,
@@ -180,22 +271,33 @@ Users::Users(sqlite::database db) : db_(db) {
     )sql";
   auto query = db_ << sql;
 
-  query >> [&](const std::string &id, const std::string &service,
-               const std::string &channel, const std::string &last_ip,
-               const time_t last_seen, const bool left_chat,
-               const bool is_admin) {
+  query >> [&](const std::string &id, const uint64_t twitch_id,
+               const std::string &name, const std::string &stream_path,
+               const std::string &service, const std::string &channel,
+               const std::string &last_ip, const time_t last_seen,
+               const bool left_chat, const bool is_admin) {
+    boost::uuids::string_generator to_uuid;
     auto stream_channel = Channel::Create(channel, service);
-    data_[id] = std::make_shared<User>(db_, id, stream_channel, last_ip,
+    auto user = std::make_shared<User>(db_, to_uuid(id), twitch_id, name,
+                                       stream_path, stream_channel, last_ip,
                                        last_seen, left_chat, is_admin);
+
+    data_by_id_[user->GetID()] = user;
+    data_by_twitch_id_[user->GetTwitchID()] = user;
+    data_by_name_[user->GetName()] = user;
+    data_by_stream_path_[user->GetStreamPath()] = user;
   };
 
-  LOG(INFO) << "read " << data_.size() << " users";
+  LOG(INFO) << "read " << data_by_id_.size() << " users";
 }
 
 void Users::InitTable() {
   auto sql = R"sql(
       CREATE TABLE IF NOT EXISTS `users` (
-        `id` VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+        `id` CHAR(36) NOT NULL,
+        `twitch_id` UNSIGNED BIGINT NOT NULL,
+        `name` VARCHAR(32) NOT NULL,
+        `stream_path` VARCHAR(255) NOT NULL,
         `service` VARCHAR(255) NOT NULL,
         `channel` VARCHAR(255) NOT NULL,
         `last_ip` VARCHAR(255) NOT NULL,
@@ -206,35 +308,72 @@ void Users::InitTable() {
         `created_at` DATETIME NOT NULL,
         `updated_at` DATETIME NOT NULL,
         `is_admin` TINYINT(1) DEFAULT 0,
-        UNIQUE (`id`)
+        UNIQUE (`id`),
+        UNIQUE (`twitch_id`),
+        UNIQUE (`stream_path`),
+        UNIQUE (`name`)
       );
     )sql";
   db_ << sql;
 }
 
-std::shared_ptr<User> Users::GetByName(const std::string &name) {
+std::shared_ptr<User> Users::GetByID(const boost::uuids::uuid &id) {
   boost::shared_lock<boost::shared_mutex> read_lock(lock_);
 
-  auto i = data_.find(name);
-  if (i == data_.end()) {
+  auto i = data_by_id_.find(id);
+  if (i == data_by_id_.end()) {
     return nullptr;
   }
   return i->second;
 }
 
-std::shared_ptr<User> Users::Emplace(const std::string &name,
+std::shared_ptr<User> Users::GetByTwitchID(const uint64_t twitch_id) {
+  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+
+  auto i = data_by_twitch_id_.find(twitch_id);
+  if (i == data_by_twitch_id_.end()) {
+    return nullptr;
+  }
+  return i->second;
+}
+
+std::shared_ptr<User> Users::GetByName(const std::string &name) {
+  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+
+  auto i = data_by_name_.find(name);
+  if (i == data_by_name_.end()) {
+    return nullptr;
+  }
+  return i->second;
+}
+
+std::shared_ptr<User> Users::GetByStreamPath(const std::string &stream_path) {
+  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+
+  auto i = data_by_stream_path_.find(stream_path);
+  if (i == data_by_stream_path_.end()) {
+    return nullptr;
+  }
+  return i->second;
+}
+
+std::shared_ptr<User> Users::Emplace(const uint64_t twitch_id,
+                                     const std::string &name,
                                      const Channel &channel,
                                      const std::string &ip) {
-  auto user = std::make_shared<User>(db_, name, channel, ip);
+  auto user = std::make_shared<User>(db_, twitch_id, name, channel, ip);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    auto it = data_.find(user->GetID());
-    if (it != data_.end()) {
+    auto it = data_by_twitch_id_.find(user->GetTwitchID());
+    if (it != data_by_twitch_id_.end()) {
       return it->second;
     }
 
-    data_[user->GetID()] = user;
+    data_by_id_[user->GetID()] = user;
+    data_by_twitch_id_[user->GetTwitchID()] = user;
+    data_by_stream_path_[user->GetStreamPath()] = user;
+    data_by_name_[user->GetName()] = user;
   }
 
   user->SaveNew();
@@ -242,11 +381,68 @@ std::shared_ptr<User> Users::Emplace(const std::string &name,
   return user;
 }
 
+Status Users::Save(std::shared_ptr<User> user) {
+  auto oldUser = GetByID(user->GetID());
+
+  if (oldUser == nullptr) {
+    return Status(StatusCode::VALIDATION_ERROR, "No user found.");
+  }
+
+  bool stream_path_changed = user->GetStreamPath() != oldUser->GetStreamPath();
+  bool name_changed = user->GetName() != oldUser->GetName();
+
+  // optimistically acquire new path and name if they're available
+  {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+
+    if (name_changed) {
+      if (data_by_name_.count(user->GetName())) {
+        return Status(StatusCode::VALIDATION_ERROR, "Name unavailable.");
+      }
+      data_by_name_[user->GetName()] = user;
+    }
+
+    if (stream_path_changed) {
+      if (data_by_stream_path_.count(user->GetStreamPath())) {
+        return Status(StatusCode::VALIDATION_ERROR, "Stream path unavailable.");
+      }
+      data_by_stream_path_[user->GetStreamPath()] = user;
+    }
+  }
+
+  bool saved = user->Save();
+
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+
+  if (saved) {
+    data_by_id_[user->GetID()] = user;
+    data_by_twitch_id_[user->GetTwitchID()] = user;
+
+    if (name_changed) {
+      data_by_name_.erase(oldUser->GetStreamPath());
+    }
+    if (stream_path_changed) {
+      data_by_stream_path_.erase(oldUser->GetStreamPath());
+    }
+
+    return Status::OK;
+  }
+
+  if (name_changed) {
+    data_by_name_.erase(user->GetStreamPath());
+  }
+  if (stream_path_changed) {
+    data_by_stream_path_.erase(user->GetStreamPath());
+  }
+
+  return Status(StatusCode::DB_ENGINE_ERROR, "Error saving changes.");
+}
+
 void Users::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   boost::shared_lock<boost::shared_mutex> read_lock(lock_);
 
   writer->StartArray();
-  for (const auto &it : data_) {
+  for (const auto &it : data_by_id_) {
     it.second->WriteJSON(writer);
   }
   writer->EndArray();

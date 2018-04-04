@@ -38,7 +38,7 @@ void Stream::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("service");
   writer->String(channel_->GetService());
   writer->Key("overrustle_id");
-  writer->String(overrustle_id_);
+  writer->String(path_);
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("live");
@@ -60,21 +60,21 @@ bool Stream::Save() {
         UPDATE `streams` SET
           `channel` = ?,
           `service` = ?,
-          `overrustle_id` = ?,
+          `path` = ?,
           `thumbnail` = ?,
           `live` = ?,
           `viewers` = ?,
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
-    db_ << sql << channel_->GetChannel() << channel_->GetService()
-        << overrustle_id_ << thumbnail_ << live_ << viewer_count_ << id_;
+    db_ << sql << channel_->GetChannel() << channel_->GetService() << path_
+        << thumbnail_ << live_ << viewer_count_ << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating stream "
                << "id " << id_ << ", "
                << "channel " << channel_->GetChannel() << ", "
                << "service " << channel_->GetService() << ", "
-               << "overrustle_id " << overrustle_id_ << ", "
+               << "path " << path_ << ", "
                << "thumbnail " << thumbnail_ << ", "
                << "live " << live_ << ", "
                << "viewer_count " << viewer_count_ << ", "
@@ -95,7 +95,7 @@ bool Stream::SaveNew() {
           `id`,
           `channel`,
           `service`,
-          `overrustle_id`,
+          `path`,
           `thumbnail`,
           `live`,
           `viewers`,
@@ -115,13 +115,13 @@ bool Stream::SaveNew() {
         )
       )sql";
     db_ << sql << id_ << channel_->GetChannel() << channel_->GetService()
-        << overrustle_id_ << thumbnail_ << live_ << viewer_count_;
+        << path_ << thumbnail_ << live_ << viewer_count_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating stream "
                << "id " << id_ << ", "
                << "channel " << channel_->GetChannel() << ", "
                << "service " << channel_->GetService() << ", "
-               << "overrustle_id " << overrustle_id_ << ", "
+               << "path " << path_ << ", "
                << "thumbnail " << thumbnail_ << ", "
                << "live " << live_ << ", "
                << "viewer_count " << viewer_count_ << ", "
@@ -142,7 +142,7 @@ Streams::Streams(sqlite::database db) : db_(db) {
         `id`,
         `channel`,
         `service`,
-        `overrustle_id`,
+        `path`,
         `thumbnail`,
         `live`,
         `viewers`
@@ -151,12 +151,12 @@ Streams::Streams(sqlite::database db) : db_(db) {
   auto query = db_ << sql;
 
   query >> [&](const uint64_t id, const std::string &channel,
-               const std::string &service, const std::string &overrustle_id,
+               const std::string &service, const std::string &path,
                const std::string &thumbnail, const bool live,
                const uint64_t viewer_count) {
     const auto stream_channel = Channel::Create(channel, service);
-    auto stream = std::make_shared<Stream>(
-        db_, id, stream_channel, overrustle_id, thumbnail, live, viewer_count);
+    auto stream = std::make_shared<Stream>(db_, id, stream_channel, path,
+                                           thumbnail, live, viewer_count);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -171,7 +171,7 @@ void Streams::InitTable() {
         `id` INTEGER PRIMARY KEY,
         `channel` VARCHAR(255) NOT NULL,
         `service` VARCHAR(255) NOT NULL,
-        `overrustle_id` VARCHAR(255) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+        `path` VARCHAR(255) REFERENCES `users` (`stream_path`) ON DELETE SET NULL ON UPDATE CASCADE,
         `thumbnail` VARCHAR(255),
         `live` TINYINT(1) DEFAULT 0,
         `viewers` INTEGER DEFAULT 0,
@@ -261,8 +261,8 @@ void Streams::WriteStreamsJSON(
 }
 
 std::shared_ptr<Stream> Streams::Emplace(const Channel &channel,
-                                         const std::string &overrustle_id) {
-  auto stream = std::make_shared<Stream>(db_, channel, overrustle_id);
+                                         const std::string &path) {
+  auto stream = std::make_shared<Stream>(db_, channel, path);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
