@@ -42,7 +42,6 @@ class User {
       : db_(db),
         id_(boost::uuids::random_generator()()),
         twitch_id_(twitch_id),
-        name_(name),
         stream_path_(name),
         channel_(std::shared_ptr<Channel>(channel)),
         last_ip_(last_ip),

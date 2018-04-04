@@ -76,6 +76,13 @@ Status User::SetStreamPath(const std::string &stream_path) {
 }
 
 Status User::SetName(const std::string &name) {
+  if (name_ != "") {
+    if (name_ == name) {
+      return Status::OK;
+    }
+    return Status(StatusCode::VALIDATION_ERROR, "Username cannot be changed.");
+  }
+
   // based on destinygg/website username validation
   // https://github.com/destinygg/website/blob/0e984436d2d381f02666272e8bf38eb9ebda476a/lib/Destiny/Common/Authentication/AuthenticationCredentials.php
 
@@ -373,7 +380,10 @@ std::shared_ptr<User> Users::Emplace(const uint64_t twitch_id,
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
     data_by_stream_path_[user->GetStreamPath()] = user;
-    data_by_name_[user->GetName()] = user;
+
+    if (!user->GetName().empty()) {
+      data_by_name_[user->GetName()] = user;
+    }
   }
 
   user->SaveNew();
@@ -418,8 +428,8 @@ Status Users::Save(std::shared_ptr<User> user) {
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
 
-    if (name_changed) {
-      data_by_name_.erase(oldUser->GetStreamPath());
+    if (name_changed && !oldUser->GetName().empty()) {
+      data_by_name_.erase(oldUser->GetName());
     }
     if (stream_path_changed) {
       data_by_stream_path_.erase(oldUser->GetStreamPath());
@@ -429,7 +439,7 @@ Status Users::Save(std::shared_ptr<User> user) {
   }
 
   if (name_changed) {
-    data_by_name_.erase(user->GetStreamPath());
+    data_by_name_.erase(user->GetName());
   }
   if (stream_path_changed) {
     data_by_stream_path_.erase(user->GetStreamPath());
