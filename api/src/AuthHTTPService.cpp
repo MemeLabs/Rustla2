@@ -82,14 +82,14 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
     return;
   }
   auto twitch_id = twitch_user.GetID();
-  auto name = twitch_user.GetName();
+  auto twitch_name = twitch_user.GetName();
 
   auto ip = req->GetClientIPHeader().toString();
 
   auto user = db_->GetUsers()->GetByTwitchID(twitch_id);
   if (user == nullptr) {
-    auto channel = Channel::Create(name, kTwitchService.toString());
-    user = db_->GetUsers()->Emplace(twitch_id, name, channel, ip);
+    auto channel = Channel::Create(twitch_name, kTwitchService.toString());
+    user = db_->GetUsers()->Emplace(twitch_id, twitch_name, channel, ip);
   } else {
     user->SetLastIP(ip);
     user->Save();
@@ -97,7 +97,13 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
 
   writer.Status(302, "Redirect");
   writer.SessionCookie(user->GetIDString());
-  writer.Header("Location", "/");
+
+  if (user->GetName().empty()) {
+    writer.Header("Location", "/profile?username=" + twitch_name);
+  } else {
+    writer.Header("Location", "/");
+  }
+
   writer.Body();
 }
 
