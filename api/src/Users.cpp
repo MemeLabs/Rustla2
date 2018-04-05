@@ -23,6 +23,18 @@ std::string User::GetStreamJSON() {
   return buf.GetString();
 }
 
+std::string User::GetUsernameJSON() {
+  rapidjson::StringBuffer buf;
+  rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
+
+  writer.StartObject();
+  writer.Key("username");
+  writer.String(name_);
+  writer.EndObject();
+
+  return buf.GetString();
+}
+
 std::string User::GetProfileJSON() {
   rapidjson::StringBuffer buf;
   rapidjson::Writer<rapidjson::StringBuffer> writer(buf);

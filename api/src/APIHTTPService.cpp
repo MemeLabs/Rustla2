@@ -29,6 +29,7 @@ void APIHTTPService::RegisterRoutes(HTTPRouter *router) {
 
   router->Get(api, &APIHTTPService::GetAPI, this);
   router->Get(api + "/streamer/*", &APIHTTPService::GetStreamer, this);
+  router->Get(api + "/username/*", &APIHTTPService::GetUsername, this);
   router->Get(api + "/profile", &APIHTTPService::GetProfile, this);
   router->Post(api + "/profile", &APIHTTPService::PostProfile, this);
 }
@@ -49,6 +50,19 @@ void APIHTTPService::GetStreamer(uWS::HttpResponse *res, HTTPRequest *req) {
   } else {
     writer.Status(200, "OK");
     writer.JSON(user->GetStreamJSON());
+  }
+}
+
+void APIHTTPService::GetUsername(uWS::HttpResponse *res, HTTPRequest *req) {
+  HTTPResponseWriter writer(res);
+
+  auto user = db_->GetUsers()->GetByID(req->GetPathPart(3).toString());
+  if (user == nullptr) {
+    writer.Status(404, "Not Found");
+    writer.JSON("{\"error\": \"invalid user\"}");
+  } else {
+    writer.Status(200, "OK");
+    writer.JSON(user->GetUsernameJSON());
   }
 }
 

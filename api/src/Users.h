@@ -113,6 +113,8 @@ class User {
 
   std::string GetStreamJSON();
 
+  std::string GetUsernameJSON();
+
   std::string GetProfileJSON();
 
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);

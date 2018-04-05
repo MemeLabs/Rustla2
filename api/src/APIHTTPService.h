@@ -19,6 +19,8 @@ class APIHTTPService {
 
   void GetStreamer(uWS::HttpResponse *res, HTTPRequest *req);
 
+  void GetUsername(uWS::HttpResponse *res, HTTPRequest *req);
+
   void GetProfile(uWS::HttpResponse *res, HTTPRequest *req);
 
   void PostProfile(uWS::HttpResponse *res, HTTPRequest *req);
