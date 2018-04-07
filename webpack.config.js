@@ -5,8 +5,9 @@ require('dotenv').config({ silent: true });
 
 const webpack = require('webpack');
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const gitHash = require('helper-git-hash');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 const { NODE_ENV } = process.env;
 const IS_PRODUCTION = NODE_ENV === 'production';
@@ -14,8 +15,8 @@ const IS_PRODUCTION = NODE_ENV === 'production';
 // eslint-disable-next-line no-console
 console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
 
-
 module.exports = {
+  mode: IS_PRODUCTION ? 'production' : 'development',
   devtool: !IS_PRODUCTION && 'cheap-module-source-map',
   entry: {
     main: [
@@ -32,6 +33,17 @@ module.exports = {
     chunkFilename: '[name].[chunkhash].js',
     publicPath: '/assets/',
     crossOriginLoading: 'anonymous',
+  },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        uglifyOptions: {
+          compress: {
+            warnings: false,
+          },
+        },
+      }),
+    ],
   },
   devServer: {
     contentBase: path.join(__dirname, './public'),
@@ -67,22 +79,21 @@ module.exports = {
       },
       {
         test: /\.s?css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
-            { loader: 'css-loader', options: { importLoaders: 1 } },
-            { loader: 'postcss-loader',
-              options: {
-                plugins: () => {
-                  require('autoprefixer')({
-                    browsers: ['last 2 versions'],
-                  });
-                },
+        use: [
+          MiniCssExtractPlugin.loader,
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          { loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: () => {
+                require('autoprefixer')({
+                  browsers: ['last 2 versions'],
+                });
               },
             },
-            { loader: 'sass-loader' },
-          ],
-        }),
+          },
+          'sass-loader',
+        ],
       },
       {
         test: /\.(eot|woff|woff2|ttf|png|jpg|svg|gif)/,
@@ -126,15 +137,8 @@ module.exports = {
       // production-only global defines
     } : undefined)())),
     new webpack.optimize.AggressiveMergingPlugin(),
-    new ExtractTextPlugin(IS_PRODUCTION ? 'css/[name].[contenthash].css' : 'css/[name].css'),
-
-    // production-only plugins
-    ...(() => IS_PRODUCTION ? [
-      new webpack.optimize.UglifyJsPlugin({
-        compress: {
-          warnings: false,
-        },
-      }),
-    ] : [])(),
-  ].filter(Boolean),
+    new MiniCssExtractPlugin({
+      filename: IS_PRODUCTION ? '[name].[contenthash].css' : '[name].css',
+    }),
+  ],
 };
