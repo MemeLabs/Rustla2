@@ -89,13 +89,19 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
   auto user = db_->GetUsers()->GetByTwitchID(twitch_id);
   if (user == nullptr) {
     auto channel = Channel::Create(twitch_name, kTwitchService.toString());
-    user = db_->GetUsers()->Emplace(twitch_id, twitch_name, channel, ip);
+    user = db_->GetUsers()->Emplace(twitch_id, channel, ip);
   } else {
     user->SetLastIP(ip);
     user->Save();
   }
 
   writer.Status(302, "Redirect");
+
+  if (user == nullptr) {
+    writer.Header("Location", "/?error=login_failed");
+    return;
+  }
+
   writer.SessionCookie(user->GetIDString());
 
   if (user->GetName().empty()) {

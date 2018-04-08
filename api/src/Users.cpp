@@ -377,10 +377,9 @@ std::shared_ptr<User> Users::GetByStreamPath(const std::string &stream_path) {
 }
 
 std::shared_ptr<User> Users::Emplace(const uint64_t twitch_id,
-                                     const std::string &name,
                                      const Channel &channel,
                                      const std::string &ip) {
-  auto user = std::make_shared<User>(db_, twitch_id, name, channel, ip);
+  auto user = std::make_shared<User>(db_, twitch_id, channel, ip);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
@@ -391,14 +390,18 @@ std::shared_ptr<User> Users::Emplace(const uint64_t twitch_id,
 
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
-    data_by_stream_path_[user->GetStreamPath()] = user;
-
-    if (!user->GetName().empty()) {
-      data_by_name_[user->GetName()] = user;
-    }
   }
 
-  user->SaveNew();
+  bool saved = user->SaveNew();
+
+  if (!saved) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+
+    data_by_id_.erase(user->GetID());
+    data_by_twitch_id_.erase(user->GetTwitchID());
+
+    return nullptr;
+  }
 
   return user;
 }
@@ -450,10 +453,10 @@ Status Users::Save(std::shared_ptr<User> user) {
     return Status::OK;
   }
 
-  if (name_changed) {
+  if (name_changed && !user->GetName().empty()) {
     data_by_name_.erase(user->GetName());
   }
-  if (stream_path_changed) {
+  if (stream_path_changed && !user->GetStreamPath().empty()) {
     data_by_stream_path_.erase(user->GetStreamPath());
   }
 

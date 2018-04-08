@@ -37,12 +37,11 @@ class User {
         left_chat_(left_chat),
         is_admin_(is_admin) {}
 
-  User(sqlite::database db, const uint64_t twitch_id, const std::string &name,
+  User(sqlite::database db, const uint64_t twitch_id,
        const Channel &channel, const std::string &last_ip)
       : db_(db),
         id_(boost::uuids::random_generator()()),
         twitch_id_(twitch_id),
-        stream_path_(name),
         channel_(std::shared_ptr<Channel>(channel)),
         last_ip_(last_ip),
         last_seen_(time(nullptr)),
@@ -171,7 +170,7 @@ class Users {
   std::shared_ptr<User> GetByStreamPath(const std::string &stream_path);
 
   std::shared_ptr<User> Emplace(const uint64_t twitch_id,
-                                const std::string &name, const Channel &channel,
+                                const Channel &channel,
                                 const std::string &ip);
 
   Status Save(std::shared_ptr<User> user);
