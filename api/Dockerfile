@@ -1,5 +1,5 @@
 FROM rustla2-api-base:latest
-MAINTAINER Overrustle
+LABEL maintainer="Overrustle"
 
 RUN useradd -m rustla
 
