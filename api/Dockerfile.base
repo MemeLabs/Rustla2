@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-MAINTAINER Overrustle
+LABEL maintainer="Overrustle"
 
 COPY . ./rustla2_api
 
