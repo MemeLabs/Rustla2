@@ -131,8 +131,9 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
       status = newUser->SetName(json::StringRef(input["username"]));
     }
 
-    if (status.Ok() && !input["stream_path"].Empty()) {
-      status = newUser->SetStreamPath(json::StringRef(input["stream_path"]));
+    auto stream_path = json::StringRef(input["stream_path"]);
+    if (status.Ok() && !stream_path.Empty()) {
+      status = newUser->SetStreamPath(stream_path);
     }
 
     if (status.Ok()) {
