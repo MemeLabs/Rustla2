@@ -328,9 +328,7 @@ void Users::InitTable() {
         `updated_at` DATETIME NOT NULL,
         `is_admin` TINYINT(1) DEFAULT 0,
         UNIQUE (`id`),
-        UNIQUE (`twitch_id`),
-        UNIQUE (`stream_path`),
-        UNIQUE (`name`)
+        UNIQUE (`twitch_id`)
       );
     )sql";
   db_ << sql;
@@ -427,7 +425,7 @@ Status Users::Save(std::shared_ptr<User> user) {
       data_by_name_[user->GetName()] = user;
     }
 
-    if (stream_path_changed) {
+    if (stream_path_changed && !user->GetStreamPath().empty()) {
       if (data_by_stream_path_.count(user->GetStreamPath())) {
         return Status(StatusCode::VALIDATION_ERROR, "Stream path unavailable.");
       }
@@ -446,7 +444,7 @@ Status Users::Save(std::shared_ptr<User> user) {
     if (name_changed && !oldUser->GetName().empty()) {
       data_by_name_.erase(oldUser->GetName());
     }
-    if (stream_path_changed) {
+    if (stream_path_changed && !oldUser->GetStreamPath().empty()) {
       data_by_stream_path_.erase(oldUser->GetStreamPath());
     }
 
