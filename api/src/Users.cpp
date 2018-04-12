@@ -78,7 +78,7 @@ Status User::SetStreamPath(const std::string &stream_path) {
   const boost::regex valid_path_regex("^[a-z0-9_]{3,32}$");
   if (!boost::regex_match(stream_path, valid_path_regex)) {
     return Status(StatusCode::VALIDATION_ERROR,
-                  "Username may only contain a-z 0-9 or underscores and must "
+                  "Stream path may only contain a-z 0-9 or underscores and must "
                   "be betwee 3 and 32 characters in length.");
   }
 
