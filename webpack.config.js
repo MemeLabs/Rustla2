@@ -1,5 +1,4 @@
 /* global process __dirname */
-/* eslint no-template-curly-in-string: 0 */
 require('dotenv').config({ silent: true });
 
 const webpack = require('webpack');
