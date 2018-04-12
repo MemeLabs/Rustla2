@@ -1,5 +1,4 @@
 /* global process __dirname */
-/* eslint quotes: 0 */
 /* eslint no-template-curly-in-string: 0 */
 require('dotenv').config({ silent: true });
 
@@ -122,6 +121,7 @@ module.exports = {
       enabled: IS_PRODUCTION,
     }),
     new webpack.DefinePlugin(Object.assign({
+      /* eslint-disable quotes */
       'process.env.NODE_ENV': `"${NODE_ENV}"`,
       'API': process.env.API ? `"${process.env.API}"` : "'/api'",
       'API_WS': process.env.API_WS ? `"${process.env.API_WS}"` : undefined,
@@ -133,6 +133,7 @@ module.exports = {
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : undefined,
       'GIT_COMMIT_HASH': `"${gitHash()}"`,
       'GIT_SHORT_COMMIT_HASH': `"${gitHash({ short: true })}"`,
+      /* eslint-enable quotes */
     }, (() => IS_PRODUCTION ? {
       // production-only global defines
     } : undefined)())),
