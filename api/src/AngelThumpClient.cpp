@@ -37,7 +37,7 @@ uint64_t ChannelResult::GetViewers() const {
 
 Status Client::GetChannelByName(const std::string& name,
                                 ChannelResult* result) {
-  CurlRequest req("https://api.angelthump.com/" + name);
+  CurlRequest req("https://angelthump.com/api/" + name);
   req.Submit();
 
   if (!req.Ok()) {
