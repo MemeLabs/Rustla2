@@ -1,7 +1,6 @@
 #include "APIHTTPService.h"
 
 #include <rapidjson/schema.h>
-#include <boost/uuid/uuid_generators.hpp>
 
 #include "Config.h"
 #include "HTTPResponseWriter.h"
@@ -57,16 +56,7 @@ void APIHTTPService::GetStreamer(uWS::HttpResponse *res, HTTPRequest *req) {
 void APIHTTPService::GetUsername(uWS::HttpResponse *res, HTTPRequest *req) {
   HTTPResponseWriter writer(res);
 
-  boost::uuids::uuid id;
-  try {
-    id = boost::uuids::string_generator()(req->GetPathPart(3).toString());
-  } catch (std::runtime_error e) {
-    writer.Status(422, "Unprocessable Entity");
-    writer.JSON("{\"error\": \"invalid user id\"}");
-    return;
-  }
-
-  auto user = db_->GetUsers()->GetByID(id);
+  auto user = db_->GetUsers()->GetByID(req->GetPathPart(3).toString());
   if (user == nullptr) {
     writer.Status(404, "Not Found");
     writer.JSON("{\"error\": \"invalid user\"}");

@@ -175,7 +175,14 @@ class Users {
   void InitTable();
 
   std::shared_ptr<User> GetByID(const std::string &id) {
-    return GetByID(boost::uuids::string_generator()(id));
+    boost::uuids::uuid uuid;
+    try {
+      uuid = boost::uuids::string_generator()(id);
+    } catch (std::runtime_error &e) {
+      return nullptr;
+    }
+
+    return GetByID(uuid);
   }
 
   std::shared_ptr<User> GetByID(const boost::uuids::uuid &id);
