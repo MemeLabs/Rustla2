@@ -1,8 +1,11 @@
 #pragma once
 
+#include <folly/String.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <sqlite_modern_cpp.h>
+#include <cstring>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -37,8 +40,8 @@ class User {
         left_chat_(left_chat),
         is_admin_(is_admin) {}
 
-  User(sqlite::database db, const uint64_t twitch_id,
-       const Channel &channel, const std::string &last_ip)
+  User(sqlite::database db, const uint64_t twitch_id, const Channel &channel,
+       const std::string &last_ip)
       : db_(db),
         id_(boost::uuids::random_generator()()),
         twitch_id_(twitch_id),
@@ -151,6 +154,20 @@ class User {
   friend std::ostream &operator<<(std::ostream &os, const User &user);
 };
 
+struct NameHash : public std::unary_function<std::string, std::size_t> {
+  std::size_t operator()(const std::string &k) const {
+    std::string k_lower = k;
+    folly::toLowerAscii(k_lower);
+    return std::hash<std::string>{}(k_lower);
+  }
+};
+
+struct NameEqual : public std::binary_function<std::string, std::string, bool> {
+  bool operator()(const std::string &a, const std::string &b) const {
+    return strcasecmp(a.c_str(), b.c_str()) == 0;
+  }
+};
+
 class Users {
  public:
   explicit Users(sqlite::database db);
@@ -170,8 +187,7 @@ class Users {
   std::shared_ptr<User> GetByStreamPath(const std::string &stream_path);
 
   std::shared_ptr<User> Emplace(const uint64_t twitch_id,
-                                const Channel &channel,
-                                const std::string &ip);
+                                const Channel &channel, const std::string &ip);
 
   Status Save(std::shared_ptr<User> user);
 
@@ -185,7 +201,8 @@ class Users {
                      boost::hash<boost::uuids::uuid>>
       data_by_id_;
   std::unordered_map<uint64_t, std::shared_ptr<User>> data_by_twitch_id_;
-  std::unordered_map<std::string, std::shared_ptr<User>> data_by_name_;
+  std::unordered_map<std::string, std::shared_ptr<User>, NameHash, NameEqual>
+      data_by_name_;
   std::unordered_map<std::string, std::shared_ptr<User>> data_by_stream_path_;
 };
 
