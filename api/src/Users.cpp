@@ -223,6 +223,7 @@ bool User::SaveNew() {
         INSERT INTO `users` (
           `id`,
           `twitch_id`,
+          `twitch_username`,
           `name`,
           `stream_path`,
           `service`,
@@ -243,6 +244,7 @@ bool User::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
           datetime(?, 'unixepoch'),
           ?,
           ?,
@@ -251,9 +253,9 @@ bool User::SaveNew() {
           datetime()
         )
       )sql";
-    db_ << sql << GetIDString() << twitch_id_ << name_ << stream_path_
-        << channel_->GetService() << channel_->GetChannel() << last_ip_
-        << last_seen_ << left_chat_ << is_admin_;
+    db_ << sql << GetIDString() << twitch_id_ << channel_->GetChannel() << name_
+        << stream_path_ << channel_->GetService() << channel_->GetChannel()
+        << last_ip_ << last_seen_ << left_chat_ << is_admin_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -321,6 +323,7 @@ void Users::InitTable() {
       CREATE TABLE IF NOT EXISTS `users` (
         `id` CHAR(36) NOT NULL,
         `twitch_id` UNSIGNED BIGINT NOT NULL,
+        `twitch_username` VARCHAR(32) NOT NULL,
         `name` VARCHAR(32) NOT NULL,
         `stream_path` VARCHAR(255) NOT NULL,
         `service` VARCHAR(255) NOT NULL,
