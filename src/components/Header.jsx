@@ -52,8 +52,8 @@ const Header = ({
             {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
           </ul>
           <ul className='nav navbar-nav navbar-right'>
-            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs({ active: isStrimsChat })}><a role='button'>Strims Chat</a></li>}
-            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs({ active: isDggChat })}><a role='button'>Destiny Chat</a></li>}
+            {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs({ active: isStrimsChat })}><a role='button'>Strims Chat</a></li>}
+            {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs({ active: isDggChat })}><a role='button'>Destiny Chat</a></li>}
             {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('text-capitalize', { 'active': isServiceChat })}><a role='button'>{currentStreamService} Chat</a></li>}
             <li>
               <HeaderForm history={history} />
