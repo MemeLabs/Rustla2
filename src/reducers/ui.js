@@ -12,7 +12,7 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
     case TOGGLE_CHAT:
       return {
         ...state,
-        isOtherChatActive: action.payload,
+        chatHost: action.payload,
       };
     default:
       return state;

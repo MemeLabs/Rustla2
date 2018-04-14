@@ -139,9 +139,12 @@ export const logout = () => dispatch => {
 };
 
 export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT');
-export const toggleChat = isOtherChatActive => {
+export const CHAT_HOST_SERVICE = Symbol('CHAT_HOST_SERVICE');
+export const CHAT_HOST_STRIMS = Symbol('CHAT_HOST_STRIMS');
+export const CHAT_HOST_DGG = Symbol('CHAT_HOST_DGG');
+export const toggleChat = mode => {
   return {
     type: TOGGLE_CHAT,
-    payload: isOtherChatActive,
+    payload: mode,
   };
 };

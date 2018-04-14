@@ -10,7 +10,7 @@ import get from 'lodash/get';
 
 import '../css/Header';
 
-import { toggleChat } from '../actions';
+import { toggleChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
 import HeaderForm from './HeaderForm';
 
@@ -18,7 +18,9 @@ import HeaderForm from './HeaderForm';
 const Header = ({
   rustlerCount,
   isLoggedIn,
-  isOtherChatActive,
+  isDggChat,
+  isStrimsChat,
+  isServiceChat,
   currentStreamService,
   toggleChat,
   history,
@@ -50,8 +52,9 @@ const Header = ({
             {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
           </ul>
           <ul className='nav navbar-nav navbar-right'>
-            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(false)} className={cs({ active: !isOtherChatActive })}><a role='button'>Destiny Chat</a></li>}
-            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(true)} className={cs('text-capitalize', { 'active': isOtherChatActive })}><a role='button'>{currentStreamService} Chat</a></li>}
+            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs({ active: isStrimsChat })}><a role='button'>Strims Chat</a></li>}
+            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs({ active: isDggChat })}><a role='button'>Destiny Chat</a></li>}
+            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('text-capitalize', { 'active': isServiceChat })}><a role='button'>{currentStreamService} Chat</a></li>}
             <li>
               <HeaderForm history={history} />
             </li>
@@ -85,7 +88,9 @@ const Header = ({
 
 Header.propTypes = {
   isLoggedIn: PropTypes.bool.isRequired,
-  isOtherChatActive: PropTypes.bool.isRequired,
+  isDggChat: PropTypes.bool.isRequired,
+  isStrimsChat: PropTypes.bool.isRequired,
+  isServiceChat: PropTypes.bool.isRequired,
   currentStreamService: PropTypes.string,
   toggleChat: PropTypes.func.isRequired,
   history: PropTypes.object,
@@ -98,7 +103,9 @@ export default compose(
   connect(
     state => ({
       isLoggedIn: state.self.isLoggedIn,
-      isOtherChatActive: state.ui.isOtherChatActive,
+      isDggChat: state.ui.chatHost === CHAT_HOST_DGG,
+      isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
+      isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
       currentStreamService: get(state, ['streams', state.stream, 'service']),
     }),
     { toggleChat }
