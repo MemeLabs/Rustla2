@@ -97,7 +97,7 @@ Status User::SetName(const std::string &name) {
   }
 
   // based on destinygg/website username validation
-  // https://github.com/destinygg/website/blob/0e984436d2d381f02666272e8bf38eb9ebda476a/lib/Destiny/Common/Authentication/AuthenticationCredentials.php
+  // https://github.com/destinygg/website/blob/0e984436d2d381f02666272e8bf38eb9ebda476a/lib/Destiny/Common/Authentication/AuthenticationService.php
 
   const boost::regex valid_name_regex("^[A-Za-z0-9_]{3,20}$");
   if (!boost::regex_match(name, valid_name_regex)) {
@@ -119,15 +119,20 @@ Status User::SetName(const std::string &name) {
                     "Username cannot contain emote.", "Contains " + emote);
     }
 
-    if (emote.size() < 4) {
+    if (emote.size() < Config::Get().GetEmoteSimilarityMinLength()) {
       continue;
     }
 
-    auto emote_start = emote_norm.substr(0, 2);
+    const auto prefix_check_size =
+        Config::Get().GetEmoteSimilarityPrefixCheckSize();
+    const auto min_edit_distance =
+        Config::Get().GetEmoteSimilarityMinEditDistance();
+
+    auto emote_start = emote_norm.substr(0, prefix_check_size);
     auto name_trunc = name_norm.substr(0, std::min(emote.size(), name.size()));
 
     if (emote_start == name_start &&
-        levenshtein_distance(emote_norm, name_trunc) <= 2) {
+        levenshtein_distance(emote_norm, name_trunc) <= min_edit_distance) {
       return Status(StatusCode::VALIDATION_ERROR,
                     "Username too similar to an emote, try changing the first "
                     "characters.");

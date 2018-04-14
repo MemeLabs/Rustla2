@@ -18,6 +18,9 @@ namespace {
 
 constexpr char kDefaultAPI[] = "/api";
 constexpr char kDefaultDBPath[] = "./overrustle.sqlite";
+const uint32_t kDefaultSimilarityMinLength = 4;
+const uint32_t kDefaultSimilarityPrefixCheckSize = 2;
+const uint32_t kDefaultSimilarityMinEditDistance = 2;
 constexpr char kDefaultGithubURL[] = "https://github.com/MemeLabs/Rustla2";
 constexpr char kDefaultJWTSecret[] = "PepoThink";
 constexpr char kDefaultJWTName[] = "jwt";
@@ -41,6 +44,14 @@ void Config::Init(const std::string& config_path) {
   AssignString(&donate_do_url_, "DONATE_DO_URL", config);
   AssignString(&donate_linode_url_, "DONATE_LINODE_URL", config);
   AssignString(&donate_paypal_url_, "DONATE_PAYPAL_URL", config);
+  AssignUint(&emote_similarity_min_length_, "EMOTE_SIMILARITY_MIN_LENGTH",
+             config, kDefaultSimilarityMinLength);
+  AssignUint(&emote_similarity_prefix_check_size_,
+             "EMOTE_SIMILARITY_PREFIX_CHECK_SIZE", config,
+             kDefaultSimilarityPrefixCheckSize);
+  AssignUint(&emote_similarity_min_edit_distance_,
+             "EMOTE_SIMILARITY_MIN_EDIT_DISTANCE", config,
+             kDefaultSimilarityMinEditDistance);
   AssignString(&github_url_, "GITHUB_URL", config, kDefaultGithubURL);
   AssignString(&jwt_secret_, "JWT_SECRET", config, kDefaultJWTSecret);
   AssignString(&jwt_name_, "JWT_NAME", config, kDefaultJWTName);

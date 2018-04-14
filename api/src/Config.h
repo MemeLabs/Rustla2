@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -33,6 +34,18 @@ class Config {
   const std::string& GetDonatePaypalURL() { return donate_paypal_url_; }
 
   const std::vector<std::string>& GetEmotes() { return emotes_; }
+
+  uint32_t GetEmoteSimilarityMinLength() {
+    return emote_similarity_min_length_;
+  }
+
+  uint32_t GetEmoteSimilarityPrefixCheckSize() {
+    return emote_similarity_prefix_check_size_;
+  }
+
+  uint32_t GetEmoteSimilarityMinEditDistance() {
+    return emote_similarity_min_edit_distance_;
+  }
 
   const std::string& GetGithubURL() { return github_url_; }
 
@@ -106,6 +119,9 @@ class Config {
   std::string donate_linode_url_;
   std::string donate_paypal_url_;
   std::vector<std::string> emotes_;
+  uint32_t emote_similarity_min_length_;
+  uint32_t emote_similarity_prefix_check_size_;
+  uint32_t emote_similarity_min_edit_distance_;
   std::string github_url_;
   std::string jwt_secret_;
   std::string jwt_name_;
