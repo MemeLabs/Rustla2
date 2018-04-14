@@ -419,19 +419,17 @@ Status Users::Save(std::shared_ptr<User> user) {
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
 
-    if (name_changed) {
-      if (data_by_name_.count(user->GetName())) {
-        return Status(StatusCode::VALIDATION_ERROR, "Name unavailable.");
-      }
-      data_by_name_[user->GetName()] = user;
+    if (name_changed && data_by_name_.count(user->GetName())) {
+      return Status(StatusCode::VALIDATION_ERROR, "Name unavailable.");
     }
 
-    if (stream_path_changed && !user->GetStreamPath().empty()) {
-      if (data_by_stream_path_.count(user->GetStreamPath())) {
-        return Status(StatusCode::VALIDATION_ERROR, "Stream path unavailable.");
-      }
-      data_by_stream_path_[user->GetStreamPath()] = user;
+    if (stream_path_changed && !user->GetStreamPath().empty() &&
+        data_by_stream_path_.count(user->GetStreamPath())) {
+      return Status(StatusCode::VALIDATION_ERROR, "Stream path unavailable.");
     }
+
+    data_by_name_[user->GetName()] = oldUser;
+    data_by_stream_path_[user->GetStreamPath()] = oldUser;
   }
 
   bool saved = user->Save();
@@ -441,6 +439,8 @@ Status Users::Save(std::shared_ptr<User> user) {
   if (saved) {
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
+    data_by_name_[user->GetName()] = user;
+    data_by_stream_path_[user->GetStreamPath()] = user;
 
     if (name_changed && !oldUser->GetName().empty()) {
       data_by_name_.erase(oldUser->GetName());
