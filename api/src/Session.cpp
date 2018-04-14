@@ -10,33 +10,32 @@ namespace rustla2 {
 
 std::string EncodeSessionCookie(const std::string& id) {
   const time_t eol = time(nullptr) + Config::Get().GetJWTTTL();
-  std::unique_ptr<json_t, json_ptr_delete> json(
-      json_pack("{ss, si}", "id", id.c_str(), "exp", eol));
+  nlohmann::json json = {{"id", id}, {"exp", eol}};
 
   HS256Validator signer(Config::Get().GetJWTSecret());
-  return JWT::Encode(&signer, json.get());
+  return JWT::Encode(signer, json);
 }
 
 std::string DecodeSessionCookie(const std::string& cookie) {
-  if (cookie == "") {
+  if (cookie.empty()) {
     return "";
   }
 
-  std::unique_ptr<JWT> token;
+  nlohmann::json header, payload;
   ExpValidator exp;
   HS256Validator signer(Config::Get().GetJWTSecret());
   try {
-    token.reset(JWT::Decode(cookie, &signer, &exp));
+    std::tie(header, payload) = JWT::Decode(cookie, &signer, &exp);
   } catch (InvalidTokenError& e) {
     return "";
   }
 
-  json_t* id = json_object_get(token->payload(), "id");
-  if (id == nullptr || !json_is_string(id)) {
+  auto id = payload.find("id");
+  if (id == payload.end() || !id->is_string()) {
     return "";
   }
 
-  return json_string_value(id);
+  return id->get<std::string>();
 }
 
 }  // namespace rustla2
