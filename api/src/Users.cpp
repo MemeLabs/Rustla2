@@ -106,31 +106,32 @@ Status User::SetName(const std::string &name) {
                   "be betwee 3 and 20 characters in length.");
   }
 
+  const auto prefix_check_size =
+      Config::Get().GetEmoteSimilarityPrefixCheckSize();
+
   std::string name_norm = name;
   folly::toLowerAscii(name_norm);
-  auto name_start = name_norm.substr(0, 2);
+  auto name_start = name_norm.substr(0, prefix_check_size);
 
   for (const auto &emote : Config::Get().GetEmotes()) {
     std::string emote_norm = emote;
     folly::toLowerAscii(emote_norm);
 
-    if (folly::StringPiece(name_norm).contains(emote_norm)) {
+    if (emote.size() >= Config::Get().GetEmoteSubstringMinLength() &&
+        folly::StringPiece(name_norm).contains(emote_norm)) {
       return Status(StatusCode::VALIDATION_ERROR,
-                    "Username cannot contain emote.", "Contains " + emote);
+                    "Username cannot contain emote (" + emote + ")");
     }
 
     if (emote.size() < Config::Get().GetEmoteSimilarityMinLength()) {
       continue;
     }
 
-    const auto prefix_check_size =
-        Config::Get().GetEmoteSimilarityPrefixCheckSize();
-    const auto min_edit_distance =
-        Config::Get().GetEmoteSimilarityMinEditDistance();
-
     auto emote_start = emote_norm.substr(0, prefix_check_size);
     auto name_trunc = name_norm.substr(0, std::min(emote.size(), name.size()));
 
+    const auto min_edit_distance =
+        Config::Get().GetEmoteSimilarityMinEditDistance();
     if (emote_start == name_start &&
         levenshtein_distance(emote_norm, name_trunc) <= min_edit_distance) {
       return Status(StatusCode::VALIDATION_ERROR,

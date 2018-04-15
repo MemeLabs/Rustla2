@@ -47,6 +47,8 @@ class Config {
     return emote_similarity_min_edit_distance_;
   }
 
+  uint32_t GetEmoteSubstringMinLength() { return emote_substring_min_length_; }
+
   const std::string& GetGithubURL() { return github_url_; }
 
   const std::string& GetJWTSecret() { return jwt_secret_; }
@@ -122,6 +124,7 @@ class Config {
   uint32_t emote_similarity_min_length_;
   uint32_t emote_similarity_prefix_check_size_;
   uint32_t emote_similarity_min_edit_distance_;
+  uint32_t emote_substring_min_length_;
   std::string github_url_;
   std::string jwt_secret_;
   std::string jwt_name_;

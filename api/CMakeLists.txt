@@ -78,6 +78,7 @@ set(SOURCE_FILES
         src/StaticHTTPService.cpp
         src/Status.cpp
         src/Streams.cpp
+        src/Strings.cpp
         src/TwitchClient.cpp
         src/Users.cpp
         src/WSService.cpp
@@ -116,6 +117,16 @@ add_executable(curl_test
         src/Curl.cpp)
 target_include_directories(curl_test PRIVATE ${TEST_LIB_HEADER})
 target_link_libraries(curl_test PRIVATE ${TEST_LIB})
+
+add_executable(users_test
+        tests/UsersTest.cpp
+        src/Channel.cpp
+        src/Config.cpp
+        src/Status.cpp
+        src/Strings.cpp
+        src/Users.cpp)
+target_include_directories(users_test PRIVATE ${TEST_LIB_HEADER})
+target_link_libraries(users_test PRIVATE ${TEST_LIB})
 
 enable_testing()
 add_test(router http_router_test)

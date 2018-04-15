@@ -21,6 +21,7 @@ constexpr char kDefaultDBPath[] = "./overrustle.sqlite";
 const uint32_t kDefaultSimilarityMinLength = 4;
 const uint32_t kDefaultSimilarityPrefixCheckSize = 2;
 const uint32_t kDefaultSimilarityMinEditDistance = 2;
+const uint32_t kDefaultSubstringMinLength = 4;
 constexpr char kDefaultGithubURL[] = "https://github.com/MemeLabs/Rustla2";
 constexpr char kDefaultJWTSecret[] = "PepoThink";
 constexpr char kDefaultJWTName[] = "jwt";
@@ -52,6 +53,8 @@ void Config::Init(const std::string& config_path) {
   AssignUint(&emote_similarity_min_edit_distance_,
              "EMOTE_SIMILARITY_MIN_EDIT_DISTANCE", config,
              kDefaultSimilarityMinEditDistance);
+  AssignUint(&emote_substring_min_length_, "EMOTE_SUBSTRING_MIN_LENGTH", config,
+             kDefaultSubstringMinLength);
   AssignString(&github_url_, "GITHUB_URL", config, kDefaultGithubURL);
   AssignString(&jwt_secret_, "JWT_SECRET", config, kDefaultJWTSecret);
   AssignString(&jwt_name_, "JWT_NAME", config, kDefaultJWTName);
