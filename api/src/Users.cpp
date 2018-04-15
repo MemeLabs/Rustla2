@@ -50,6 +50,8 @@ std::string User::GetProfileJSON() {
   writer.String(channel_->GetChannel());
   writer.Key("left_chat");
   writer.Bool(left_chat_);
+  writer.Key("is_admin");
+  writer.Bool(is_admin_);
   writer.EndObject();
 
   return buf.GetString();
@@ -89,13 +91,6 @@ Status User::SetStreamPath(const std::string &stream_path) {
 }
 
 Status User::SetName(const std::string &name) {
-  if (name_ != "") {
-    if (name_ == name) {
-      return Status::OK;
-    }
-    return Status(StatusCode::VALIDATION_ERROR, "Username cannot be changed.");
-  }
-
   // based on destinygg/website username validation
   // https://github.com/destinygg/website/blob/0e984436d2d381f02666272e8bf38eb9ebda476a/lib/Destiny/Common/Authentication/AuthenticationService.php
 

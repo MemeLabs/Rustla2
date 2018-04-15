@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "APIHTTPService.h"
+#include "AdminHTTPService.h"
 #include "AuthHTTPService.h"
 #include "DB.h"
 #include "HTTPRequest.h"
@@ -24,6 +25,7 @@ class HTTPService {
 
   std::shared_ptr<DB> db_;
   HTTPRouter router_;
+  AdminHTTPService admin_service_;
   APIHTTPService api_service_;
   AuthHTTPService auth_service_;
   StaticHTTPService static_service_;

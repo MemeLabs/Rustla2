@@ -38,9 +38,11 @@ struct StringRef {
     return rhs.size() == size_ && rhs == string_;
   }
 
-  bool Empty() const {
-    return size_ == 0;
+  bool operator!=(const std::string& rhs) const {
+    return rhs.size() != size_ || rhs != string_;
   }
+
+  bool Empty() const { return size_ == 0; }
 
   const char* string_;
   const size_t size_;

@@ -60,6 +60,7 @@ set(LIB
         ${WANGLE_LIBRARIES})
 
 set(SOURCE_FILES
+        src/AdminHTTPService.cpp
         src/APIClient.cpp
         src/APIHTTPService.cpp
         src/AngelThumpClient.cpp

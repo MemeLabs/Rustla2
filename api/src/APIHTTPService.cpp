@@ -118,7 +118,17 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
                                         &status));
 
     if (status.Ok()) {
-      status = newUser->SetName(json::StringRef(input["username"]));
+      auto name = json::StringRef(input["username"]);
+
+      if (name.Empty()) {
+        status =
+            Status(StatusCode::VALIDATION_ERROR, "Username cannot be empty.");
+      } else if (!newUser->GetName().empty() && name != newUser->GetName()) {
+        status =
+            Status(StatusCode::VALIDATION_ERROR, "Username cannot be changed.");
+      } else {
+        status = newUser->SetName(name);
+      }
     }
 
     auto stream_path = json::StringRef(input["stream_path"]);
