@@ -29,7 +29,7 @@ const Footer = () =>
   <footer>
     <div className='container'>
       <p className='text-muted'>
-        OverRustle.com, an unofficial <a href='https://destiny.gg'>destiny.gg</a> community
+        Strims.gg, an unofficial <a href='https://destiny.gg'>destiny.gg</a> community
         <br />
         By <a href={`${GITHUB_URL}/graphs/contributors`}>memers</a> on <a href={`${DISCORD_URL}`}>discord</a>
         <br />

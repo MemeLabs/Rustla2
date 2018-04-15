@@ -9,7 +9,7 @@ const AdvancedStreamWarning = ({ channel, onAccept }) => {
       <h1>WARNING</h1>
       <p>
         This "stream" requires embedding an external site onto this webpage.
-        External webpages are outside of OverRustle's control, and may serve
+        External webpages are outside of Strims.gg's control, and may serve
         malware, display not-safe-for-work content, and execute JavaScript, to
         name just a few of the dangers.
       </p>

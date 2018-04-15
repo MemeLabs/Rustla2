@@ -58,7 +58,7 @@ const Streams = ({ history, streams }) => {
   if (streams_arr.length) {
     grid = makeCategories([
       {
-        header: 'Live OverRustle Streamers',
+        header: 'Live Community Streams',
         test: stream => Boolean(stream.overrustle_id) && stream.live,
       },
       {
@@ -97,7 +97,7 @@ export default compose(
   ),
   lifecycle({
     componentDidMount() {
-      document.title = 'OverRustle';
+      document.title = 'Strims';
       this.props.setStream(null);
     },
   }),

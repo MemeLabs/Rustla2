@@ -43,7 +43,7 @@ const Header = ({
     >
       <div className='container-fluid'>
         <div className='navbar-header'>
-          <Link className='navbar-brand' to='/'>OverRustle</Link>
+          <Link className='navbar-brand' to='/'>Strims</Link>
         </div>
         <div className='collapse navbar-collapse'>
           <ul className='nav navbar-nav'>

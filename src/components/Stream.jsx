@@ -115,10 +115,10 @@ export default compose(
     componentDidMount() {
       const { channel, service, streamer } = this.props;
       if (streamer) {
-        document.title = `${streamer} - OverRustle`;
+        document.title = `${streamer} - Strims`;
         return this.props.setStream(streamer);
       }
-      document.title = `${channel} on ${service} - OverRustle`;
+      document.title = `${channel} on ${service} - Strims`;
       this.props.setStream(channel, service);
       this.props.fetchProfileIfLoggedIn();
     },
