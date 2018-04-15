@@ -6,6 +6,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const gitHash = require('helper-git-hash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const LodashWebpackPlugin = require('lodash-webpack-plugin');
 
 const { NODE_ENV } = process.env;
 const IS_PRODUCTION = NODE_ENV === 'production';
@@ -140,5 +141,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: IS_PRODUCTION ? '[name].[contenthash].css' : '[name].css',
     }),
+    new LodashWebpackPlugin(),
   ],
 };
