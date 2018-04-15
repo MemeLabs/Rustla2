@@ -16,7 +16,7 @@ console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
 
 module.exports = {
   mode: IS_PRODUCTION ? 'production' : 'development',
-  devtool: !IS_PRODUCTION && 'cheap-module-source-map',
+  devtool: !IS_PRODUCTION && 'eval-source-map',
   entry: {
     main: [
       'bootstrap/dist/css/bootstrap.css',
