@@ -17,6 +17,8 @@ void Stream::WriteAPIJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("rustlers");
   writer->Uint64(rustler_count_);
   writer->Key("service");
+  writer->String(channel_->GetService());
+  writer->Key("channel");
   writer->String(channel_->GetChannel());
   writer->Key("thumbnail");
   writer->String(thumbnail_);
