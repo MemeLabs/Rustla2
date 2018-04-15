@@ -1,4 +1,3 @@
-/* global API */
 import React from 'react';
 
 import Loadable from './Loadable';
