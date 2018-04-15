@@ -1,4 +1,4 @@
-/* global API_WS */
+/* global API_WS process */
 import WebSocket from 'reconnecting-websocket';
 
 import history from '../history';
@@ -85,8 +85,10 @@ export const init = store => {
   };
 
   socket.onmessage = function onmessage(event) {
-    // eslint-disable-next-line no-console
-    console.log('socket message', event);
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('socket message', event);
+    }
 
     const { data } = event;
     try {
