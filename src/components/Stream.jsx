@@ -90,7 +90,7 @@ export default compose(
     state => ({
       chatSize: state.ui.chatSize,
       rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
-      showLeftChat: idx(self, _ => _.profile.data.left_chat),
+      showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
       isFetchingProfile: state.self.profile.isFetching,
     }),
     {
