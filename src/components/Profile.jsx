@@ -2,7 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import cs from 'classnames';
+import idx from 'idx';
 import lifecycle from 'recompose/lifecycle';
+import trim from 'lodash.trim';
+import qs from 'qs';
 
 import { fetchProfile, updateProfile } from '../actions';
 import Checkbox from './Checkbox';
@@ -10,7 +14,13 @@ import MainLayout from './MainLayout';
 import ServiceSelect from './ServiceSelect';
 
 
-const Profile = ({ history, profile, updateProfile }) =>
+const Profile = ({
+  history,
+  profile,
+  updateProfile,
+  isUsernameSet,
+  defaultUsername,
+}) =>
   <MainLayout history={history}>
     <div className='container'>
       <h1 className='text-center'>Settings</h1>
@@ -41,6 +51,40 @@ const Profile = ({ history, profile, updateProfile }) =>
             updateProfile(payload);
           }}
           >
+          {!isUsernameSet ?
+            <div className='form-group'>
+              <div className='col-sm-2' />
+              <div className='col-sm-10'>
+                <strong className='profile-first-login-message'>Save your profile to finish logging in.</strong>
+              </div>
+            </div>
+          : null}
+          <div className={cs({ 'form-group': true, 'form-group-highlight': !isUsernameSet })}>
+            <label htmlFor='profile-username' className='col-sm-2 control-label'>Username</label>
+            <div className='col-sm-10'>
+              <input
+                className='form-control'
+                id='profile-username'
+                type='text'
+                name='username'
+                defaultValue={profile.data.username || defaultUsername}
+                />
+              <small className='form-text text-muted'>Choose carefully, your username cannot be changed!</small>
+            </div>
+          </div>
+          <div className='form-group'>
+            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Stream Path</label>
+            <div className='col-sm-10'>
+              <input
+                className='form-control'
+                id='profile-stream-path'
+                type='text'
+                name='stream_path'
+                defaultValue={profile.data.stream_path}
+                />
+              <small className='form-text text-muted'>{location.origin}/<strong>my_stream_path</strong></small>
+            </div>
+          </div>
           <div className='form-group'>
             <label htmlFor='profile-service-select' className='col-sm-2 control-label'>Streaming Service</label>
             <div className='col-sm-10'>
@@ -56,30 +100,6 @@ const Profile = ({ history, profile, updateProfile }) =>
                 type='text'
                 name='channel'
                 defaultValue={profile.data.channel}
-                />
-            </div>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Stream Path</label>
-            <div className='col-sm-10'>
-              <input
-                className='form-control'
-                id='profile-stream-path'
-                type='text'
-                name='stream_path'
-                defaultValue={profile.data.stream_path}
-                />
-            </div>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Chat Name</label>
-            <div className='col-sm-10'>
-              <input
-                className='form-control'
-                id='profile-username'
-                type='text'
-                name='username'
-                defaultValue={profile.data.username}
                 />
             </div>
           </div>
@@ -116,6 +136,8 @@ Profile.propTypes = {
     }),
     err: PropTypes.any,
     isFetching: PropTypes.bool,
+    isUsernameSet: PropTypes.bool,
+    defaultUsername: PropTypes.string,
   }),
 };
 
@@ -132,8 +154,10 @@ function mapDispatchToProps(dispatch) {
 
 export default compose(
   connect(
-    state => ({
+    (state, ownProps) => ({
       profile: state.self.profile,
+      isUsernameSet: Boolean(idx(state, _ => _.self.profile.data.username)),
+      defaultUsername: qs.parse(trim(ownProps.location.search, '?')).username || '',
     }),
     mapDispatchToProps,
   ),

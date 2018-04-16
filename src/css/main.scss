@@ -66,6 +66,26 @@ a {
   }
 }
 
+.form-group-highlight {
+  font-size: 2em;
+}
+
+.form-group-highlight input {
+  height: 2em;
+  font-size: 1em;
+}
+
+.form-control.form-check-input {
+  width: 34px;
+}
+
+.profile-first-login-message {
+  font-size: 1.5em;
+  display: inline-block;
+  margin-top: 1em;
+  font-weight: inherit;
+}
+
 .img-top-margin {
   margin-top: 50px;
 }
