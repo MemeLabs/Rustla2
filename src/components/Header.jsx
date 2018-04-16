@@ -6,7 +6,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import cs from 'classnames';
 import setPropTypes from 'recompose/setPropTypes';
-import get from 'lodash/get';
+import idx from 'idx';
 
 import '../css/Header';
 
@@ -106,7 +106,7 @@ export default compose(
       isDggChat: state.ui.chatHost === CHAT_HOST_DGG,
       isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
       isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
-      currentStreamService: get(state, ['streams', state.stream, 'service']),
+      currentStreamService: idx(state, _ => _.streams[state.stream].service),
     }),
     { toggleChat }
   ),

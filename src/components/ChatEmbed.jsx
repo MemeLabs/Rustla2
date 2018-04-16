@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
-import get from 'lodash/get';
+import idx from 'idx';
 
 import { toggleChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import supportedChats, { supportedChatServices } from '../util/supported-chats';
@@ -64,15 +64,13 @@ ChatEmbed.propTypes = {
 
 export default compose(
   connect(
-    state => {
-      return {
-        isDggChat: state.ui.chatHost === CHAT_HOST_DGG,
-        isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
-        isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
-        channel: get(state, ['streams', state.stream, 'channel']),
-        service: get(state, ['streams', state.stream, 'service']),
-      };
-    },
+    state => ({
+      isDggChat: state.ui.chatHost === CHAT_HOST_DGG,
+      isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
+      isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
+      channel: idx(state, _ => _.streams[state.stream].channel),
+      service: idx(state, _ => _.streams[state.stream].service),
+    }),
     {
       toggleChat,
     },

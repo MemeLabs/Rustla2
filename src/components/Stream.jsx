@@ -8,7 +8,7 @@ import renderNothing from 'recompose/renderNothing';
 import withHandlers from 'recompose/withHandlers';
 import withState from 'recompose/withState';
 import branch from 'recompose/branch';
-import get from 'lodash/get';
+import idx from 'idx';
 
 import {
   setStream,
@@ -90,7 +90,7 @@ export default compose(
     state => ({
       chatSize: state.ui.chatSize,
       rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
-      showLeftChat: get(state, ['self', 'profile', 'data', 'left_chat']),
+      showLeftChat: idx(self, _ => _.profile.data.left_chat),
       isFetchingProfile: state.self.profile.isFetching,
     }),
     {
