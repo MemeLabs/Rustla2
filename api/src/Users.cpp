@@ -91,6 +91,10 @@ Status User::SetStreamPath(const std::string &stream_path) {
 }
 
 Status User::SetName(const std::string &name) {
+  if (name == name_) {
+    return Status::OK;
+  }
+
   // based on destinygg/website username validation
   // https://github.com/destinygg/website/blob/0e984436d2d381f02666272e8bf38eb9ebda476a/lib/Destiny/Common/Authentication/AuthenticationService.php
 
