@@ -8,7 +8,7 @@ First, ensure that you have Node.js (version 6 or greater) and `npm` (preferably
 the latest stable release) installed. Then,
 
 ``` bash
-$ git clone https://github.com/ILiedAboutCake/Rustla2.git
+$ git clone https://github.com/MemeLabs/Rustla2.git
 $ cd Rustla2/
 $ cp .env.example .env
 ```
