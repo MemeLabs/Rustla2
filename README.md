@@ -1,4 +1,4 @@
-# overrustle.com
+# strims.gg
 
 Livestream viewing with `destiny.gg` chat.
 
