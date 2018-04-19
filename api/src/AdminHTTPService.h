@@ -17,6 +17,7 @@ class AdminHTTPService {
 
   bool RejectNonAdmin(uWS::HttpResponse *res, HTTPRequest *req);
 
+  void GetUsers(uWS::HttpResponse *res, HTTPRequest *req);
   void PostUsername(uWS::HttpResponse *res, HTTPRequest *req);
 
  private:

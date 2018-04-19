@@ -42,6 +42,14 @@ bool AdminHTTPService::RejectNonAdmin(uWS::HttpResponse *res,
   return false;
 }
 
+void AdminHTTPService::GetUsers(uWS::HttpResponse *res, HTTPRequest *req) {
+  if (RejectNonAdmin(res, req)) {
+    return;
+  }
+
+  auto users = db_->GetUsers();
+}
+
 void AdminHTTPService::PostUsername(uWS::HttpResponse *res, HTTPRequest *req) {
   if (RejectNonAdmin(res, req)) {
     return;
