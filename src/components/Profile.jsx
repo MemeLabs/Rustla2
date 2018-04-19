@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import cs from 'classnames';
 import idx from 'idx';
 import lifecycle from 'recompose/lifecycle';
-import trim from 'lodash.trim';
+import trim from 'lodash/trim';
 import qs from 'qs';
 
 import { fetchProfile, updateProfile } from '../actions';
