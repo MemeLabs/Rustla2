@@ -7,7 +7,7 @@
     "node": ">=6"
   },
   "scripts": {
-    "clean": "rm -rf lib public/assets public/index.html",
+    "clean": "rm -rf public/assets public/index.html",
     "build": "npm run clean && npm run build:bundle",
     "build:bundle": "webpack --progress --display-chunks --display-reasons --display-error-details --display-modules",
     "build:production": "NODE_ENV=production npm run build",
