@@ -21,7 +21,7 @@
     "bootstrap": "^3.3.7",
     "browser-cookies": "^1.1.0",
     "classnames": "^2.2.5",
-    "dotenv": "^4.0.0",
+    "dotenv": "^5.0.1",
     "history": "^4.7.2",
     "idx": "^2.3.0",
     "isomorphic-fetch": "^2.2.1",
