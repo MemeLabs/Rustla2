@@ -7,8 +7,6 @@ namespace rustla2 {
 void Stream::WriteAPIJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   boost::shared_lock<boost::shared_mutex> read_lock(lock_);
 
-  auto url = channel_->GetPath();
-
   writer->StartObject();
   writer->Key("live");
   writer->Bool(live_);
@@ -23,7 +21,7 @@ void Stream::WriteAPIJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("url");
-  writer->String(url);
+  writer->String(channel_->GetPath());
   writer->Key("viewers");
   writer->Uint64(viewer_count_);
   writer->EndObject();
