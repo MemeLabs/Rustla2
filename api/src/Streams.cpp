@@ -223,7 +223,7 @@ std::string Streams::GetAPIJSON() {
 
 void Streams::WriteStreamsJSON(
     rapidjson::Writer<rapidjson::StringBuffer> *writer) {
-  auto streams = GetAllWithRustlers();
+  auto streams = GetAllFilteredSorted(HasRustlers());
 
   writer->StartArray();
   for (const auto &stream : streams) {
