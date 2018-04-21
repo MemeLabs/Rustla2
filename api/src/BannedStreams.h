@@ -26,7 +26,7 @@ class BannedStreams {
  private:
   sqlite::database db_;
   boost::shared_mutex lock_;
-  std::unordered_set<Channel, ChannelHash, ChannelEqual> data_;
+  std::unordered_set<Channel, ChannelSourceHash, ChannelSourceEqual> data_;
 };
 
 }  // namespace rustla2

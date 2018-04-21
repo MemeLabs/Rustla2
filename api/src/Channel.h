@@ -44,16 +44,22 @@ constexpr std::array<folly::StringPiece, 4> kCaseInsensitiveServices{
 class Channel {
  public:
   static Channel Create(const std::string &channel, const std::string &service,
-                        Status *status);
+                        const std::string &stream_path, Status *status);
 
-  static Channel Create(const std::string &channel,
-                        const std::string &service) {
+  static Channel Create(const std::string &channel, const std::string &service,
+                        const std::string &stream_path = "") {
     Status status;
-    return Create(channel, service, &status);
+    return Create(channel, service, stream_path, &status);
+  }
+
+  static Channel Create(const std::string &channel, const std::string &service,
+                        Status *status) {
+    return Create(channel, service, "", status);
   }
 
   inline operator std::shared_ptr<Channel>() const {
-    return std::shared_ptr<Channel>(new Channel(channel_, service_));
+    return std::shared_ptr<Channel>(
+        new Channel(channel_, service_, stream_path_));
   }
 
   inline const std::string &GetChannel() const { return channel_; }
@@ -61,8 +67,13 @@ class Channel {
   inline const std::string &GetService() const { return service_; }
 
   inline const std::string GetPath() const {
-    return folly::sformat("/{}/{}", service_, channel_);
+    return !stream_path_.empty() ? stream_path_
+                                 : folly::sformat("/{}/{}", service_, channel_);
   }
+
+  inline const std::string &GetStreamPath() const { return stream_path_; }
+
+  inline bool HasStreamPath() const { return !stream_path_.empty(); }
 
   inline bool IsEmpty() { return channel_.empty() || service_.empty(); }
 
@@ -71,12 +82,16 @@ class Channel {
  private:
   Channel() {}
 
-  Channel(const std::string &channel, const std::string &service)
-      : channel_(channel), service_(service) {}
+  Channel(const std::string &channel, const std::string &service,
+          const std::string &stream_path)
+      : channel_(channel), service_(service), stream_path_(stream_path) {}
 
-  Status Init(const std::string &channel, const std::string &service);
+  Status Init(const std::string &channel, const std::string &service,
+              const std::string &stream_path);
 
-  bool IsValidService(const std::string &service);
+  Status ValidateService(const std::string &service);
+
+  Status ValidlatePath(const std::string &stream_path);
 
   Status NormalizeChannel(const std::string &service,
                           std::string *clean_channel);
@@ -88,20 +103,41 @@ class Channel {
 
   std::string channel_;
   std::string service_;
+  std::string stream_path_;
 
   friend std::ostream &operator<<(std::ostream &os, const Channel &channel);
+  friend class ChannelHash;
+  friend class ChannelEqual;
+  friend class ChannelSourceHash;
+  friend class ChannelSourceEqual;
 };
 
 struct ChannelHash : public std::unary_function<Channel, std::size_t> {
   std::size_t operator()(const Channel &k) const {
-    return std::hash<std::string>{}(k.GetChannel()) ^
-           std::hash<std::string>{}(k.GetService());
+    return std::hash<std::string>{}(k.channel_) ^
+           std::hash<std::string>{}(k.service_) ^
+           std::hash<std::string>{}(k.stream_path_);
   }
 };
 
 struct ChannelEqual : public std::binary_function<Channel, Channel, bool> {
   bool operator()(const Channel &a, const Channel &b) const {
-    return a.GetChannel() == b.GetChannel() && a.GetService() == b.GetService();
+    return a.channel_ == b.channel_ && a.service_ == b.service_ &&
+           a.stream_path_ == b.stream_path_;
+  }
+};
+
+struct ChannelSourceHash : public std::unary_function<Channel, std::size_t> {
+  std::size_t operator()(const Channel &k) const {
+    return std::hash<std::string>{}(k.channel_) ^
+           std::hash<std::string>{}(k.service_);
+  }
+};
+
+struct ChannelSourceEqual
+    : public std::binary_function<Channel, Channel, bool> {
+  bool operator()(const Channel &a, const Channel &b) const {
+    return a.channel_ == b.channel_ && a.service_ == b.service_;
   }
 };
 

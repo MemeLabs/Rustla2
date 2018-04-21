@@ -40,7 +40,7 @@ void Stream::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("service");
   writer->String(channel_->GetService());
   writer->Key("overrustle_id");
-  writer->String(path_);
+  writer->String(channel_->GetStreamPath());
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("live");
@@ -69,14 +69,15 @@ bool Stream::Save() {
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
-    db_ << sql << channel_->GetChannel() << channel_->GetService() << path_
-        << thumbnail_ << live_ << viewer_count_ << id_;
+    db_ << sql << channel_->GetChannel() << channel_->GetService()
+        << channel_->GetStreamPath() << thumbnail_ << live_ << viewer_count_
+        << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating stream "
                << "id " << id_ << ", "
                << "channel " << channel_->GetChannel() << ", "
                << "service " << channel_->GetService() << ", "
-               << "path " << path_ << ", "
+               << "path " << channel_->GetStreamPath() << ", "
                << "thumbnail " << thumbnail_ << ", "
                << "live " << live_ << ", "
                << "viewer_count " << viewer_count_ << ", "
@@ -117,13 +118,13 @@ bool Stream::SaveNew() {
         )
       )sql";
     db_ << sql << id_ << channel_->GetChannel() << channel_->GetService()
-        << path_ << thumbnail_ << live_ << viewer_count_;
+        << channel_->GetStreamPath() << thumbnail_ << live_ << viewer_count_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating stream "
                << "id " << id_ << ", "
                << "channel " << channel_->GetChannel() << ", "
                << "service " << channel_->GetService() << ", "
-               << "path " << path_ << ", "
+               << "path " << channel_->GetStreamPath() << ", "
                << "thumbnail " << thumbnail_ << ", "
                << "live " << live_ << ", "
                << "viewer_count " << viewer_count_ << ", "
@@ -156,9 +157,9 @@ Streams::Streams(sqlite::database db) : db_(db) {
                const std::string &service, const std::string &path,
                const std::string &thumbnail, const bool live,
                const uint64_t viewer_count) {
-    const auto stream_channel = Channel::Create(channel, service);
-    auto stream = std::make_shared<Stream>(db_, id, stream_channel, path,
-                                           thumbnail, live, viewer_count);
+    auto stream_channel = Channel::Create(channel, service, path);
+    auto stream = std::make_shared<Stream>(db_, id, stream_channel, thumbnail,
+                                           live, viewer_count);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -180,7 +181,7 @@ void Streams::InitTable() {
         `created_at` DATETIME NOT NULL,
         `updated_at` DATETIME NOT NULL,
         UNIQUE (`id`),
-        UNIQUE (`channel`, `service`)
+        UNIQUE (`channel`, `service`, `path`)
       );
     )sql";
   db_ << sql;
@@ -262,9 +263,8 @@ void Streams::WriteStreamsJSON(
   writer->EndArray();
 }
 
-std::shared_ptr<Stream> Streams::Emplace(const Channel &channel,
-                                         const std::string &path) {
-  auto stream = std::make_shared<Stream>(db_, channel, path);
+std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
+  auto stream = std::make_shared<Stream>(db_, channel);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);

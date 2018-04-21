@@ -38,7 +38,6 @@ class WSService {
                              uint64_t* stream_id);
 
   void SetStreamToChannel(const Channel& channel,
-                          const std::string& stream_path,
                           rapidjson::Writer<rapidjson::StringBuffer>* writer,
                           uint64_t* stream_id);
 

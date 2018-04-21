@@ -191,7 +191,7 @@ inline void WSService::SetStreamToChannel(
     return;
   }
 
-  SetStreamToChannel(stream_channel, "", writer, stream_id);
+  SetStreamToChannel(stream_channel, writer, stream_id);
 }
 
 /**
@@ -214,7 +214,7 @@ void WSService::SetStreamToStreamPath(
     return;
   }
 
-  SetStreamToChannel(*channel, stream_path, writer, stream_id);
+  SetStreamToChannel(*channel, writer, stream_id);
 }
 
 /**
@@ -223,8 +223,8 @@ void WSService::SetStreamToStreamPath(
  * TODO: this should probably be the model's responsibility...
  */
 void WSService::SetStreamToChannel(
-    const Channel& channel, const std::string& stream_path,
-    rapidjson::Writer<rapidjson::StringBuffer>* writer, uint64_t* stream_id) {
+    const Channel& channel, rapidjson::Writer<rapidjson::StringBuffer>* writer,
+    uint64_t* stream_id) {
   if (db_->GetBannedStreams()->Contains(channel)) {
     writer->String("STREAM_BANNED");
     writer->Null();
@@ -233,7 +233,7 @@ void WSService::SetStreamToChannel(
 
   auto stream = db_->GetStreams()->GetByChannel(channel);
   if (stream == nullptr) {
-    stream = db_->GetStreams()->Emplace(channel, stream_path);
+    stream = db_->GetStreams()->Emplace(channel);
   }
 
   writer->String("STREAM_SET");

@@ -113,27 +113,21 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
       newUser->SetLeftChat(input["left_chat"].GetBool());
     }
 
-    newUser->SetChannel(Channel::Create(json::StringRef(input["channel"]),
-                                        json::StringRef(input["service"]),
-                                        &status));
-
-    if (status.Ok()) {
-      auto name = json::StringRef(input["username"]);
-
-      if (name.Empty()) {
-        status =
-            Status(StatusCode::VALIDATION_ERROR, "Username cannot be empty.");
-      } else if (!newUser->GetName().empty() && name != newUser->GetName()) {
-        status =
-            Status(StatusCode::VALIDATION_ERROR, "Username cannot be changed.");
-      } else {
-        status = newUser->SetName(name);
-      }
+    auto name = json::StringRef(input["username"]);
+    if (name.Empty()) {
+      status =
+          Status(StatusCode::VALIDATION_ERROR, "Username cannot be empty.");
+    } else if (!newUser->GetName().empty() && name != newUser->GetName()) {
+      status =
+          Status(StatusCode::VALIDATION_ERROR, "Username cannot be changed.");
+    } else {
+      status = newUser->SetName(name);
     }
 
-    auto stream_path = json::StringRef(input["stream_path"]);
-    if (status.Ok() && !stream_path.Empty()) {
-      status = newUser->SetStreamPath(stream_path);
+    if (status.Ok()) {
+      newUser->SetChannel(Channel::Create(
+          json::StringRef(input["channel"]), json::StringRef(input["service"]),
+          json::StringRef(input["stream_path"]), &status));
     }
 
     if (status.Ok()) {

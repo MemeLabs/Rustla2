@@ -22,19 +22,18 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 class Stream {
  public:
   Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         const std::string &path, const std::string &thumbnail = "",
-         const bool live = false, const uint64_t viewer_count = 0)
+         const std::string &thumbnail = "", const bool live = false,
+         const uint64_t viewer_count = 0)
       : db_(db),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
-        path_(path),
         thumbnail_(thumbnail),
         live_(live),
         nsfw_(false),
         viewer_count_(viewer_count) {}
 
-  Stream(sqlite::database db, const Channel &channel, const std::string &path)
-      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel, path) {}
+  Stream(sqlite::database db, const Channel &channel)
+      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel) {}
 
   inline uint64_t GetID() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -44,11 +43,6 @@ class Stream {
   inline std::shared_ptr<Channel> GetChannel() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return channel_;
-  }
-
-  inline std::string GetPath() {
-    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return path_;
   }
 
   inline std::string GetThumbnail() {
@@ -157,7 +151,6 @@ class Stream {
   boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
-  std::string path_;
   std::string thumbnail_;
   bool live_;
   bool nsfw_;
@@ -195,8 +188,7 @@ class Streams {
     return it == data_by_channel_.end() ? nullptr : it->second;
   }
 
-  std::shared_ptr<Stream> Emplace(const Channel &channel,
-                                  const std::string &path);
+  std::shared_ptr<Stream> Emplace(const Channel &channel);
 
  private:
   sqlite::database db_;

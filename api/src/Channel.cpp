@@ -9,31 +9,57 @@
 namespace rustla2 {
 
 Channel Channel::Create(const std::string &channel, const std::string &service,
-                        Status *status) {
+                        const std::string &stream_path, Status *status) {
   Channel instance;
-  *status = instance.Init(channel, service);
+  *status = instance.Init(channel, service, stream_path);
   return instance;
 }
 
-Status Channel::Init(const std::string &channel, const std::string &service) {
-  if (!IsValidService(service)) {
-    return Status(StatusCode::VALIDATION_ERROR, "invalid service");
-  }
+Status Channel::Init(const std::string &channel, const std::string &service,
+                     const std::string &stream_path) {
+  auto status = ValidateService(service);
 
   std::string normalized_channel(channel);
-  auto status = NormalizeChannel(service, &normalized_channel);
+  if (status.Ok()) {
+    status = NormalizeChannel(service, &normalized_channel);
+  }
+
+  if (status.Ok()) {
+    status = ValidlatePath(stream_path);
+  }
 
   if (status.Ok()) {
     service_ = service;
     channel_ = normalized_channel;
+    stream_path_ = stream_path;
   }
 
   return status;
 }
 
-bool Channel::IsValidService(const std::string &service) {
+Status Channel::ValidateService(const std::string &service) {
   auto it = std::find(kServices.begin(), kServices.end(), service);
-  return it != kServices.end();
+  if (it == kServices.end()) {
+    return Status(StatusCode::VALIDATION_ERROR, "invalid service");
+  }
+
+  return Status::OK;
+}
+
+Status Channel::ValidlatePath(const std::string &stream_path) {
+  if (stream_path.empty()) {
+    return Status::OK;
+  }
+
+  const boost::regex valid_stream_path_regex("^[a-z0-9_]{3,32}$");
+  if (!boost::regex_match(stream_path, valid_stream_path_regex)) {
+    return Status(
+        StatusCode::VALIDATION_ERROR,
+        "Stream path may only contain a-z 0-9 or underscores and must "
+        "be betwee 3 and 32 characters in length.");
+  }
+
+  return Status::OK;
 }
 
 Status Channel::NormalizeChannel(const std::string &service,
@@ -74,19 +100,21 @@ Status Channel::NormalizeBasicChannel(const std::string &service,
 
   return Status::OK;
 }
-
 void Channel::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->StartObject();
   writer->Key("channel");
   writer->String(channel_);
   writer->Key("service");
   writer->String(service_);
+  writer->Key("path");
+  writer->String(stream_path_);
   writer->EndObject();
 }
 
 std::ostream &operator<<(std::ostream &os, const Channel &channel) {
   os << "service: " << channel.service_ << ", "
-     << "channel: " << channel.channel_;
+     << "channel: " << channel.channel_ << ", "
+     << "stream_path: " << channel.stream_path_;
   return os;
 }
 

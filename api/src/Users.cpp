@@ -43,7 +43,7 @@ std::string User::GetProfileJSON() {
   writer.Key("username");
   writer.String(name_);
   writer.Key("stream_path");
-  writer.String(stream_path_);
+  writer.String(channel_->GetStreamPath());
   writer.Key("service");
   writer.String(channel_->GetService());
   writer.Key("channel");
@@ -62,7 +62,7 @@ void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("username");
   writer->String(name_);
   writer->Key("stream_path");
-  writer->String(stream_path_);
+  writer->String(channel_->GetStreamPath());
   writer->Key("channel");
   channel_->WriteJSON(writer);
   writer->Key("left_chat");
@@ -74,20 +74,6 @@ void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Key("is_admin");
   writer->Bool(is_admin_);
   writer->EndObject();
-}
-
-Status User::SetStreamPath(const std::string &stream_path) {
-  const boost::regex valid_path_regex("^[a-z0-9_]{3,32}$");
-  if (!boost::regex_match(stream_path, valid_path_regex)) {
-    return Status(
-        StatusCode::VALIDATION_ERROR,
-        "Stream path may only contain a-z 0-9 or underscores and must "
-        "be betwee 3 and 32 characters in length.");
-  }
-
-  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-  stream_path_ = stream_path;
-  return Status::OK;
 }
 
 Status User::SetName(const std::string &name) {
@@ -203,7 +189,7 @@ bool User::Save() {
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
-    db_ << sql << name_ << stream_path_ << channel_->GetService()
+    db_ << sql << name_ << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
         << is_admin_ << GetIDString();
   } catch (const sqlite::sqlite_exception &e) {
@@ -254,8 +240,9 @@ bool User::SaveNew() {
         )
       )sql";
     db_ << sql << GetIDString() << twitch_id_ << channel_->GetChannel() << name_
-        << stream_path_ << channel_->GetService() << channel_->GetChannel()
-        << last_ip_ << last_seen_ << left_chat_ << is_admin_;
+        << channel_->GetStreamPath() << channel_->GetService()
+        << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
+        << is_admin_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -270,8 +257,7 @@ std::ostream &operator<<(std::ostream &os, const User &user) {
   os << "id: " << user.id_ << ", "
      << "twitch_id: " << user.twitch_id_ << ", "
      << "name: " << user.name_ << ", "
-     << "stream_path: " << user.stream_path_ << ", "
-     << "channel: " << user.channel_ << ", "
+     << "channel: " << *user.channel_ << ", "
      << "last_ip: " << user.last_ip_ << ", "
      << "last_seen: " << user.last_seen_ << ", "
      << "left_chat: " << user.left_chat_ << ", "
@@ -304,15 +290,15 @@ Users::Users(sqlite::database db) : db_(db) {
                const std::string &last_ip, const time_t last_seen,
                const bool left_chat, const bool is_admin) {
     boost::uuids::string_generator to_uuid;
-    auto stream_channel = Channel::Create(channel, service);
-    auto user = std::make_shared<User>(db_, to_uuid(id), twitch_id, name,
-                                       stream_path, stream_channel, last_ip,
-                                       last_seen, left_chat, is_admin);
+    auto user_channel = Channel::Create(channel, service, stream_path);
+    auto user =
+        std::make_shared<User>(db_, to_uuid(id), twitch_id, name, user_channel,
+                               last_ip, last_seen, left_chat, is_admin);
 
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
     data_by_name_[user->GetName()] = user;
-    data_by_stream_path_[user->GetStreamPath()] = user;
+    data_by_stream_path_[user->GetChannel()->GetStreamPath()] = user;
   };
 
   LOG(INFO) << "read " << data_by_id_.size() << " users";
@@ -414,14 +400,15 @@ std::shared_ptr<User> Users::Emplace(const uint64_t twitch_id,
 }
 
 Status Users::Save(std::shared_ptr<User> user) {
-  auto oldUser = GetByID(user->GetID());
+  auto old_user = GetByID(user->GetID());
 
-  if (oldUser == nullptr) {
+  if (old_user == nullptr) {
     return Status(StatusCode::VALIDATION_ERROR, "No user found.");
   }
 
-  bool stream_path_changed = user->GetStreamPath() != oldUser->GetStreamPath();
-  bool name_changed = user->GetName() != oldUser->GetName();
+  bool path_changed = user->GetChannel()->GetStreamPath() !=
+                      old_user->GetChannel()->GetStreamPath();
+  bool name_changed = !NameEqual()(user->GetName(), old_user->GetName());
 
   // optimistically acquire new path and name if they're available
   {
@@ -431,13 +418,13 @@ Status Users::Save(std::shared_ptr<User> user) {
       return Status(StatusCode::VALIDATION_ERROR, "Name unavailable.");
     }
 
-    if (stream_path_changed && !user->GetStreamPath().empty() &&
-        data_by_stream_path_.count(user->GetStreamPath())) {
+    if (path_changed && user->GetChannel()->HasStreamPath() &&
+        data_by_stream_path_.count(user->GetChannel()->GetStreamPath())) {
       return Status(StatusCode::VALIDATION_ERROR, "Stream path unavailable.");
     }
 
-    data_by_name_[user->GetName()] = oldUser;
-    data_by_stream_path_[user->GetStreamPath()] = oldUser;
+    data_by_name_[user->GetName()] = old_user;
+    data_by_stream_path_[user->GetChannel()->GetStreamPath()] = old_user;
   }
 
   bool saved = user->Save();
@@ -448,13 +435,15 @@ Status Users::Save(std::shared_ptr<User> user) {
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
     data_by_name_[user->GetName()] = user;
-    data_by_stream_path_[user->GetStreamPath()] = user;
+    data_by_stream_path_[user->GetChannel()->GetStreamPath()] = user;
 
-    if (name_changed && !oldUser->GetName().empty()) {
-      data_by_name_.erase(oldUser->GetName());
+    if (name_changed && !old_user->GetName().empty()) {
+      data_by_name_.erase(old_user->GetName());
     }
-    if (stream_path_changed && !oldUser->GetStreamPath().empty()) {
-      data_by_stream_path_.erase(oldUser->GetStreamPath());
+
+    const auto &old_channel = old_user->GetChannel()->GetStreamPath();
+    if (path_changed && old_user->GetChannel()->HasStreamPath()) {
+      data_by_stream_path_.erase(old_user->GetChannel()->GetStreamPath());
     }
 
     return Status::OK;
@@ -463,8 +452,8 @@ Status Users::Save(std::shared_ptr<User> user) {
   if (name_changed && !user->GetName().empty()) {
     data_by_name_.erase(user->GetName());
   }
-  if (stream_path_changed && !user->GetStreamPath().empty()) {
-    data_by_stream_path_.erase(user->GetStreamPath());
+  if (path_changed && user->GetChannel()->HasStreamPath()) {
+    data_by_stream_path_.erase(user->GetChannel()->GetStreamPath());
   }
 
   return Status(StatusCode::DB_ENGINE_ERROR, "Error saving changes.");
