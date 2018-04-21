@@ -3,13 +3,15 @@
 #include <glog/logging.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
-#include <sqlite_modern_cpp.h>
-#include <boost/thread/shared_mutex.hpp>
 #include <chrono>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <sqlite_modern_cpp.h>
+#include <algorithm>
+#include <boost/thread/shared_mutex.hpp>
 
 #include "Channel.h"
 #include "Status.h"
@@ -35,47 +37,47 @@ class Stream {
   Stream(sqlite::database db, const Channel &channel)
       : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel) {}
 
-  inline uint64_t GetID() {
+  inline uint64_t GetID() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return id_;
   }
 
-  inline std::shared_ptr<Channel> GetChannel() {
+  inline std::shared_ptr<Channel> GetChannel() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return channel_;
   }
 
-  inline std::string GetThumbnail() {
+  inline std::string GetThumbnail() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return thumbnail_;
   }
 
-  inline bool GetLive() {
+  inline bool GetLive() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return live_;
   }
 
-  inline bool GetNSFW() {
+  inline bool GetNSFW() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return nsfw_;
   }
 
-  inline uint64_t GetViewerCount() {
+  inline uint64_t GetViewerCount() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return viewer_count_;
   }
 
-  inline uint64_t GetRustlerCount() {
+  inline uint64_t GetRustlerCount() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return rustler_count_;
   }
 
-  inline uint64_t GetUpdateTime() {
+  inline uint64_t GetUpdateTime() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return update_time_;
   }
 
-  inline uint64_t GetResetTime() {
+  inline uint64_t GetResetTime() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return reset_time_;
   }
@@ -146,9 +148,19 @@ class Stream {
 
   bool SaveNew();
 
+  template <class T>
+  bool Test(T filter) const {
+    return filter.Test(*this);
+  }
+
+  template <class T, class... Ts>
+  bool Test(T filter, Ts... filters) const {
+    return filter.Test(*this) && Test(filters...);
+  }
+
  private:
   sqlite::database db_;
-  boost::shared_mutex lock_;
+  mutable boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
   std::string thumbnail_;
@@ -160,17 +172,61 @@ class Stream {
   uint64_t update_time_{0};
 };
 
+class UpdatedSince {
+ public:
+  explicit UpdatedSince(uint64_t timestamp) : timestamp_(timestamp) {}
+
+  bool Test(const Stream &stream) const {
+    return stream.GetUpdateTime() >= timestamp_;
+  }
+
+ private:
+  uint64_t timestamp_;
+};
+
+struct HasRustlers {
+  bool Test(const Stream &stream) const { return stream.GetRustlerCount() > 0; }
+};
+
+struct IsLive {
+  bool Test(const Stream &stream) const { return stream.GetLive(); }
+};
+
 class Streams {
  public:
   explicit Streams(sqlite::database db_);
 
   void InitTable();
 
+  template <class... Ts>
+  std::vector<std::shared_ptr<Stream>> GetAllFiltered(Ts... filters) {
+    std::vector<std::shared_ptr<Stream>> streams;
+
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    for (const auto i : data_by_id_) {
+      if (i.second->Test(filters...)) {
+        streams.push_back(i.second);
+      }
+    }
+
+    return streams;
+  }
+
+  template <class... Ts>
+  std::vector<std::shared_ptr<Stream>> GetAllFilteredSorted(Ts... filters) {
+    auto streams = GetAllFiltered(filters...);
+
+    std::sort(streams.begin(), streams.end(),
+              [](std::shared_ptr<Stream> a, std::shared_ptr<Stream> b) {
+                return b->GetRustlerCount() < a->GetRustlerCount();
+              });
+
+    return streams;
+  }
+
   std::vector<std::shared_ptr<Stream>> GetAllUpdatedSince(uint64_t timestamp);
 
   std::vector<std::shared_ptr<Stream>> GetAllWithRustlers();
-
-  std::vector<std::shared_ptr<Stream>> GetAllWithRustlersSorted();
 
   std::string GetAPIJSON();
 

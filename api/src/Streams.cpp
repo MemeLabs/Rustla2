@@ -189,44 +189,15 @@ void Streams::InitTable() {
 
 std::vector<std::shared_ptr<Stream>> Streams::GetAllUpdatedSince(
     uint64_t timestamp) {
-  std::vector<std::shared_ptr<Stream>> streams;
-
-  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-  for (const auto i : data_by_id_) {
-    if (i.second->GetUpdateTime() >= timestamp) {
-      streams.push_back(i.second);
-    }
-  }
-
-  return streams;
+  return GetAllFiltered(UpdatedSince(timestamp));
 }
 
 std::vector<std::shared_ptr<Stream>> Streams::GetAllWithRustlers() {
-  std::vector<std::shared_ptr<Stream>> streams;
-
-  boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-  for (const auto i : data_by_id_) {
-    if (i.second->GetRustlerCount() > 0) {
-      streams.push_back(i.second);
-    }
-  }
-
-  return streams;
-}
-
-std::vector<std::shared_ptr<Stream>> Streams::GetAllWithRustlersSorted() {
-  auto streams = GetAllWithRustlers();
-
-  std::sort(streams.begin(), streams.end(),
-            [](std::shared_ptr<Stream> a, std::shared_ptr<Stream> b) {
-              return b->GetRustlerCount() < a->GetRustlerCount();
-            });
-
-  return streams;
+  return GetAllFiltered(HasRustlers());
 }
 
 std::string Streams::GetAPIJSON() {
-  auto streams = GetAllWithRustlersSorted();
+  auto streams = GetAllFilteredSorted(HasRustlers(), IsLive());
 
   rapidjson::StringBuffer buf;
   rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
@@ -254,7 +225,7 @@ std::string Streams::GetAPIJSON() {
 
 void Streams::WriteStreamsJSON(
     rapidjson::Writer<rapidjson::StringBuffer> *writer) {
-  auto streams = GetAllWithRustlersSorted();
+  auto streams = GetAllWithRustlers();
 
   writer->StartArray();
   for (const auto &stream : streams) {
