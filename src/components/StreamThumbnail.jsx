@@ -1,3 +1,5 @@
+/* global THUMBNAIL_REFRESH_INTERVAL */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -8,10 +10,14 @@ import '../css/StreamThumbnail';
 const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rustlers, ...rest }) => {
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
   const text = overrustle_id ? `${overrustle_id} via ${channel} on ${service}` : `${channel} on ${service}`;
+
+  const epochMinute = Math.floor(Date.now() / (THUMBNAIL_REFRESH_INTERVAL || 60000));
+  const thumbnailUrl = `${thumbnail}?${epochMinute}`;
+
   return (
     <div className='stream-thumbnail' {...rest}>
       <Link to={url}>
-        {thumbnail ? <img src={thumbnail} /> : <img className='jiggle-position' src='/image/jigglymonkey.png' />}
+        {thumbnail ? <img src={thumbnailUrl} /> : <img className='jiggle-position' src='/image/jigglymonkey.png' />}
       </Link>
       <div className='stream-caption'>
         <Link to={url}>

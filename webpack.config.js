@@ -131,6 +131,7 @@ module.exports = {
       'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : undefined,
       'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : undefined,
       'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : undefined,
+      'THUMBNAIL_REFRESH_INTERVAL': process.env.THUMBNAIL_REFRESH_INTERVAL ? `"${process.env.THUMBNAIL_REFRESH_INTERVAL}"` : undefined,
       'GIT_COMMIT_HASH': `"${gitHash()}"`,
       'GIT_SHORT_COMMIT_HASH': `"${gitHash({ short: true })}"`,
       /* eslint-enable quotes */
