@@ -12,7 +12,7 @@ const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rus
   const text = overrustle_id ? `${overrustle_id} via ${channel} on ${service}` : `${channel} on ${service}`;
 
   const epochMinute = Math.floor(Date.now() / (THUMBNAIL_REFRESH_INTERVAL || 60000));
-  const thumbnailUrl = `${thumbnail}?${epochMinute}`;
+  const thumbnailUrl = live ? `${thumbnail}?${epochMinute}` : thumbnail;
 
   return (
     <div className='stream-thumbnail' {...rest}>
