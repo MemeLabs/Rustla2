@@ -59,7 +59,7 @@ const Streams = ({ history, streams }) => {
     grid = makeCategories([
       {
         header: 'Live Community Streams',
-        test: stream => Boolean(stream.overrustle_id) && stream.live,
+        test: stream => (Boolean(stream.overrustle_id) || stream.service === 'angelthump') && stream.live,
       },
       {
         header: 'Live Streams',
