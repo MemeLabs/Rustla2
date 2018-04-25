@@ -1,5 +1,5 @@
 import INITIAL_STATE from '../INITIAL_STATE';
-import { SET_CHAT_SIZE, TOGGLE_CHAT } from '../actions';
+import { SET_CHAT_SIZE, TOGGLE_CHAT, SHOW_CHAT } from '../actions';
 
 
 function uiReducer(state = INITIAL_STATE.ui, action) {
@@ -13,6 +13,13 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
       return {
         ...state,
         chatHost: action.payload,
+        // Might be better to add this conditionally based on current state to avoid re-renders
+        showChat: true,
+      };
+    case SHOW_CHAT:
+      return {
+        ...state,
+        showChat: action.payload,
       };
     default:
       return state;
