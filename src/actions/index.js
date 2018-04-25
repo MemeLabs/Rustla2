@@ -148,3 +148,11 @@ export const toggleChat = host => {
     payload: host,
   };
 };
+
+export const SHOW_CHAT = Symbol('SHOW_CHAT');
+export const showChat = value => {
+  return {
+    type: SHOW_CHAT,
+    payload: value,
+  };
+};

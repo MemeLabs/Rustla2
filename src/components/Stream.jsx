@@ -13,6 +13,7 @@ import idx from 'idx';
 import {
   setStream,
   setChatSize,
+  showChat,
   fetchProfileIfLoggedIn,
 } from '../actions';
 
@@ -24,12 +25,12 @@ import ChatEmbed from './ChatEmbed';
 
 export const Stream = ({
   chatClosed,
-  closeChat,
   history,
   service,
   channel,
   chatSize,
   setChatSize,
+  showChat,
   rustlerCount,
   showLeftChat = false,
 }) => {
@@ -40,7 +41,7 @@ export const Stream = ({
   );
   let right = chatClosed ? null : (
     <div style={{ width: chatSize }}>
-      <ChatEmbed onClose={closeChat} />
+      <ChatEmbed onClose={() => showChat(false)} />
     </div>
   );
   if (showLeftChat) {
@@ -72,7 +73,6 @@ export const Stream = ({
 
 Stream.propTypes = {
   chatClosed: PropTypes.bool,
-  closeChat: PropTypes.func,
   history: PropTypes.object.isRequired,
 
   service: PropTypes.string.isRequired,
@@ -82,6 +82,7 @@ Stream.propTypes = {
   showLeftChat: PropTypes.bool,
 
   setChatSize: PropTypes.func.isRequired,
+  showChat: PropTypes.func.isRequired,
   rustlerCount: PropTypes.arrayOf(PropTypes.number),
 };
 
@@ -92,10 +93,12 @@ export default compose(
       rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
       showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
       isFetchingProfile: state.self.profile.isFetching,
+      chatClosed: !state.ui.showChat,
     }),
     {
       setStream,
       setChatSize,
+      showChat,
       fetchProfileIfLoggedIn,
     },
   ),
@@ -109,6 +112,7 @@ export default compose(
     showLeftChat: PropTypes.bool,
 
     setChatSize: PropTypes.func.isRequired,
+    showChat: PropTypes.func.isRequired,
     setStream: PropTypes.func.isRequired,
   }),
   lifecycle({
@@ -147,8 +151,4 @@ export default compose(
     renderNothing,
     Component => Component,
   ),
-  withState('chatClosed', 'setChatClosed', false),
-  withHandlers({
-    closeChat: ({ setChatClosed }) => () => setChatClosed(true),
-  }),
 )(Stream);
