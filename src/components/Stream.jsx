@@ -5,8 +5,6 @@ import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
 import setPropTypes from 'recompose/setPropTypes';
 import renderNothing from 'recompose/renderNothing';
-import withHandlers from 'recompose/withHandlers';
-import withState from 'recompose/withState';
 import branch from 'recompose/branch';
 import idx from 'idx';
 
