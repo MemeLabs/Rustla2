@@ -48,7 +48,7 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
 
     rapidjson::Document input;
     input.Parse(message, length);
-    if (input.HasParseError() || !input.IsArray()) {
+    if (input.HasParseError() || !input.IsArray() || input.Size() == 0) {
       return;
     }
 
