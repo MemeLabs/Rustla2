@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/functional/hash.hpp>
 #include <folly/Format.h>
 #include <folly/String.h>
 #include <rapidjson/stringbuffer.h>
@@ -114,9 +115,10 @@ class Channel {
 
 struct ChannelHash : public std::unary_function<Channel, std::size_t> {
   std::size_t operator()(const Channel &k) const {
-    return std::hash<std::string>{}(k.channel_) ^
-           std::hash<std::string>{}(k.service_) ^
-           std::hash<std::string>{}(k.stream_path_);
+    auto hash = std::hash<std::string>{}(k.channel_);
+    boost::hash_combine(hash, std::hash<std::string>{}(k.service_));
+    boost::hash_combine(hash, std::hash<std::string>{}(k.stream_path_));
+    return hash;
   }
 };
 
@@ -129,8 +131,9 @@ struct ChannelEqual : public std::binary_function<Channel, Channel, bool> {
 
 struct ChannelSourceHash : public std::unary_function<Channel, std::size_t> {
   std::size_t operator()(const Channel &k) const {
-    return std::hash<std::string>{}(k.channel_) ^
-           std::hash<std::string>{}(k.service_);
+    auto hash = std::hash<std::string>{}(k.channel_);
+    boost::hash_combine(hash, std::hash<std::string>{}(k.service_));
+    return hash;
   }
 };
 
