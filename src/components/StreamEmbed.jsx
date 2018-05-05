@@ -65,6 +65,7 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
         scrolling='no'
         seamless
         allowFullScreen
+        muted
         src={src}
         {...rest}
         />
