@@ -13,26 +13,34 @@ rapidjson::Document ChannelResult::GetSchema() {
         "type": "object",
         "properties": {
           "live": {"type": "boolean"},
+          "poster": {
+            "type": "string",
+            "format": "uri"
+          },
           "thumbnail": {
             "type": "string",
             "format": "uri"
           },
           "viewers": {"type": "integer"}
         },
-        "required": ["live", "thumbnail", "viewers"]
+        "required": ["poster"]
       }
     )json");
   return schema;
 }
 
-bool ChannelResult::GetLive() const { return GetData()["live"].GetBool(); }
+bool ChannelResult::GetLive() const {
+  return GetData().HasMember("live") && GetData()["live"].GetBool();
+}
 
 std::string ChannelResult::GetThumbnail() const {
-  return json::StringRef(GetData()["thumbnail"]);
+  return GetData().HasMember("thumbnail")
+             ? json::StringRef(GetData()["thumbnail"])
+             : json::StringRef(GetData()["poster"]);
 }
 
 uint64_t ChannelResult::GetViewers() const {
-  return GetData()["viewers"].GetUint64();
+  return GetData().HasMember("viewers") ? GetData()["viewers"].GetUint64() : 0;
 }
 
 Status Client::GetChannelByName(const std::string& name,

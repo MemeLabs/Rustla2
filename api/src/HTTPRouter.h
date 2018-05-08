@@ -1,5 +1,6 @@
 #pragma once
 
+#include <boost/functional/hash.hpp>
 #include <folly/String.h>
 #include <uWS/uWS.h>
 #include <functional>
@@ -38,8 +39,9 @@ struct HTTPRoute {
 
 struct HTTPRouteHash : public std::unary_function<HTTPRoute, std::size_t> {
   std::size_t operator()(const HTTPRoute &k) const {
-    return std::hash<std::string>{}(k.path) ^
-           std::hash<std::underlying_type<uWS::HttpMethod>::type>{}(k.method);
+    auto hash = std::hash<std::string>{}(k.path);
+    boost::hash_combine(hash, std::hash<std::underlying_type<uWS::HttpMethod>::type>{}(k.method));
+    return hash;
   }
 };
 

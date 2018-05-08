@@ -4,6 +4,7 @@
 #include <folly/String.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include <boost/functional/hash.hpp>
 #include <functional>
 #include <memory>
 #include <string>
@@ -67,7 +68,7 @@ class Channel {
   inline const std::string &GetService() const { return service_; }
 
   inline const std::string GetPath() const {
-    return !stream_path_.empty() ? stream_path_
+    return !stream_path_.empty() ? folly::sformat("/{}", stream_path_)
                                  : folly::sformat("/{}/{}", service_, channel_);
   }
 
@@ -114,9 +115,10 @@ class Channel {
 
 struct ChannelHash : public std::unary_function<Channel, std::size_t> {
   std::size_t operator()(const Channel &k) const {
-    return std::hash<std::string>{}(k.channel_) ^
-           std::hash<std::string>{}(k.service_) ^
-           std::hash<std::string>{}(k.stream_path_);
+    auto hash = std::hash<std::string>{}(k.channel_);
+    boost::hash_combine(hash, std::hash<std::string>{}(k.service_));
+    boost::hash_combine(hash, std::hash<std::string>{}(k.stream_path_));
+    return hash;
   }
 };
 
@@ -129,8 +131,9 @@ struct ChannelEqual : public std::binary_function<Channel, Channel, bool> {
 
 struct ChannelSourceHash : public std::unary_function<Channel, std::size_t> {
   std::size_t operator()(const Channel &k) const {
-    return std::hash<std::string>{}(k.channel_) ^
-           std::hash<std::string>{}(k.service_);
+    auto hash = std::hash<std::string>{}(k.channel_);
+    boost::hash_combine(hash, std::hash<std::string>{}(k.service_));
+    return hash;
   }
 };
 

@@ -17,6 +17,7 @@ const AdvancedStreamEmbed = ({ acceptedWarning, acceptWarning, channel }) => {
         frameBorder='0'
         scrolling='no'
         seamless
+        allow='autoplay; fullscreen'
         allowFullScreen
         allowTransparency
         src={channel}

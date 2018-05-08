@@ -64,6 +64,7 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
         frameBorder='0'
         scrolling='no'
         seamless
+        allow='autoplay; fullscreen'
         allowFullScreen
         src={src}
         {...rest}
