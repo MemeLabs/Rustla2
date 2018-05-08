@@ -1,10 +1,10 @@
 #pragma once
 
-#include <boost/functional/hash.hpp>
 #include <folly/Format.h>
 #include <folly/String.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include <boost/functional/hash.hpp>
 #include <functional>
 #include <memory>
 #include <string>
@@ -68,7 +68,7 @@ class Channel {
   inline const std::string &GetService() const { return service_; }
 
   inline const std::string GetPath() const {
-    return !stream_path_.empty() ? stream_path_
+    return !stream_path_.empty() ? folly::sformat("/{}", stream_path_)
                                  : folly::sformat("/{}/{}", service_, channel_);
   }
 
