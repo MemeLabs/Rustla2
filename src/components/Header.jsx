@@ -12,6 +12,7 @@ import '../css/Header';
 
 import { toggleChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
+import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
 
 
@@ -27,13 +28,14 @@ const Header = ({
 }) => {
   let rustlers = null;
   let viewers = null;
+  const viewerTitle = isVod(currentStreamService) ? 'Views' : 'Viewers';
   if (rustlerCount) {
     const [ rCount, vCount ] = rustlerCount;
     if (rCount) {
       rustlers = <li><a>{rCount} Rustlers</a></li>;
     }
     if (vCount) {
-      viewers = <li><a>{vCount} Viewers</a></li>;
+      viewers = <li><a>{vCount} {viewerTitle}</a></li>;
     }
   }
   return (
