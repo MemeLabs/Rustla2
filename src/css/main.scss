@@ -13,19 +13,9 @@ iframe {
   display: block;
 }
 
-@keyframes jiggle_position {
-  0% { left: 0px }
-  100% { left: 2px }
-}
-
 @keyframes jiggle_background {
   0% { background-position: 50% 50%; }
   100% { background-position: 51% 50%; }
-}
-
-.jiggle-position {
-  animation: jiggle_position 100ms infinite;
-  position: relative;
 }
 
 .jiggle-background {

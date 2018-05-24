@@ -11,14 +11,20 @@ const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rus
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
   const text = overrustle_id ? `${overrustle_id} via ${channel} on ${service}` : `${channel} on ${service}`;
 
-  const epochMinute = Math.floor(Date.now() / (THUMBNAIL_REFRESH_INTERVAL || 60000));
-  const thumbnailUrl = live ? `${thumbnail}?${epochMinute}` : thumbnail;
+  let thumbnailProps = { className: 'thumbnail-image thumbnail-default-image' };
+  if (thumbnail) {
+    const epochMinute = Math.floor(Date.now() / (THUMBNAIL_REFRESH_INTERVAL || 60000));
+    const thumbnailUrl = live ? `${thumbnail}?${epochMinute}` : thumbnail;
+
+    thumbnailProps = {
+      className: 'thumbnail-image',
+      style: { backgroundImage: `url(${thumbnailUrl})` },
+    };
+  }
 
   return (
     <div className='stream-thumbnail' {...rest}>
-      <Link to={url}>
-        {thumbnail ? <img src={thumbnailUrl} /> : <img className='jiggle-position' src='/image/jigglymonkey.png' />}
-      </Link>
+      <Link to={url} {...thumbnailProps} />
       <div className='stream-caption'>
         <Link to={url}>
           <span className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
