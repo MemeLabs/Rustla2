@@ -7,7 +7,7 @@ export default {
   ui: {
     chatHost: CHAT_HOST_STRIMS,
     chatSize: localStorage ? Number(localStorage.getItem('chatSize')) || 400 : 400,
-    showChat: true,
+    showChat: localStorage ? !(localStorage.getItem('showChat') === 'false') : true,
   },
   self: {
     isLoggedIn: false,
