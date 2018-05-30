@@ -138,21 +138,27 @@ export const logout = () => dispatch => {
   });
 };
 
+export const SHOW_CHAT = Symbol('SHOW_CHAT');
+export const showChat = value => dispatch => {
+  if (localStorage) {
+    localStorage.setItem('showChat', value);
+  }
+
+  dispatch({
+    type: SHOW_CHAT,
+    payload: value,
+  });
+};
+
 export const TOGGLE_CHAT = Symbol('TOGGLE_CHAT');
 export const CHAT_HOST_SERVICE = Symbol('CHAT_HOST_SERVICE');
 export const CHAT_HOST_STRIMS = Symbol('CHAT_HOST_STRIMS');
 export const CHAT_HOST_DGG = Symbol('CHAT_HOST_DGG');
-export const toggleChat = host => {
-  return {
+export const toggleChat = host => dispatch => {
+  dispatch(showChat(true));
+
+  dispatch({
     type: TOGGLE_CHAT,
     payload: host,
-  };
-};
-
-export const SHOW_CHAT = Symbol('SHOW_CHAT');
-export const showChat = value => {
-  return {
-    type: SHOW_CHAT,
-    payload: value,
-  };
+  });
 };
