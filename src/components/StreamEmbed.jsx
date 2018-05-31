@@ -37,7 +37,7 @@ const getSrc = (channel, service) => {
     case 'vaughn':
       return `https://vaughnlive.tv/embed/video/${channel}`;
     case 'youtube-playlist':
-      return `https://www.youtube.com/embed/videoseries?list=${channel}`;
+      return `https://www.youtube.com/embed/videoseries?list=${channel}&autoplay=1`;
     case 'youtube':
       return `https://www.youtube.com/embed/${channel}?autoplay=1`;
     case 'afreeca':
