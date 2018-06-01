@@ -13,8 +13,6 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
       return {
         ...state,
         chatHost: action.payload,
-        // Might be better to add this conditionally based on current state to avoid re-renders
-        showChat: true,
       };
     case SHOW_CHAT:
       return {
