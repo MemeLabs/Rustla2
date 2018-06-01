@@ -1,6 +1,6 @@
 ## Setup
 
-  1. Build the static assets and create a config (<https://github.com/ILiedAboutCake/Rustla2#setup>)
+  1. Build the static assets and create a config (<https://github.com/MemeLabs/Rustla2#setup>)
   2. Install Docker (<https://docs.docker.com/engine/installation/>)
   3. Build and run the Docker container
         ```
