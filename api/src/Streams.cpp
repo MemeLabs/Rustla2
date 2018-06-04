@@ -18,6 +18,8 @@ void Stream::WriteAPIJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->String(channel_->GetService());
   writer->Key("channel");
   writer->String(channel_->GetChannel());
+  writer->Key("title");
+  writer->String(title_);
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("url");
@@ -39,6 +41,8 @@ void Stream::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->String(channel_->GetService());
   writer->Key("overrustle_id");
   writer->String(channel_->GetStreamPath());
+  writer->Key("title");
+  writer->String(title_);
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("live");
@@ -61,6 +65,7 @@ bool Stream::Save() {
           `channel` = ?,
           `service` = ?,
           `path` = ?,
+          `title` = ?,
           `thumbnail` = ?,
           `live` = ?,
           `viewers` = ?,
@@ -68,14 +73,15 @@ bool Stream::Save() {
         WHERE `id` = ?
       )sql";
     db_ << sql << channel_->GetChannel() << channel_->GetService()
-        << channel_->GetStreamPath() << thumbnail_ << live_ << viewer_count_
-        << id_;
+        << channel_->GetStreamPath() << title_ << thumbnail_ << live_
+        << viewer_count_ << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating stream "
                << "id " << id_ << ", "
                << "channel " << channel_->GetChannel() << ", "
                << "service " << channel_->GetService() << ", "
                << "path " << channel_->GetStreamPath() << ", "
+               << "title " << title_ << ", "
                << "thumbnail " << thumbnail_ << ", "
                << "live " << live_ << ", "
                << "viewer_count " << viewer_count_ << ", "
@@ -97,6 +103,7 @@ bool Stream::SaveNew() {
           `channel`,
           `service`,
           `path`,
+          `title`,
           `thumbnail`,
           `live`,
           `viewers`,
@@ -111,18 +118,21 @@ bool Stream::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
           datetime(),
           datetime()
         )
       )sql";
     db_ << sql << id_ << channel_->GetChannel() << channel_->GetService()
-        << channel_->GetStreamPath() << thumbnail_ << live_ << viewer_count_;
+        << channel_->GetStreamPath() << title_ << thumbnail_ << live_
+        << viewer_count_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating stream "
                << "id " << id_ << ", "
                << "channel " << channel_->GetChannel() << ", "
                << "service " << channel_->GetService() << ", "
                << "path " << channel_->GetStreamPath() << ", "
+               << "title " << title_ << ", "
                << "thumbnail " << thumbnail_ << ", "
                << "live " << live_ << ", "
                << "viewer_count " << viewer_count_ << ", "
@@ -144,6 +154,7 @@ Streams::Streams(sqlite::database db) : db_(db) {
         `channel`,
         `service`,
         `path`,
+        `title`,
         `thumbnail`,
         `live`,
         `viewers`
@@ -153,11 +164,11 @@ Streams::Streams(sqlite::database db) : db_(db) {
 
   query >> [&](const uint64_t id, const std::string &channel,
                const std::string &service, const std::string &path,
-               const std::string &thumbnail, const bool live,
-               const uint64_t viewer_count) {
+               const std::string &title, const std::string &thumbnail,
+               const bool live, const uint64_t viewer_count) {
     auto stream_channel = Channel::Create(channel, service, path);
-    auto stream = std::make_shared<Stream>(db_, id, stream_channel, thumbnail,
-                                           live, viewer_count);
+    auto stream = std::make_shared<Stream>(db_, id, stream_channel, title,
+                                           thumbnail, live, viewer_count);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -173,6 +184,7 @@ void Streams::InitTable() {
         `channel` VARCHAR(255) NOT NULL,
         `service` VARCHAR(255) NOT NULL,
         `path` VARCHAR(255) REFERENCES `users` (`stream_path`) ON DELETE SET NULL ON UPDATE CASCADE,
+        `title` VARCHAR(255) NOT NULL,
         `thumbnail` VARCHAR(255),
         `live` TINYINT(1) DEFAULT 0,
         `viewers` INTEGER DEFAULT 0,

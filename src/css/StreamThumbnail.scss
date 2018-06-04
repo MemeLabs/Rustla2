@@ -3,6 +3,32 @@
   background-color: #222;
   margin-top: 1em;
 
+  .thumbnail-image:before {
+    background-size: contain;
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.5));
+    padding-top: 10%;
+    position: absolute;
+    right: 2%;
+    top: 4%;
+    width: 10%;
+  }
+
+  &.stream-thumbnail-angelthump .thumbnail-image:before {
+    background-image: url(/image/angelthump.png);
+    width: 20%;
+  }
+
+  &.stream-thumbnail-twitch .thumbnail-image:before {
+    background-image: url(/image/twitch.png);
+  }
+
+  &.stream-thumbnail-youtube .thumbnail-image:before {
+    background-image: url(/image/youtube.png);
+  }
+
   .thumbnail-image {
     background-position: center;
     background-repeat: no-repeat;
@@ -10,6 +36,7 @@
     display: block;
     height: 0;
     padding-top: 56.25%;
+    position: relative;
   }
 
   .thumbnail-default-image {
@@ -31,5 +58,14 @@
       text-overflow: ellipsis;
       overflow: hidden;
     }
+  }
+
+  .thumbnail-text {
+    display: block;
+    height: 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: calc(100% - 50px);
   }
 }

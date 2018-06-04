@@ -10,9 +10,19 @@
 namespace rustla2 {
 namespace youtube {
 
+std::string VideosResult::Video::GetTitle() const {
+  return json::StringRef(data_["snippet"]["title"]);
+}
+
 uint64_t VideosResult::Video::GetViewers() const {
-  return std::stoull(std::string(
-      json::StringRef(data_["liveStreamingDetails"]["concurrentViewers"])));
+  std::string count;
+  if (data_.HasMember("liveStreamingDetails")) {
+    count = json::StringRef(data_["liveStreamingDetails"]["concurrentViewers"]);
+  } else if (data_.HasMember("statistics")) {
+    count = json::StringRef(data_["statistics"]["viewCount"]);
+  }
+
+  return std::stoull(count);
 }
 
 std::string VideosResult::Video::GetMediumThumbnail() const {
@@ -40,6 +50,7 @@ rapidjson::Document VideosResult::GetSchema() {
                 "snippet": {
                   "type": "object",
                   "properties": {
+                    "title": {"type": "string"},
                     "thumbnails": {
                       "type": "object",
                       "properties": {
@@ -57,7 +68,7 @@ rapidjson::Document VideosResult::GetSchema() {
                       "required": ["medium"]
                     }
                   },
-                  "required": ["thumbnails"]
+                  "required": ["title", "thumbnails"]
                 },
                 "liveStreamingDetails": {
                   "type": "object",
@@ -68,9 +79,19 @@ rapidjson::Document VideosResult::GetSchema() {
                     }
                   },
                   "required": ["concurrentViewers"]
+                },
+                "statistics": {
+                  "type": "object",
+                  "properties": {
+                    "viewCount": {
+                      "type": "string",
+                      "pattern": "^[0-9]+$"
+                    }
+                  },
+                  "required": ["viewCount"]
                 }
               },
-              "required": ["snippet", "liveStreamingDetails"]
+              "required": ["snippet"]
             }
           }
         }
@@ -123,7 +144,7 @@ Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
   std::stringstream url;
   url << "https://www.googleapis.com/youtube/v3/videos"
       << "?key=" << config_.public_api_key
-      << "&part=liveStreamingDetails,snippet"
+      << "&part=liveStreamingDetails,snippet,statistics"
       << "&id=" << id;
 
   CurlRequest req(url.str());

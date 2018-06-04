@@ -6,10 +6,15 @@ import { Link } from 'react-router-dom';
 
 import '../css/StreamThumbnail';
 
-
-const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rustlers, ...rest }) => {
+const StreamThumbnail = ({ overrustle_id, channel, service, title, thumbnail, live, rustlers, ...rest }) => {
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
-  const text = overrustle_id ? `${overrustle_id} via ${channel} on ${service}` : `${channel} on ${service}`;
+
+  let text = overrustle_id && overrustle_id !== channel
+    ? `${overrustle_id} via ${channel}`
+    : `${channel}`;
+  if (title) {
+    text = overrustle_id ? `${title} presented by ${overrustle_id}` : title;
+  }
 
   let thumbnailProps = { className: 'thumbnail-image thumbnail-default-image' };
   if (thumbnail) {
@@ -23,7 +28,7 @@ const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rus
   }
 
   return (
-    <div className='stream-thumbnail' {...rest}>
+    <div className={`stream-thumbnail stream-thumbnail-${service}`} title={text} {...rest}>
       <Link to={url} {...thumbnailProps} />
       <div className='stream-caption'>
         <Link to={url}>
@@ -32,7 +37,7 @@ const StreamThumbnail = ({ overrustle_id, channel, service, thumbnail, live, rus
             {'\u00a0'}
             <span className='glyphicon glyphicon-user' />
           </span>
-          <span>{text}</span>
+          <span className='thumbnail-text'>{text}</span>
         </Link>
       </div>
     </div>
@@ -43,6 +48,7 @@ StreamThumbnail.propTypes = {
   overrustle_id: PropTypes.string,
   channel: PropTypes.string.isRequired,
   service: PropTypes.string.isRequired,
+  title: PropTypes.string,
   thumbnail: PropTypes.string,
   live: PropTypes.bool.isRequired,
   rustlers: PropTypes.number.isRequired,

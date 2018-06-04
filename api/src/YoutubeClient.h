@@ -16,6 +16,8 @@ class VideosResult : public APIResult {
    public:
     explicit Video(const rapidjson::Value& data) : data_(data) {}
 
+    std::string GetTitle() const;
+
     uint64_t GetViewers() const;
 
     std::string GetMediumThumbnail() const;

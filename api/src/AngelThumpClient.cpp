@@ -12,6 +12,7 @@ rapidjson::Document ChannelResult::GetSchema() {
       {
         "type": "object",
         "properties": {
+          "title": {"type": "string"},
           "live": {"type": "boolean"},
           "poster": {
             "type": "string",
@@ -27,6 +28,13 @@ rapidjson::Document ChannelResult::GetSchema() {
       }
     )json");
   return schema;
+}
+
+std::string ChannelResult::GetTitle() const {
+  if (GetData().HasMember("title")) {
+    return json::StringRef(GetData()["title"]);
+  }
+  return "";
 }
 
 bool ChannelResult::GetLive() const {

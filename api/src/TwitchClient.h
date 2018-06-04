@@ -60,6 +60,8 @@ class StreamsResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
 
+  std::string GetGame() const;
+
   bool IsEmpty() const;
 
   uint64_t GetViewers() const;
@@ -77,6 +79,8 @@ class ChannelsResult : public APIResult {
 class VideosResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
+
+  std::string GetTitle() const;
 
   std::string GetLargePreview() const;
 

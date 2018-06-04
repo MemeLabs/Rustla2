@@ -14,6 +14,7 @@ namespace rustla2 {
 struct ChannelState {
   ChannelState() : thumbnail(""), viewers(0), live(false) {}
 
+  std::string title;
   std::string thumbnail;
   uint64_t viewers;
   bool live;

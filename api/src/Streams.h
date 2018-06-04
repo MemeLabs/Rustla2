@@ -24,11 +24,12 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 class Stream {
  public:
   Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         const std::string &thumbnail = "", const bool live = false,
-         const uint64_t viewer_count = 0)
+         const std::string &title = "", const std::string &thumbnail = "",
+         const bool live = false, const uint64_t viewer_count = 0)
       : db_(db),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
+        title_(title),
         thumbnail_(thumbnail),
         live_(live),
         nsfw_(false),
@@ -45,6 +46,11 @@ class Stream {
   inline std::shared_ptr<Channel> GetChannel() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return channel_;
+  }
+
+  inline std::string GetTitle() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return title_;
   }
 
   inline std::string GetThumbnail() const {
@@ -126,6 +132,12 @@ class Stream {
     return true;
   }
 
+  inline bool SetTitle(const std::string &title) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    title_ = title;
+    return true;
+  }
+
   inline bool SetThumbnail(const std::string &thumbnail) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
     thumbnail_ = thumbnail;
@@ -163,6 +175,7 @@ class Stream {
   mutable boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
+  std::string title_;
   std::string thumbnail_;
   bool live_;
   bool nsfw_;

@@ -35,10 +35,18 @@ void ServicePoller::Run() {
     }
 
     if (status.Ok()) {
+      stream->SetTitle(state.title);
       stream->SetLive(state.live);
       stream->SetThumbnail(state.thumbnail);
       stream->SetViewerCount(state.viewers);
       stream->Save();
+    } else {
+      LOG(INFO) << status.GetErrorMessage() << ", " << status.GetErrorDetails();
+
+      if (stream->GetLive()) {
+        stream->SetLive(false);
+        stream->Save();
+      }
     }
   }
 }
@@ -53,6 +61,7 @@ const Status ServicePoller::CheckAngelThump(const std::string& name,
     return status;
   }
 
+  state->title = channel.GetTitle();
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
@@ -79,6 +88,7 @@ const Status ServicePoller::CheckTwitchStream(const std::string& name,
   }
 
   if (!stream.IsEmpty()) {
+    state->title = stream.GetGame();
     state->live = true;
     state->thumbnail = stream.GetLargePreview();
     state->viewers = stream.GetViewers();
@@ -89,6 +99,7 @@ const Status ServicePoller::CheckTwitchStream(const std::string& name,
       return channel_status;
     }
 
+    state->title = "";
     state->live = false;
     state->thumbnail = channel.GetVideoBanner();
     state->viewers = 0;
@@ -103,6 +114,7 @@ const Status ServicePoller::CheckTwitchVOD(const std::string& name,
   auto status = twitch_->GetVideosByID("v" + name, &videos);
 
   if (status.Ok()) {
+    state->title = videos.GetTitle();
     state->live = true;
     state->thumbnail = videos.GetLargePreview();
     state->viewers = videos.GetViews();
@@ -118,6 +130,7 @@ const Status ServicePoller::CheckYouTube(const std::string& name,
 
   if (status.Ok() && !videos.IsEmpty()) {
     auto video = videos.GetVideo(0);
+    state->title = video.GetTitle();
     state->live = true;
     state->thumbnail = video.GetMediumThumbnail();
     state->viewers = video.GetViewers();

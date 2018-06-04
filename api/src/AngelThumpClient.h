@@ -12,6 +12,8 @@ class ChannelResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
 
+  std::string GetTitle() const;
+
   bool GetLive() const;
 
   std::string GetThumbnail() const;

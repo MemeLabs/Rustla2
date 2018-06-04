@@ -1,5 +1,6 @@
 #include "TwitchClient.h"
 
+#include <folly/Format.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <string>
@@ -128,6 +129,7 @@ rapidjson::Document StreamsResult::GetSchema() {
               {
                 "type": "object",
                 "properties": {
+                  "game": {"type": "string"},
                   "viewers": {"type": "integer"},
                   "preview": {
                     "type": "object",
@@ -138,9 +140,16 @@ rapidjson::Document StreamsResult::GetSchema() {
                       }
                     },
                     "required": ["large"]
+                  },
+                  "channel": {
+                    "type": "object",
+                    "properties": {
+                      "display_name": {"type": "string"}
+                    },
+                    "required": ["display_name"]
                   }
                 },
-                "required": ["viewers", "preview"]
+                "required": ["game", "viewers", "preview", "channel"]
               },
               {"type": "null"}
             ]
@@ -150,6 +159,13 @@ rapidjson::Document StreamsResult::GetSchema() {
       }
     )json");
   return schema;
+}
+
+std::string StreamsResult::GetGame() const {
+  auto& stream = GetData()["stream"];
+  std::string channel = json::StringRef(stream["channel"]["display_name"]);
+  std::string game = json::StringRef(stream["game"]);
+  return folly::sformat("{} playing {}", channel, game);
 }
 
 bool StreamsResult::IsEmpty() const { return GetData()["stream"].IsNull(); }
@@ -205,12 +221,17 @@ rapidjson::Document VideosResult::GetSchema() {
               }
             },
             "required": ["large"]
-          }
+          },
+          "title": {"type": "string"}
         },
-        "required": ["views", "preview"]
+        "required": ["views", "preview", "title"],
       }
     )json");
   return schema;
+}
+
+std::string VideosResult::GetTitle() const {
+  return json::StringRef(GetData()["title"]);
 }
 
 std::string VideosResult::GetLargePreview() const {
