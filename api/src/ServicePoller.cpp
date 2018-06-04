@@ -88,7 +88,7 @@ const Status ServicePoller::CheckTwitchStream(const std::string& name,
   }
 
   if (!stream.IsEmpty()) {
-    state->title = stream.GetGame();
+    state->title = stream.GetTitle();
     state->live = true;
     state->thumbnail = stream.GetLargePreview();
     state->viewers = stream.GetViewers();

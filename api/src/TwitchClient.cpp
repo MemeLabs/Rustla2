@@ -161,7 +161,7 @@ rapidjson::Document StreamsResult::GetSchema() {
   return schema;
 }
 
-std::string StreamsResult::GetGame() const {
+std::string StreamsResult::GetTitle() const {
   auto& stream = GetData()["stream"];
   std::string channel = json::StringRef(stream["channel"]["display_name"]);
   std::string game = json::StringRef(stream["game"]);

@@ -60,7 +60,7 @@ class StreamsResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
 
-  std::string GetGame() const;
+  std::string GetTitle() const;
 
   bool IsEmpty() const;
 
