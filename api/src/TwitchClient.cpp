@@ -161,11 +161,8 @@ rapidjson::Document StreamsResult::GetSchema() {
   return schema;
 }
 
-std::string StreamsResult::GetTitle() const {
-  auto& stream = GetData()["stream"];
-  std::string channel = json::StringRef(stream["channel"]["display_name"]);
-  std::string game = json::StringRef(stream["game"]);
-  return folly::sformat("{} playing {}", channel, game);
+std::string StreamsResult::GetGame() const {
+  return json::StringRef(GetData()["stream"]["game"]);
 }
 
 bool StreamsResult::IsEmpty() const { return GetData()["stream"].IsNull(); }
@@ -224,7 +221,7 @@ rapidjson::Document VideosResult::GetSchema() {
           },
           "title": {"type": "string"}
         },
-        "required": ["views", "preview", "title"],
+        "required": ["views", "preview", "title"]
       }
     )json");
   return schema;

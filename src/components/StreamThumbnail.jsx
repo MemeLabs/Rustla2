@@ -6,15 +6,30 @@ import { Link } from 'react-router-dom';
 
 import '../css/StreamThumbnail';
 
-const StreamThumbnail = ({ overrustle_id, channel, service, title, thumbnail, live, rustlers, ...rest }) => {
-  const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
-
-  let text = overrustle_id && overrustle_id !== channel
-    ? `${overrustle_id} via ${channel}`
-    : `${channel}`;
-  if (title) {
-    text = overrustle_id ? `${title} presented by ${overrustle_id}` : title;
+const getStreamTitle = ({ overrustle_id, channel, title, service }) => {
+  switch (service) {
+    case 'angelthump': {
+      const presenter = overrustle_id !== channel
+        ? `${overrustle_id} via ${channel}`
+        : channel;
+      const content = title
+        ? `presents ${title}`
+        : 'on angelthump';
+      return `${presenter} ${content}`;
+    }
+    case 'twitch-vod':
+      return title ? `${channel}: ${title}` : `${channel} on twitch`;
+    case 'twitch':
+      return title ? `${channel} playing ${title}` : `${channel} on twitch`;
+    default:
+      return title ? title : `${channel} on ${service}`;
   }
+};
+
+const StreamThumbnail = (props) => {
+  const { overrustle_id, channel, service, thumbnail, live, rustlers, ...rest } = props;
+  const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
+  const text = getStreamTitle(props);
 
   let thumbnailProps = { className: 'thumbnail-image thumbnail-default-image' };
   if (thumbnail) {
@@ -52,6 +67,7 @@ StreamThumbnail.propTypes = {
   thumbnail: PropTypes.string,
   live: PropTypes.bool.isRequired,
   rustlers: PropTypes.number.isRequired,
+  nsfw: PropTypes.bool,
 };
 
 export default StreamThumbnail;
