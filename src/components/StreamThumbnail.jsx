@@ -9,7 +9,7 @@ import '../css/StreamThumbnail';
 const getStreamTitle = ({ overrustle_id, channel, title, service }) => {
   switch (service) {
     case 'angelthump': {
-      const presenter = overrustle_id !== channel
+      const presenter = overrustle_id && overrustle_id !== channel
         ? `${overrustle_id} via ${channel}`
         : channel;
       const content = title
