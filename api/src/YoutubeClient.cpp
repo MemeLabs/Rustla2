@@ -44,6 +44,7 @@ rapidjson::Document VideosResult::GetSchema() {
           },
           "items": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "object",
               "properties": {

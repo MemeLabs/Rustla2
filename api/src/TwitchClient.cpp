@@ -72,6 +72,7 @@ rapidjson::Document UsersResult::GetSchema() {
           "_total": {"type": "integer"},
           "users": {
             "type": "array",
+            "minItems": "1",
             "items": {
               "type": "object",
               "properties": {
