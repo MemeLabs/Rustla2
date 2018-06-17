@@ -10,71 +10,64 @@ import '../css/Streams';
 import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
 
+const Thumbnail = stream => (
+  <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+    <StreamThumbnail {...stream} />
+  </div>
+);
 
-const makeCategories = (categories, items) => {
-  const sortedStreams = categories.map(() => []);
-  for (const item of items) {
-    for (let i = 0; i < categories.length; i++) {
-      const { test } = categories[i];
-      if (test(item)) {
+const Category = ({ header, streams }) => {
+  const thumbnails = streams
+    .sort((a, b) => b.rustlers - a.rustlers)
+    .map((stream, i) => <Thumbnail key={i} {...stream} />);
 
-        // Find position to insert this stream at in order to keep this list
-        // sorted.
-        let position = 0;
-        for (; position < sortedStreams[i].length; position++) {
-          if (item.rustlers > sortedStreams[i][position].rustlers) {
-            break;
-          }
-        }
-        sortedStreams[i].splice(position, 0, item);
-        break;
-      }
-    }
-  }
-  return categories.map(({ header }, i) =>
-    sortedStreams[i].length ?
-    <div key={i} className='streams'>
+  return (
+    <div className='streams'>
       <h3 className='col-xs-12'>{header}</h3>
-      {sortedStreams[i].map(stream => {
-        // Don't send stream properties that aren't required by StreamThumbnail.
-        // eslint-disable-next-line no-unused-vars
-        const { created_at, updated_at, viewers, ...rest } = stream;
-
-        return (
-          <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
-            <StreamThumbnail {...rest} />
-          </div>
-        );
-      }
-      )}
+      {thumbnails}
     </div>
-    : null
   );
 };
 
 const Streams = ({ history, streams }) => {
-  let grid = null;
-  const streams_arr = Object.values(streams);
-  if (streams_arr.length) {
-    grid = makeCategories([
-      {
-        header: 'Live Community Streams',
-        test: stream => (Boolean(stream.overrustle_id) || stream.service === 'angelthump') && stream.live,
-      },
-      {
-        header: 'Live Streams',
-        test: stream => stream.live,
-      },
-      {
-        header: 'Offline Streams',
-        test: () => true,
-      },
-    ], streams_arr);
-  }
+  const visibleStreams = Object.values(streams).filter(({ hidden }) => !hidden);
+
+  const categories = [
+    {
+      header: 'Live Community Streams',
+      test: stream => (Boolean(stream.overrustle_id) || stream.service === 'angelthump') && stream.live,
+      streams: [],
+    },
+    {
+      header: 'Live Streams',
+      test: stream => stream.live,
+      streams: [],
+    },
+    {
+      header: 'Offline Streams',
+      test: () => true,
+      streams: [],
+    },
+  ];
+
+  const reduceCategories = (categories, item) => {
+    const i = categories.findIndex(({ test }) => test(item));
+    categories[i].streams.push(item);
+    return categories;
+  };
+
+  const grid = visibleStreams
+    .reduce(reduceCategories, categories)
+    .filter(({ streams }) => streams.length > 0)
+    .map((category, i) => <Category key={i} {...category} />);
+
+  const viewerCount = visibleStreams
+    .reduce((sum, stream) => sum + stream.rustlers, 0)
+    .toLocaleString();
 
   return (
     <MainLayout history={history}>
-      <h1 className='streams-heading'>See what {streams_arr.reduce((sum, stream) => sum + stream.rustlers, 0)} rustlers are watching!</h1>
+      <h1 className='streams-heading'>See what {viewerCount} rustlers are watching!</h1>
       <div className='flex-column grow-1'>{grid}</div>
     </MainLayout>
   );

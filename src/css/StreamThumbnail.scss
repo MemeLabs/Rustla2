@@ -2,8 +2,10 @@
   border: 1px solid #5D5D5D;
   background-color: #222;
   margin-top: 1em;
+  overflow: hidden;
+  position: relative;
 
-  .thumbnail-image:before {
+  &:before {
     background-size: contain;
     background-repeat: no-repeat;
     content: "";
@@ -14,18 +16,20 @@
     right: 2%;
     top: 4%;
     width: 10%;
+    z-index: 1;
   }
 
-  &.stream-thumbnail-angelthump .thumbnail-image:before {
+  &.stream-thumbnail-angelthump:before {
     background-image: url(/image/angelthump.png);
     width: 20%;
   }
 
-  &.stream-thumbnail-twitch .thumbnail-image:before {
+  &.stream-thumbnail-twitch:before,
+  &.stream-thumbnail-twitch-vod:before {
     background-image: url(/image/twitch.png);
   }
 
-  &.stream-thumbnail-youtube .thumbnail-image:before {
+  &.stream-thumbnail-youtube:before {
     background-image: url(/image/youtube.png);
   }
 
@@ -36,7 +40,11 @@
     display: block;
     height: 0;
     padding-top: 56.25%;
-    position: relative;
+    overflow: hidden;
+  }
+
+  .thumbnail-image-nsfw {
+    filter: blur(10px);
   }
 
   .thumbnail-default-image {
@@ -50,8 +58,10 @@
   }
 
   .stream-caption {
-    padding: 9px;
+    background-color: #222;
     color: #333;
+    padding: 9px;
+    position: relative;
 
     a {
       display: block;

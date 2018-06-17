@@ -24,7 +24,7 @@ std::string Serialize(const T& model) {
 
 template <typename T>
 std::string Serialize(std::shared_ptr<T> model) {
-  return Serialize(model.get());
+  return Serialize(const_cast<const T*>(model.get()));
 }
 
 struct StringRef {

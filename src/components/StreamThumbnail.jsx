@@ -27,7 +27,7 @@ const getStreamTitle = ({ overrustle_id, channel, title, service }) => {
 };
 
 const StreamThumbnail = (props) => {
-  const { overrustle_id, channel, service, thumbnail, live, rustlers, ...rest } = props;
+  const { overrustle_id, channel, service, nsfw, thumbnail, live, rustlers, ...rest } = props;
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
   const text = getStreamTitle(props);
 
@@ -37,7 +37,7 @@ const StreamThumbnail = (props) => {
     const thumbnailUrl = live ? `${thumbnail}?${epochMinute}` : thumbnail;
 
     thumbnailProps = {
-      className: 'thumbnail-image',
+      className: `thumbnail-image ${nsfw ? 'thumbnail-image-nsfw' : ''}`,
       style: { backgroundImage: `url(${thumbnailUrl})` },
     };
   }

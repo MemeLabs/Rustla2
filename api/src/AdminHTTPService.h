@@ -19,9 +19,12 @@ class AdminHTTPService {
 
   void PostUsername(uWS::HttpResponse *res, HTTPRequest *req);
 
+  void PostStream(uWS::HttpResponse *res, HTTPRequest *req);
+
  private:
   std::shared_ptr<DB> db_;
   rapidjson::Document username_update_schema_;
+  rapidjson::Document stream_update_schema_;
 };
 
 }  // namespace rustla2

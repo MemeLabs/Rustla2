@@ -24,15 +24,17 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 class Stream {
  public:
   Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         const std::string &title = "", const std::string &thumbnail = "",
-         const bool live = false, const uint64_t viewer_count = 0)
+         bool nsfw = false, bool hidden = false, const std::string &title = "",
+         const std::string &thumbnail = "", const bool live = false,
+         const uint64_t viewer_count = 0)
       : db_(db),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
         title_(title),
         thumbnail_(thumbnail),
         live_(live),
-        nsfw_(false),
+        nsfw_(nsfw),
+        hidden_(hidden),
         viewer_count_(viewer_count) {}
 
   Stream(sqlite::database db, const Channel &channel)
@@ -68,6 +70,11 @@ class Stream {
     return nsfw_;
   }
 
+  inline bool GetHidden() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return hidden_;
+  }
+
   inline uint64_t GetViewerCount() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return viewer_count_;
@@ -88,9 +95,9 @@ class Stream {
     return reset_time_;
   }
 
-  void WriteAPIJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
+  void WriteAPIJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) const;
 
-  void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
+  void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) const;
 
   inline uint64_t IncrRustlerCount() {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
@@ -156,6 +163,12 @@ class Stream {
     return true;
   }
 
+  inline bool SetHidden(const bool hidden) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    hidden_ = hidden;
+    return true;
+  }
+
   bool Save();
 
   bool SaveNew();
@@ -179,6 +192,7 @@ class Stream {
   std::string thumbnail_;
   bool live_;
   bool nsfw_;
+  bool hidden_;
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
   uint64_t reset_time_{0};
@@ -203,6 +217,10 @@ struct HasRustlers {
 
 struct IsLive {
   bool Test(const Stream &stream) const { return stream.GetLive(); }
+};
+
+struct IsVisible {
+  bool Test(const Stream &stream) const { return !stream.GetHidden(); }
 };
 
 class Streams {
