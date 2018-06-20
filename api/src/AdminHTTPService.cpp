@@ -23,8 +23,8 @@ AdminHTTPService::AdminHTTPService(std::shared_ptr<DB> db) : db_(db) {
       {
         "type": "object",
         "properties": {
-          "nsfw": {"type": "bool"},
-          "hidden": {"type": "bool"}
+          "nsfw": {"type": "boolean"},
+          "hidden": {"type": "boolean"}
         }
       }
     )json");
@@ -121,14 +121,22 @@ void AdminHTTPService::PostStream(uWS::HttpResponse *res, HTTPRequest *req) {
   std::shared_ptr<Stream> stream;
 
   auto path = req->GetPath();
-  if (path.size() == 5) {
+  if (path.size() == 6) {
     // ex: /api/admin/streams/{service}/{channel}
 
-    auto channel = Channel::Create(req->GetPathPart(4).toString(),
-                                   req->GetPathPart(5).toString());
+    Status status;
+    auto channel = Channel::Create(req->GetPathPart(5).toString(),
+                                   req->GetPathPart(4).toString(), &status);
+
+    if (!status.Ok()) {
+      HTTPResponseWriter writer(res);
+      writer.Status(400, "Invalid Request");
+      writer.JSON(json::Serialize(status));
+      return;
+    }
 
     stream = db_->GetStreams()->GetByChannel(channel);
-  } else if (path.size() == 4) {
+  } else if (path.size() == 5) {
     // ex: /api/admin/streams/{stream_path}
 
     auto stream_path = req->GetPathPart(4).toString();
