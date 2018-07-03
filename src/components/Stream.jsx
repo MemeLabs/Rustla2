@@ -118,7 +118,9 @@ export default compose(
       const { channel, service, streamer } = this.props;
       if (streamer) {
         document.title = `${streamer} - Strims`;
-        return this.props.setStream(streamer);
+        this.props.setStream(streamer);
+        this.props.fetchProfileIfLoggedIn();
+        return;
       }
       document.title = `${channel} on ${service} - Strims`;
       this.props.setStream(channel, service);
