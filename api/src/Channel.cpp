@@ -64,8 +64,9 @@ Status Channel::ValidlatePath(const std::string &stream_path) {
 
 Status Channel::NormalizeChannel(const std::string &service,
                                  std::string *channel) {
-  return service == kAdvancedService ? NormalizeAdvancedChannel(channel)
-                                     : NormalizeBasicChannel(service, channel);
+  return service == kAdvancedService || service == kM3u8Service
+    ? NormalizeAdvancedChannel(channel)
+    : NormalizeBasicChannel(service, channel);
 }
 
 Status Channel::NormalizeAdvancedChannel(std::string *channel) {

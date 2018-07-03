@@ -19,6 +19,7 @@
     "bluebird": "^3.4.7",
     "bootstrap": "^3.3.7",
     "browser-cookies": "^1.1.0",
+    "clappr": "^0.2.95",
     "classnames": "^2.2.5",
     "dotenv": "^5.0.1",
     "history": "^4.7.2",
