@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
 import AdvancedStreamEmbed from './AdvancedStreamEmbed';
+import M3u8StreamEmbed from './M3u8StreamEmbed';
+import ThirdPartyWarning from './ThirdPartyWarning';
 
 // Use `window.URL` as our WHATWG `URL` implementation. See
 // <http://caniuse.com/#feat=url> for the browsers which do not support this.
@@ -40,9 +42,21 @@ const getSrc = (channel, service) => {
 const StreamEmbed = ({ channel, service, ...rest }) => {
   if (service === 'advanced') {
     if (isValidAdvancedUrl(channel)) {
-      return <AdvancedStreamEmbed channel={channel} />;
+      return (
+        <ThirdPartyWarning channel={channel}>
+          <AdvancedStreamEmbed channel={channel} />
+        </ThirdPartyWarning>
+      );
     }
     return <Redirect to='/' />;
+  }
+
+  if (service === 'm3u8') {
+    return (
+      <ThirdPartyWarning channel={channel}>
+        <M3u8StreamEmbed src={channel} />
+      </ThirdPartyWarning>
+    );
   }
 
   const src = getSrc(channel, service);
@@ -74,6 +88,7 @@ StreamEmbed.propTypes = {
     'angelthump',
     'dailymotion',
     'facebook',
+    'm3u8',
     'nsfw-chaturbate',
     'smashcast',
     'twitch-vod',

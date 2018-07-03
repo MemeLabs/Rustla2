@@ -28,6 +28,8 @@ class ServicePoller {
 
   const Status CheckAngelThump(const std::string& name, ChannelState* state);
 
+  const Status CheckM3u8(const std::string& name, ChannelState* state);
+
   const Status CheckTwitchStream(const std::string& name, ChannelState* state);
 
   const Status CheckTwitchVOD(const std::string& name, ChannelState* state);

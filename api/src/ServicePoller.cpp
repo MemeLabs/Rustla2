@@ -32,6 +32,8 @@ void ServicePoller::Run() {
       status = CheckAngelThump(channel->GetChannel(), &state);
     } else if (channel->GetService() == kYouTubeService) {
       status = CheckYouTube(channel->GetChannel(), &state);
+    } else if (channel->GetService() == kM3u8Service) {
+      status = CheckM3u8(channel->GetChannel(), &state);
     }
 
     if (status.Ok()) {
@@ -66,6 +68,20 @@ const Status ServicePoller::CheckAngelThump(const std::string& name,
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
 }
+
+const Status ServicePoller::CheckM3u8(const std::string& name,
+                                      ChannelState* state) {
+  CurlRequest req(name);
+  req.Submit();
+
+  if (!req.Ok()) {
+    return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
+  }
+
+  state->live = true;   
+
+  return Status::OK;   
+}                         
 
 const Status ServicePoller::CheckTwitchStream(const std::string& name,
                                               ChannelState* state) {
