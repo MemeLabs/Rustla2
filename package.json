@@ -12,7 +12,6 @@
     "build:bundle": "webpack --progress --display-chunks --display-reasons --display-error-details --display-modules",
     "build:production": "NODE_ENV=production npm run build",
     "dev-server": "npm run build && webpack-dev-server --inline --hot",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint webpack.config.js --ext .js --ext .jsx src",
     "migrate": "sequelize db:migrate --config sequelize.config.json"
   },
