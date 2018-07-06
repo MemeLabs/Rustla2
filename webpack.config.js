@@ -47,7 +47,7 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, './public'),
     host: '0.0.0.0',
-    port: process.env.PORT || 3000,
+    port: 3000,
     historyApiFallback: true,
     watchOptions: {
       aggregateTimeout: 100,
@@ -81,7 +81,8 @@ module.exports = {
         use: [
           MiniCssExtractPlugin.loader,
           { loader: 'css-loader', options: { importLoaders: 1 } },
-          { loader: 'postcss-loader',
+          {
+            loader: 'postcss-loader',
             options: {
               ident: 'postcss',
               plugins: () => {
@@ -120,24 +121,46 @@ module.exports = {
       hashFuncNames: ['sha256', 'sha384'],
       enabled: IS_PRODUCTION,
     }),
-    new webpack.DefinePlugin(Object.assign({
-      /* eslint-disable quotes */
-      'process.env.NODE_ENV': `"${NODE_ENV}"`,
-      'API': process.env.API ? `"${process.env.API}"` : "'/api'",
-      'API_WS': process.env.API_WS ? `"${process.env.API_WS}"` : undefined,
-      'JWT_NAME': process.env.JWT_NAME ? `"${process.env.JWT_NAME}"` : "'jwt'",
-      'GITHUB_URL': process.env.GITHUB_URL ? `"${process.env.GITHUB_URL}"` : "'https://github.com/ILiedAboutCake/Rustla2'",
-      'DISCORD_URL': process.env.DISCORD_URL ? `"${process.env.DISCORD_URL}"` : "'https://discord.gg/qucCTxN'",
-      'DONATE_PAYPAL_URL': process.env.DONATE_PAYPAL_URL ? `"${process.env.DONATE_PAYPAL_URL}"` : undefined,
-      'DONATE_LINODE_URL': process.env.DONATE_LINODE_URL ? `"${process.env.DONATE_LINODE_URL}"` : undefined,
-      'DONATE_DO_URL': process.env.DONATE_DO_URL ? `"${process.env.DONATE_DO_URL}"` : undefined,
-      'THUMBNAIL_REFRESH_INTERVAL': process.env.THUMBNAIL_REFRESH_INTERVAL ? `"${process.env.THUMBNAIL_REFRESH_INTERVAL}"` : undefined,
-      'GIT_COMMIT_HASH': `"${gitHash()}"`,
-      'GIT_SHORT_COMMIT_HASH': `"${gitHash({ short: true })}"`,
-      /* eslint-enable quotes */
-    }, (() => IS_PRODUCTION ? {
-      // production-only global defines
-    } : undefined)())),
+    new webpack.DefinePlugin(
+      Object.assign(
+        {
+          /* eslint-disable quotes */
+          'process.env.NODE_ENV': `"${NODE_ENV}"`,
+          API: process.env.API ? `"${process.env.API}"` : "'/api'",
+          API_WS: process.env.API_WS ? `"${process.env.API_WS}"` : undefined,
+          JWT_NAME: process.env.JWT_NAME
+            ? `"${process.env.JWT_NAME}"`
+            : "'jwt'",
+          GITHUB_URL: process.env.GITHUB_URL
+            ? `"${process.env.GITHUB_URL}"`
+            : "'https://github.com/ILiedAboutCake/Rustla2'",
+          DISCORD_URL: process.env.DISCORD_URL
+            ? `"${process.env.DISCORD_URL}"`
+            : "'https://discord.gg/qucCTxN'",
+          DONATE_PAYPAL_URL: process.env.DONATE_PAYPAL_URL
+            ? `"${process.env.DONATE_PAYPAL_URL}"`
+            : undefined,
+          DONATE_LINODE_URL: process.env.DONATE_LINODE_URL
+            ? `"${process.env.DONATE_LINODE_URL}"`
+            : undefined,
+          DONATE_DO_URL: process.env.DONATE_DO_URL
+            ? `"${process.env.DONATE_DO_URL}"`
+            : undefined,
+          THUMBNAIL_REFRESH_INTERVAL: process.env.THUMBNAIL_REFRESH_INTERVAL
+            ? `"${process.env.THUMBNAIL_REFRESH_INTERVAL}"`
+            : undefined,
+          GIT_COMMIT_HASH: `"${gitHash()}"`,
+          GIT_SHORT_COMMIT_HASH: `"${gitHash({ short: true })}"`,
+          /* eslint-enable quotes */
+        },
+        (() =>
+          IS_PRODUCTION
+            ? {
+                // production-only global defines
+            }
+            : undefined)()
+      )
+    ),
     new webpack.optimize.AggressiveMergingPlugin(),
     new MiniCssExtractPlugin({
       filename: IS_PRODUCTION ? '[name].[contenthash].css' : '[name].css',
