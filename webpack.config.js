@@ -136,7 +136,7 @@ module.exports = {
             : "'https://github.com/MemeLabs/Rustla2'",
           DISCORD_URL: process.env.DISCORD_URL
             ? `"${process.env.DISCORD_URL}"`
-            : "'https://discord.gg/qucCTxN'",
+            : "'https://discord.gg/qSXUukt'",
           DONATE_PAYPAL_URL: process.env.DONATE_PAYPAL_URL
             ? `"${process.env.DONATE_PAYPAL_URL}"`
             : undefined,
