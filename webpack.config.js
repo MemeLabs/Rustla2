@@ -133,7 +133,7 @@ module.exports = {
             : "'jwt'",
           GITHUB_URL: process.env.GITHUB_URL
             ? `"${process.env.GITHUB_URL}"`
-            : "'https://github.com/ILiedAboutCake/Rustla2'",
+            : "'https://github.com/MemeLabs/Rustla2'",
           DISCORD_URL: process.env.DISCORD_URL
             ? `"${process.env.DISCORD_URL}"`
             : "'https://discord.gg/qucCTxN'",
