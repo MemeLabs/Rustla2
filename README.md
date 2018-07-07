@@ -26,6 +26,17 @@ $ npm run build
 Then, follow the instructions in `api/README.md` for how to start the backend
 (which includes the API server and a web server for the frontend).
 
+## Building for production
+
+The process of building for development is essentially the same as building for
+production, except with the additional step of minifying the frontend JavaScript
+code. This reduces the overall size of the bundle that is served to users, which
+can result in faster page loads.
+
+``` bash
+npm run build:production
+```
+
 ### Creating Twitch client
 
 Retrieving thumbnails, viewer counts, and live statuses for Twitch streams
