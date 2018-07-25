@@ -8,7 +8,6 @@ const isVod = (service) => {
   switch (service) {
     case 'twitch-vod':
     case 'youtube-playlist':
-    case 'hitbox-vod':
       return true;
     default:
       return false;

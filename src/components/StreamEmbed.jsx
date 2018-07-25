@@ -12,26 +12,16 @@ const getSrc = (channel, service) => {
   switch (service) {
     case 'angelthump':
       return `https://angelthump.com/embed/${channel}`;
-    case 'azubu':
-      return `https://embed.azubu.tv/${channel}?autoplay=true`;
     case 'dailymotion':
       return `//www.dailymotion.com/embed/video/${channel}?autoplay=1`;
     case 'facebook':
-      return `https://www.facebook.com/video/embed?video_id=${channel}`;
-    case 'hitbox-vod':
-      return `https://www.hitbox.tv/embedvideo/${channel}`;
-    case 'hitbox':
-      return `https://www.hitbox.tv/embed/${channel}?autoplay=true`;
-    case 'mlg':
-      return `https://www.majorleaguegaming.com/player/embed/${channel}`;
+      return `https://www.facebook.com/video/embed?video_id=${channel}&autoplay=true`;
     case 'nsfw-chaturbate':
       return `https://chaturbate.com/embed/${channel}?bgcolor=black`;
-    case 'streamup':
-      return `https://streamup.com/${channel}/embeds/video?startMuted=true`;
     case 'twitch-vod':
       return `https://player.twitch.tv/?volume=0.71&video=v${channel}`;
     case 'twitch':
-      return `//player.twitch.tv/?channel=${channel}`;
+      return `https://player.twitch.tv/?channel=${channel}`;
     case 'ustream':
       return `https://www.ustream.tv/embed/${channel}?autoplay=true&html5ui=true`;
     case 'vaughn':
@@ -80,14 +70,9 @@ StreamEmbed.propTypes = {
     'advanced',
     'afreeca',
     'angelthump',
-    'azubu',
     'dailymotion',
     'facebook',
-    'hitbox-vod',
-    'hitbox ',
-    'mlg',
     'nsfw-chaturbate',
-    'streamup',
     'twitch-vod',
     'twitch',
     'ustream',

@@ -1,8 +1,6 @@
 /* global process */
 
 const supportedChats = {
-  'azubu': channel => `https://www.azubu.tv/${channel}/chatpopup`,
-  'hitbox': channel => `https://www.hitbox.tv/embedchat/${channel}`,
   'twitch-vod': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
   'twitch': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
   'ustream': channel => `https://www.ustream.tv/socialstream/${channel}`,

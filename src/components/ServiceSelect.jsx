@@ -5,14 +5,9 @@ const ServiceSelect = props =>
   <select className='form-control' name='service' defaultValue='twitch' {...props}>
     <option value='afreeca'>Afreeca</option>
     <option value='angelthump'>AngelThump</option>
-    <option value='azubu'>azubu</option>
     <option value='dailymotion'>Dailymotion</option>
     <option value='facebook'>Facebook</option>
-    <option value='hitbox'>Hitbox</option>
-    <option value='hitbox-vod'>hitbox (VOD)</option>
-    <option value='mlg'>MLG</option>
     <option value='nsfw-chaturbate'>Chaturbate (NSFW)</option>
-    <option value='streamup'>StreamUp</option>
     <option value='twitch'>Twitch</option>
     <option value='twitch-vod'>Twitch (VOD)</option>
     <option value='ustream'>Ustream</option>
