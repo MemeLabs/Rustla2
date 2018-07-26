@@ -19,7 +19,7 @@ const getSrc = (channel, service) => {
     case 'nsfw-chaturbate':
       return `https://chaturbate.com/embed/${channel}?bgcolor=black`;
     case 'twitch-vod':
-      return `https://player.twitch.tv/?volume=0.71&video=v${channel}`;
+      return `https://player.twitch.tv/?video=v${channel}`;
     case 'twitch':
       return `https://player.twitch.tv/?channel=${channel}`;
     case 'ustream':

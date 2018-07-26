@@ -16,14 +16,9 @@ namespace rustla2 {
 constexpr folly::StringPiece kAdvancedService{"advanced"};
 constexpr folly::StringPiece kAfreecaService{"afreeca"};
 constexpr folly::StringPiece kAngelThumpService{"angelthump"};
-constexpr folly::StringPiece kAzubuService{"azubu"};
 constexpr folly::StringPiece kDailyMotionService{"dailymotion"};
 constexpr folly::StringPiece kFacebookService{"facebook"};
-constexpr folly::StringPiece kHitboxService{"hitbox"};
-constexpr folly::StringPiece kHitboxVODService{"hitbox-vod"};
-constexpr folly::StringPiece kMLGService{"mlg"};
 constexpr folly::StringPiece kNSFWChaturbateService{"nsfw-chaturbate"};
-constexpr folly::StringPiece kStreamupService{"streamup"};
 constexpr folly::StringPiece kTwitchService{"twitch"};
 constexpr folly::StringPiece kTwitchVODService{"twitch-vod"};
 constexpr folly::StringPiece kUstreamService{"ustream"};
@@ -31,16 +26,14 @@ constexpr folly::StringPiece kVaughnService{"vaughn"};
 constexpr folly::StringPiece kYouTubePlaylistService{"youtube-playlist"};
 constexpr folly::StringPiece kYouTubeService{"youtube"};
 
-constexpr std::array<folly::StringPiece, 17> kServices{
-    kAdvancedService,        kAfreecaService,     kAngelThumpService,
-    kAzubuService,           kDailyMotionService, kFacebookService,
-    kHitboxService,          kHitboxVODService,   kMLGService,
-    kNSFWChaturbateService,  kStreamupService,    kTwitchService,
-    kTwitchVODService,       kUstreamService,     kVaughnService,
-    kYouTubePlaylistService, kYouTubeService};
+constexpr std::array<folly::StringPiece, 12> kServices{
+    kAdvancedService,        kAfreecaService,         kAngelThumpService,
+    kDailyMotionService,     kFacebookService,        kNSFWChaturbateService,  
+    kTwitchService,          kTwitchVODService,       kUstreamService,         
+    kVaughnService,          kYouTubePlaylistService, kYouTubeService};
 
-constexpr std::array<folly::StringPiece, 4> kCaseInsensitiveServices{
-    kAngelThumpService, kHitboxService, kTwitchService, kUstreamService};
+constexpr std::array<folly::StringPiece, 3> kCaseInsensitiveServices{
+    kAngelThumpService, kTwitchService, kUstreamService};
 
 class Channel {
  public:
