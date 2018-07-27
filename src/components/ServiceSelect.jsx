@@ -8,6 +8,7 @@ const ServiceSelect = props =>
     <option value='dailymotion'>Dailymotion</option>
     <option value='facebook'>Facebook</option>
     <option value='nsfw-chaturbate'>Chaturbate (NSFW)</option>
+    <option value='smashcast'>Smashcast</option>
     <option value='twitch'>Twitch</option>
     <option value='twitch-vod'>Twitch (VOD)</option>
     <option value='ustream'>Ustream</option>

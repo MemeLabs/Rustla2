@@ -18,6 +18,8 @@ const getSrc = (channel, service) => {
       return `https://www.facebook.com/video/embed?video_id=${channel}&autoplay=true`;
     case 'nsfw-chaturbate':
       return `https://chaturbate.com/embed/${channel}?bgcolor=black`;
+    case 'smashcast':
+      return `https://www.smashcast.tv/embed/${channel}?popout=true&autoplay=true`;
     case 'twitch-vod':
       return `https://player.twitch.tv/?video=v${channel}`;
     case 'twitch':
@@ -73,6 +75,7 @@ StreamEmbed.propTypes = {
     'dailymotion',
     'facebook',
     'nsfw-chaturbate',
+    'smashcast',
     'twitch-vod',
     'twitch',
     'ustream',
