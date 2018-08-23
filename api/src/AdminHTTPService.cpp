@@ -24,7 +24,9 @@ AdminHTTPService::AdminHTTPService(std::shared_ptr<DB> db) : db_(db) {
         "type": "object",
         "properties": {
           "nsfw": {"type": "boolean"},
-          "hidden": {"type": "boolean"}
+          "hidden": {"type": "boolean"},
+          "afk": {"type": "boolean"},
+          "promoted": {"type": "boolean"}
         }
       }
     )json");
@@ -173,6 +175,12 @@ void AdminHTTPService::PostStream(uWS::HttpResponse *res, HTTPRequest *req) {
     }
     if (input.HasMember("hidden")) {
       stream->SetHidden(input["hidden"].GetBool());
+    }
+    if (input.HasMember("afk")) {
+      stream->SetAFK(input["afk"].GetBool());
+    }
+    if (input.HasMember("promoted")) {
+      stream->SetPromoted(input["promoted"].GetBool());
     }
 
     if (stream->Save()) {

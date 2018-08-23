@@ -24,7 +24,8 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 class Stream {
  public:
   Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         bool nsfw = false, bool hidden = false, const std::string &title = "",
+         bool nsfw = false, bool hidden = false, bool afk = false,
+         bool promoted = false, const std::string &title = "",
          const std::string &thumbnail = "", const bool live = false,
          const uint64_t viewer_count = 0)
       : db_(db),
@@ -35,6 +36,8 @@ class Stream {
         live_(live),
         nsfw_(nsfw),
         hidden_(hidden),
+        afk_(afk),
+        promoted_(promoted),
         viewer_count_(viewer_count) {}
 
   Stream(sqlite::database db, const Channel &channel)
@@ -73,6 +76,16 @@ class Stream {
   inline bool GetHidden() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return hidden_;
+  }
+
+  inline bool GetAFK() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return afk_;
+  }
+
+  inline bool GetPromoted() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return promoted_;
   }
 
   inline uint64_t GetViewerCount() const {
@@ -169,6 +182,18 @@ class Stream {
     return true;
   }
 
+  inline bool SetAFK(const bool afk) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    afk_ = afk;
+    return true;
+  }
+
+  inline bool SetPromoted(const bool promoted) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    promoted_ = promoted;
+    return true;
+  }
+
   bool Save();
 
   bool SaveNew();
@@ -193,10 +218,14 @@ class Stream {
   bool live_;
   bool nsfw_;
   bool hidden_;
+  bool afk_;
+  bool promoted_;
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
   uint64_t reset_time_{0};
   uint64_t update_time_{0};
+
+  friend std::ostream &operator<<(std::ostream &os, const Stream &stream);
 };
 
 class UpdatedSince {
