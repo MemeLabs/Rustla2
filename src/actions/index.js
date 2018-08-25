@@ -7,6 +7,7 @@ export const setStream = (...args) => () => {
   emit('setStream', ...args);
 };
 
+export const setAfk = (afk) => emit('setAfk', afk);
 
 export const STREAMER_FETCH = Symbol('STREAMER_FETCH');
 export const STREAMER_FETCH_FAILURE = Symbol('STREAMER_FETCH_FAILURE');

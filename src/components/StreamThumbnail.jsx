@@ -27,7 +27,7 @@ const getStreamTitle = ({ overrustle_id, channel, title, service }) => {
 };
 
 const StreamThumbnail = (props) => {
-  const { overrustle_id, channel, service, nsfw, thumbnail, live, rustlers, ...rest } = props;
+  const { overrustle_id, channel, service, nsfw, thumbnail, live, rustlers, afk_rustlers, ...rest } = props;
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
   const text = getStreamTitle(props);
 
@@ -48,7 +48,7 @@ const StreamThumbnail = (props) => {
       <div className='stream-caption'>
         <Link to={url}>
           <span className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
-            <span>{rustlers}</span>
+            <span title={`${afk_rustlers} afk`}>{rustlers}</span>
             {'\u00a0'}
             <span className='glyphicon glyphicon-user' />
           </span>

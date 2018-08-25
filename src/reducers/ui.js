@@ -1,6 +1,11 @@
 import INITIAL_STATE from '../INITIAL_STATE';
-import { SET_CHAT_SIZE, TOGGLE_CHAT, SHOW_CHAT } from '../actions';
-
+import {
+  CHAT_HOST_STRIMS,
+  SET_CHAT_SIZE,
+  TOGGLE_CHAT,
+  SHOW_CHAT,
+  STREAM_SET,
+} from '../actions';
 
 function uiReducer(state = INITIAL_STATE.ui, action) {
   switch (action.type) {
@@ -8,6 +13,11 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
       return {
         ...state,
         chatSize: action.payload,
+      };
+    case STREAM_SET:
+      return {
+        ...state,
+        chatHost: CHAT_HOST_STRIMS,
       };
     case TOGGLE_CHAT:
       return {

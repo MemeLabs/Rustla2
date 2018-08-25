@@ -20,7 +20,9 @@ void Stream::WriteAPIJSON(
   writer->Key("promoted");
   writer->Bool(promoted_);
   writer->Key("rustlers");
-  writer->Uint64(rustler_count_);
+  writer->Uint64(rustler_count_ - afk_count_);
+  writer->Key("afk_rustlers");
+  writer->Uint64(afk_count_);
   writer->Key("service");
   writer->String(channel_->GetService());
   writer->Key("channel");
@@ -66,7 +68,9 @@ void Stream::WriteJSON(
   writer->Key("viewers");
   writer->Uint64(viewer_count_);
   writer->Key("rustlers");
-  writer->Uint64(rustler_count_);
+  writer->Uint64(rustler_count_ - afk_count_);
+  writer->Key("afk_rustlers");
+  writer->Uint64(afk_count_);
 
   writer->EndObject();
 }

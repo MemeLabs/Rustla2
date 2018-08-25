@@ -151,6 +151,7 @@ module.exports = {
             : undefined,
           GIT_COMMIT_HASH: `"${gitHash()}"`,
           GIT_SHORT_COMMIT_HASH: `"${gitHash({ short: true })}"`,
+          AFK_TIMEOUT: process.env.AFK_TIMEOUT,
           /* eslint-enable quotes */
         },
         (() =>

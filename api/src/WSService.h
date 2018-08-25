@@ -8,8 +8,14 @@
 
 #include "Channel.h"
 #include "DB.h"
+#include "Streams.h"
 
 namespace rustla2 {
+
+struct WSState {
+  uint64_t stream_id{0};
+  bool afk{false};
+};
 
 class WSService {
  public:
@@ -19,6 +25,12 @@ class WSService {
 
   bool RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws,
                       uWS::HttpRequest uws_req);
+
+  void SetAFK(uWS::WebSocket<uWS::SERVER>* ws,
+              const rapidjson::Document& input);
+
+  void SetAFK(uWS::WebSocket<uWS::SERVER>* ws, const bool afk,
+              rapidjson::Writer<rapidjson::StringBuffer>* writer);
 
   void GetStream(uWS::WebSocket<uWS::SERVER>* ws,
                  const rapidjson::Document& input);
@@ -49,6 +61,10 @@ class WSService {
   void BroadcastStreams();
 
   void BroadcastRustlers();
+
+  std::shared_ptr<Stream> GetWSStream(uWS::WebSocket<uWS::SERVER>* ws);
+
+  WSState* GetWSState(uWS::WebSocket<uWS::SERVER>* ws);
 
  private:
   std::shared_ptr<DB> db_;

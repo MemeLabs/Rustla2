@@ -1,3 +1,4 @@
+/* global AFK_TIMEOUT */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -9,12 +10,14 @@ import branch from 'recompose/branch';
 import idx from 'idx';
 
 import {
+  setAfk,
   setStream,
   setChatSize,
   showChat,
   fetchProfileIfLoggedIn,
 } from '../actions';
 
+import IdleTimer from 'react-idle-timer';
 import MainLayout from './MainLayout';
 import Resizeable from './Resizeable';
 import StreamEmbed from './StreamEmbed';
@@ -27,6 +30,7 @@ export const Stream = ({
   service,
   channel,
   chatSize,
+  setAfk,
   setChatSize,
   showChat,
   rustlerCount,
@@ -49,6 +53,12 @@ export const Stream = ({
   }
   return (
     <MainLayout history={history} showFooter={false} rustlerCount={rustlerCount}>
+      <IdleTimer
+        element={document}
+        onActive={() => setAfk(false)}
+        onIdle={() => setAfk(true)}
+        timeout={AFK_TIMEOUT}
+        />
       <Resizeable
         className='grow-1'
         onResize={e => {
@@ -94,6 +104,7 @@ export default compose(
       chatClosed: !state.ui.showChat,
     }),
     {
+      setAfk,
       setStream,
       setChatSize,
       showChat,
@@ -111,6 +122,7 @@ export default compose(
 
     setChatSize: PropTypes.func.isRequired,
     showChat: PropTypes.func.isRequired,
+    setAfk: PropTypes.func.isRequired,
     setStream: PropTypes.func.isRequired,
   }),
   lifecycle({

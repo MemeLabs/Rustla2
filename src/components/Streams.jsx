@@ -18,7 +18,12 @@ const Thumbnail = stream => (
 
 const Category = ({ header, streams }) => {
   const thumbnails = streams
-    .sort((a, b) => b.rustlers - a.rustlers)
+    .sort((a, b) => {
+      if (a.promoted !== b.promoted) {
+        return a.promoted ? -1 : 1;
+      }
+      return b.rustlers - a.rustlers;
+    })
     .map((stream, i) => <Thumbnail key={i} {...stream} />);
 
   return (

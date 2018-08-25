@@ -38,6 +38,8 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
 
     ws->send(last_streams_json_.data(), last_streams_json_.size(),
              uWS::OpCode::TEXT);
+
+    ws->setUserData(reinterpret_cast<void*>(new WSState()));
   });
 
   hub->onMessage([&](uWS::WebSocket<uWS::SERVER>* ws, char* message,
@@ -59,7 +61,9 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
 
     const json::StringRef method(command[0]);
 
-    if (method == "setStream") {
+    if (method == "setAfk") {
+      SetAFK(ws, input);
+    } else if (method == "setStream") {
       SetStream(ws, input);
     } else if (method == "getStream") {
       GetStream(ws, input);
@@ -67,8 +71,11 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
   });
 
   hub->onDisconnection([&](uWS::WebSocket<uWS::SERVER>* ws, int code,
-                           char* message, size_t length) { UnsetStream(ws); });
-}
+                           char* message, size_t length) {
+    UnsetStream(ws);
+    delete reinterpret_cast<WSState*>(ws->getUserData());
+  });
+}  // namespace rustla2
 
 WSService::~WSService() {
   stream_broadcast_timer_.stop();
@@ -86,6 +93,55 @@ bool WSService::RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws,
   }
 
   return false;
+}
+
+/**
+ * Update rustler afk state.
+ */
+void WSService::SetAFK(uWS::WebSocket<uWS::SERVER>* ws,
+                       const rapidjson::Document& input) {
+  buf_.Clear();
+  rapidjson::Writer<rapidjson::StringBuffer> writer(buf_);
+  writer.StartArray();
+
+  const auto& command = input.GetArray();
+  if (command.Size() == 2 && command[1].IsBool()) {
+    SetAFK(ws, command[1].GetBool(), &writer);
+  } else {
+    writer.String("ERR");
+    writer.String("Invalid command");
+  }
+
+  writer.EndArray();
+  ws->send(buf_.GetString(), buf_.GetSize(), uWS::OpCode::TEXT);
+}
+
+void WSService::SetAFK(uWS::WebSocket<uWS::SERVER>* ws, const bool afk,
+                       rapidjson::Writer<rapidjson::StringBuffer>* writer) {
+  auto ws_state = GetWSState(ws);
+
+  if (ws_state->afk == afk) {
+    writer->String("ERR");
+    writer->String("AFK state unchanged");
+    return;
+  }
+
+  auto stream = GetWSStream(ws);
+  if (stream == nullptr) {
+    writer->String("ERR");
+    writer->String("Not viewing stream");
+    return;
+  }
+
+  if (afk) {
+    stream->IncrAFKCount();
+  } else {
+    stream->DecrAFKCount();
+  }
+  ws_state->afk = afk;
+
+  writer->String("AFK_SET");
+  writer->Bool(afk);
 }
 
 /**
@@ -174,7 +230,7 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
 
   writer.EndArray();
   ws->send(buf_.GetString(), buf_.GetSize(), uWS::OpCode::TEXT);
-  ws->setUserData(reinterpret_cast<void*>(stream_id));
+  GetWSState(ws)->stream_id = stream_id;
 }
 
 /**
@@ -255,15 +311,19 @@ void WSService::SetStreamToNull(
  * Clear the stream id associated with the supplied client
  */
 void WSService::UnsetStream(uWS::WebSocket<uWS::SERVER>* ws) {
-  auto stream_id = reinterpret_cast<uint64_t>(ws->getUserData());
+  auto stream = GetWSStream(ws);
+  auto ws_state = GetWSState(ws);
 
-  if (stream_id != 0) {
-    auto stream = db_->GetStreams()->GetByID(stream_id);
-    if (stream != nullptr) {
-      stream->DecrRustlerCount();
+  if (stream != nullptr) {
+    stream->DecrRustlerCount();
+
+    if (ws_state->afk) {
+      stream->DecrAFKCount();
     }
-    ws->setUserData(reinterpret_cast<void*>(0));
   }
+
+  ws_state->stream_id = 0;
+  ws_state->afk = false;
 }
 
 /**
@@ -317,6 +377,7 @@ void WSService::BroadcastRustlers() {
       writer.String("RUSTLERS_SET");
       writer.Uint64(stream->GetID());
       writer.Uint64(stream->GetRustlerCount());
+      writer.Uint64(stream->GetAFKCount());
     }
 
     writer.EndArray();
@@ -325,6 +386,19 @@ void WSService::BroadcastRustlers() {
   }
 
   last_rustler_broadcast_time_ = last_rustler_broadcast_time;
+}
+
+std::shared_ptr<Stream> WSService::GetWSStream(
+    uWS::WebSocket<uWS::SERVER>* ws) {
+  auto ws_state = GetWSState(ws);
+  if (ws_state->stream_id == 0) {
+    return nullptr;
+  }
+  return db_->GetStreams()->GetByID(ws_state->stream_id);
+}
+
+WSState* WSService::GetWSState(uWS::WebSocket<uWS::SERVER>* ws) {
+  return reinterpret_cast<WSState*>(ws->getUserData());
 }
 
 }  // namespace rustla2

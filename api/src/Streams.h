@@ -95,7 +95,12 @@ class Stream {
 
   inline uint64_t GetRustlerCount() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return rustler_count_;
+    return rustler_count_ - afk_count_;
+  }
+
+  inline uint64_t GetAFKCount() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return afk_count_;
   }
 
   inline uint64_t GetUpdateTime() const {
@@ -114,14 +119,11 @@ class Stream {
 
   inline uint64_t IncrRustlerCount() {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    update_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                       std::chrono::steady_clock::now().time_since_epoch())
-                       .count();
 
+    ResetUpdatedTime();
     if (rustler_count_ == 0) {
       reset_time_ = update_time_;
     }
-
     return ++rustler_count_;
   }
 
@@ -133,11 +135,32 @@ class Stream {
       return 0;
     }
 
-    update_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                       std::chrono::steady_clock::now().time_since_epoch())
-                       .count();
-
+    ResetUpdatedTime();
     return --rustler_count_;
+  }
+
+  inline uint64_t IncrAFKCount() {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+
+    if (afk_count_ == rustler_count_) {
+      LOG(WARNING) << "IncrAFKCount called on stream with all afks";
+      return afk_count_;
+    }
+
+    ResetUpdatedTime();
+    return ++afk_count_;
+  }
+
+  inline uint64_t DecrAFKCount() {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+
+    if (afk_count_ == 0) {
+      LOG(WARNING) << "DecrAFKCount called on stream with 0 afks";
+      return 0;
+    }
+
+    ResetUpdatedTime();
+    return --afk_count_;
   }
 
   inline bool SetChannel(std::shared_ptr<Channel> channel) {
@@ -172,24 +195,28 @@ class Stream {
 
   inline bool SetNSFW(const bool nsfw) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    ResetUpdatedTime();
     nsfw_ = nsfw;
     return true;
   }
 
   inline bool SetHidden(const bool hidden) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    ResetUpdatedTime();
     hidden_ = hidden;
     return true;
   }
 
   inline bool SetAFK(const bool afk) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    ResetUpdatedTime();
     afk_ = afk;
     return true;
   }
 
   inline bool SetPromoted(const bool promoted) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    ResetUpdatedTime();
     promoted_ = promoted;
     return true;
   }
@@ -209,6 +236,12 @@ class Stream {
   }
 
  private:
+  inline void ResetUpdatedTime() {
+    update_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                       std::chrono::steady_clock::now().time_since_epoch())
+                       .count();
+  }
+
   sqlite::database db_;
   mutable boost::shared_mutex lock_;
   uint64_t id_;
@@ -222,6 +255,7 @@ class Stream {
   bool promoted_;
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
+  uint64_t afk_count_{0};
   uint64_t reset_time_{0};
   uint64_t update_time_{0};
 

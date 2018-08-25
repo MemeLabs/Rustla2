@@ -10,6 +10,8 @@ export let emit; // eslint-disable-line one-var
 
 // the types of payloads we can expect from the server
 export const actions = [
+  'AFK_SET',
+  'ERR',
   'RUSTLERS_SET',
   'STREAM_SET',
   'STREAMS_SET',
