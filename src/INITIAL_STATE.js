@@ -2,6 +2,7 @@ import { CHAT_HOST_STRIMS } from './actions';
 
 export default {
   isLoading: true,
+  isAfk: false,
   stream: null,
   streams: {},
   ui: {

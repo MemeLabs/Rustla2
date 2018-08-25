@@ -2,7 +2,7 @@
 import WebSocket from 'reconnecting-websocket';
 
 import history from '../history';
-import { setStream } from '.';
+import { setStream, setAfk } from '.';
 
 
 let socket;
@@ -43,6 +43,15 @@ const thunks = {
       type: actions.STREAM_BANNED,
       payload: null,
     });
+  },
+  STREAM_SET: (payload) => (dispatch, getState) => {
+    dispatch({
+      type: actions.STREAM_SET,
+      payload,
+    });
+    if (getState().isAfk) {
+      dispatch(setAfk(true));
+    }
   },
 };
 

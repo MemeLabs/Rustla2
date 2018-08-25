@@ -4,8 +4,10 @@ import {
   SET_CHAT_SIZE,
   TOGGLE_CHAT,
   SHOW_CHAT,
-  STREAM_SET,
 } from '../actions';
+import { actions } from '../actions/websocket';
+
+const { STREAM_SET } = actions;
 
 function uiReducer(state = INITIAL_STATE.ui, action) {
   switch (action.type) {
