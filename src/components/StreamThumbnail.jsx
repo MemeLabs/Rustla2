@@ -47,8 +47,10 @@ const StreamThumbnail = (props) => {
       <Link to={url} {...thumbnailProps} />
       <div className='stream-caption'>
         <Link to={url}>
-          <span className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
-            <span title={`${afk_rustlers} afk`}>{rustlers}</span>
+          <span
+            title={`${afk_rustlers} afk`}
+            className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
+            <span>{rustlers}</span>
             {'\u00a0'}
             <span className='glyphicon glyphicon-user' />
           </span>
