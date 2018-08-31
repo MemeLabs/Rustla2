@@ -29,7 +29,7 @@ without the need to go through the Twitch OAuth setup.
         ```
         $ node
         > var jwt = require('jwt-simple');
-        > jwt.encode({'id': 'PepoThinker', "exp":1999999999}, JWT_SECRET);
+        > jwt.encode({'id': '13374242-1337-1337-1337-cccccccccccc', 'exp':1999999999}, JWT_SECRET);
         ```
 
   3. In your browser create a cookie for your Rustla2 domain (possibly

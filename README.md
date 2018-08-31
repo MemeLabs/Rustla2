@@ -14,9 +14,13 @@ $ cp .env.example .env
 ```
 
 Edit `.env` to change various environment variables. Most importantly,
-`JWT_SECRET` should **not** be left blank.
+`JWT_SECRET` should **not** be left blank. The following is recommended:
 
-Install front dependencies and build the frontend:
+```bash
+$ sed -i "s/JWT_SECRET=/JWT_SECRET=$(head -c 22 /dev/urandom | base64 | tr -dc A-Za-z0-9)/" .env
+```
+
+Install dependencies and build the frontend:
 
 ``` bash
 $ npm install
