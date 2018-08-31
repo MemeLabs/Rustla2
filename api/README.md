@@ -5,8 +5,38 @@
   3. Build and run the Docker container
         ```
         $ git submodule update --init
-        $ cd api
         $ docker build . -f Dockerfile.base -t rustla2-api-base
         $ docker build . -t rustla2-api
-        $ docker run -d --name rustla2 --net=host -v ~/Rustla2:/Rustla2:rw -w /Rustla2 rustla2-api:latest
+        $ docker run -d --name rustla2 -p 8076:8076 -v ~/Rustla2:/Rustla2:rw -w /Rustla2 rustla2-api:latest
         ```
+  4. Test if everything worked by running
+        ```
+        $ curl -v http://localhost:8076/api
+        ```
+
+### Manual account setup
+
+It might be desirable for administrators or developers to create user accounts
+without the need to go through the Twitch OAuth setup.
+
+  1. Create a new account in the database (the database file will be created
+     after first running the server):
+        ```
+        $ sqlite3 ./overrustle.sqlite
+        sqlite> INSERT INTO "users" VALUES('13374242-1337-1337-1337-cccccccccccc',1337,'testuser','testuser','','twitch','admin','','2018-04-16 19:53:02',0,0,'','2018-04-01 20:00:00','2018-04-11 20:00:00',0);
+        ```
+  2. Forge the correct jwt cookie to be able to access this account:
+        ```
+        $ node
+        > var jwt = require('jwt-simple');
+        > jwt.encode({'id': 'PepoThinker', "exp":1999999999}, JWT_SECRET);
+        ```
+
+  3. In your browser create a cookie for your Rustla2 domain (possibly
+        `localhost`) named `jwt` (or whatever you set `JWT_NAME` to be), and set
+        the value of it to the output of the above. Depending on your browser,
+        you might need to install some addon for this.
+
+  4. Reload the page. You should be logged in, which can be seen at the top
+        right of the page.
+

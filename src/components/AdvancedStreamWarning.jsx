@@ -8,20 +8,18 @@ const AdvancedStreamWarning = ({ channel, onAccept }) => {
     <div className='advanced-stream-warning'>
       <h1>WARNING</h1>
       <p>
-        This "stream" requires embedding an external site onto this webpage.
-        External webpages are outside of Strims.gg's control, and may serve
-        malware, display not-safe-for-work content, and execute JavaScript, to
-        name just a few of the dangers.
+        This stream embed is served by an untrusted 3rd party site. It may
+        contain obscene (NSFW/NSFL) content, execute JavaScript, or record
+        your IP address.
       </p>
       <p>
-        By clicking "Accept", you are indicating that you understand the above
-        risks, and that you have at least a reasonable level of trust in the
-        following page:
+        By clicking "Continue", you are indicating that you understand the
+        above risks, and have reasonable trust in the following page:
       </p>
       <span><strong><code>{channel}</code></strong></span>
       <br />
       <button type='button' className='btn btn-danger' onClick={onAccept}>
-        I Accept The Dangers
+        Continue
       </button>
     </div>
   );

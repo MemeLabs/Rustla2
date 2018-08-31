@@ -29,9 +29,9 @@ const Footer = () =>
   <footer>
     <div className='container'>
       <p className='text-muted'>
-        Strims.gg, an unofficial <a href='https://destiny.gg'>destiny.gg</a> community
+        Strims.gg
         <br />
-        By <a href={`${GITHUB_URL}/graphs/contributors`}>memers</a> on <a href={`${DISCORD_URL}`}>discord</a>
+        By <a href={`${GITHUB_URL}/graphs/contributors`}>memers</a> on <a href={`${DISCORD_URL}`}>Discord</a>
         <br />
         Support us via{'\u00a0'}
         {
@@ -47,6 +47,8 @@ const Footer = () =>
           }, [])
         }
         <br />
+        <a href='https://chat.strims.gg/'>Chat</a>
+        &nbsp; &bull; &nbsp;
         <a href='/api'>API</a>
         &nbsp; &bull; &nbsp;
         <GitHubCommitLink hash={GIT_COMMIT_HASH} short={GIT_SHORT_COMMIT_HASH} />
