@@ -1,3 +1,20 @@
+server {
+    listen 443 ssl;
+    server_name strims.gg;
+
+    set_real_ip_from 0.0.0.0/0;
+    real_ip_header CF-Connecting-IP;
+
+    access_log /var/log/nginx/access_strims.log;
+    error_log /var/log/nginx/error_strims.log;
+
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+
+    ssl_certificate /etc/letsencrypt/live/strims.gg/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/strims.gg/privkey.pem;
+
     location / {
         proxy_pass http://localhost:8076;
         proxy_set_header Upgrade $http_upgrade;
@@ -5,4 +22,5 @@
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
     }
+}
 
