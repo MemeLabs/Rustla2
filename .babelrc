@@ -9,7 +9,8 @@
         }],
         "react",
         "stage-0"
-      ]
+      ],
+      "plugins": ["idx"]
     },
     "production": {
       "presets": [
@@ -22,6 +23,7 @@
         "stage-0"
       ],
       "plugins": [
+        "idx",
         ["transform-react-remove-prop-types", {
           "mode": "remove",
           "removeImport": true
