@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 import '../css/StreamThumbnail';
 
-const getStreamTitle = ({ overrustle_id, channel, title, service }) => {
+const getStreamTitle = (overrustle_id, channel, title, service) => {
   switch (service) {
     case 'angelthump': {
       const presenter = overrustle_id && overrustle_id !== channel
@@ -26,10 +26,19 @@ const getStreamTitle = ({ overrustle_id, channel, title, service }) => {
   }
 };
 
-const StreamThumbnail = (props) => {
-  const { overrustle_id, channel, service, nsfw, thumbnail, live, rustlers, afk_rustlers, ...rest } = props;
+const StreamThumbnail = ({
+  afk_rustlers = 0,
+  channel,
+  live = false,
+  nsfw = false,
+  overrustle_id,
+  rustlers,
+  service,
+  thumbnail,
+  title,
+}) => {
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
-  const text = getStreamTitle(props);
+  const text = getStreamTitle(overrustle_id, channel, title, service);
 
   let thumbnailProps = { className: 'thumbnail-image thumbnail-default-image' };
   if (thumbnail) {
@@ -43,7 +52,7 @@ const StreamThumbnail = (props) => {
   }
 
   return (
-    <div className={`stream-thumbnail stream-thumbnail-${service}`} title={text} {...rest}>
+    <div className={`stream-thumbnail stream-thumbnail-${service}`} title={text}>
       <Link to={url} {...thumbnailProps} />
       <div className='stream-caption'>
         <Link to={url}>
@@ -62,14 +71,15 @@ const StreamThumbnail = (props) => {
 };
 
 StreamThumbnail.propTypes = {
-  overrustle_id: PropTypes.string,
+  afk_rustlers: PropTypes.number,
   channel: PropTypes.string.isRequired,
-  service: PropTypes.string.isRequired,
-  title: PropTypes.string,
-  thumbnail: PropTypes.string,
-  live: PropTypes.bool.isRequired,
-  rustlers: PropTypes.number.isRequired,
+  live: PropTypes.bool,
   nsfw: PropTypes.bool,
+  overrustle_id: PropTypes.string,
+  rustlers: PropTypes.number.isRequired,
+  service: PropTypes.string.isRequired,
+  thumbnail: PropTypes.string,
+  title: PropTypes.string,
 };
 
 export default StreamThumbnail;
