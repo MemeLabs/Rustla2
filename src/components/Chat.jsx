@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cs from 'classnames';
 
-/* eslint-disable no-empty-function */
+// eslint-disable-next-line no-empty-function
 function noop() {}
-/* eslint-enable no-empty-function */
 
 const Chat = ({ className, onClose = noop, src, style, ...rest }) =>
   <div
