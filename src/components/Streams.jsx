@@ -40,7 +40,7 @@ const Streams = ({ history, streams }) => {
   const categories = [
     {
       header: 'Live Community Streams',
-      test: stream => (Boolean(stream.overrustle_id) || stream.service === 'angelthump') && stream.live,
+      test: stream => (Boolean(stream.overrustle_id) || stream.service === 'angelthump') && stream.live && !stream.afk,
       streams: [],
     },
     {
