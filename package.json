@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "rm -rf public/assets public/index.html",
     "build": "npm run clean && npm run build:bundle",
-    "build:bundle": "webpack --progress --display-chunks --display-reasons --display-error-details --display-modules",
+    "build:bundle": "webpack --progress",
     "build:production": "NODE_ENV=production npm run build",
     "dev-server": "npm run build && webpack-dev-server --inline --hot",
     "lint": "eslint webpack.config.js --ext .js --ext .jsx src",
