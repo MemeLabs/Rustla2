@@ -1,5 +1,5 @@
 /* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL
-          DISCORD_URL GIT_COMMIT_HASH GIT_SHORT_COMMIT_HASH */
+          DISCORD_URL GIT_COMMIT_HASH GIT_SHORT_COMMIT_HASH CHAT_URL */
 import React from 'react';
 
 import '../css/Footer';
@@ -47,8 +47,13 @@ const Footer = () =>
           }, [])
         }
         <br />
-        <a href='https://chat.strims.gg/'>Chat</a>
-        &nbsp; &bull; &nbsp;
+        {
+          CHAT_URL &&
+            <React.Fragment>
+              <a href={CHAT_URL}>Chat</a>
+              &nbsp; &bull; &nbsp;
+            </React.Fragment>
+        }
         <a href='/api'>API</a>
         &nbsp; &bull; &nbsp;
         <GitHubCommitLink hash={GIT_COMMIT_HASH} short={GIT_SHORT_COMMIT_HASH} />

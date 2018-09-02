@@ -146,6 +146,9 @@ module.exports = {
           DONATE_DO_URL: process.env.DONATE_DO_URL
             ? `"${process.env.DONATE_DO_URL}"`
             : undefined,
+          CHAT_URL: process.env.CHAT_URL
+            ? `"${process.env.CHAT_URL}"`
+            : undefined,
           THUMBNAIL_REFRESH_INTERVAL: process.env.THUMBNAIL_REFRESH_INTERVAL
             ? `"${process.env.THUMBNAIL_REFRESH_INTERVAL}"`
             : undefined,
