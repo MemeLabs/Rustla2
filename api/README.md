@@ -9,7 +9,7 @@
         $ docker build . -t rustla2-api
         $ docker run -d --name rustla2 -p 8076:8076 -v ~/Rustla2:/Rustla2:rw -w /Rustla2 rustla2-api:latest
         ```
-     If the first build fails, check your CPU and RAM usage. The process requires a fair amount of resources. Also try editing ``deps.sh`` and change ``JOBS=${JOBS:-$nproc}`` to ``JOBS=1``.
+     If the first build fails, check your CPU and RAM usage. The process requires a fair amount of resources. Try setting the environment variable ``JOBS=1`` as explained in ``deps.sh`` and restart the process.
 
   4. Test if everything worked by running
         ```
