@@ -29,3 +29,9 @@ server {
     }
 }
 
+server {
+    listen 80;
+    server_name strims.gg;
+    return 302 https://$host$request_uri;
+}
+
