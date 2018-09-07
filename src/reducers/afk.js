@@ -4,7 +4,7 @@ import { actions } from '../actions/websocket';
 const { AFK_SET } = actions;
 
 
-function afkReducer(state = INITIAL_STATE.isLoading, action) {
+function afkReducer(state = INITIAL_STATE.isAfk, action) {
   switch (action.type) {
     case AFK_SET:
       return action.payload[0];
