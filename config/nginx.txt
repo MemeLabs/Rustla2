@@ -15,7 +15,7 @@ server {
     add_header X-Content-Type-Options nosniff;
     add_header Referrer-Policy "no-referrer";
     add_header Feature-Policy "geolocation 'none'; microphone 'none'; camera 'none'";
-    add_header Content-Security-Policy "default-src 'none'; connect-src 'self' https: wss:; frame-src https:; img-src 'self' https:; script-src 'self' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-ancestors 'none'";
+    add_header Content-Security-Policy "default-src 'none'; connect-src 'self' https: wss:; frame-src https:; img-src 'self' https:; script-src 'self' 'unsafe-eval' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'";
 
     ssl_certificate /etc/letsencrypt/live/strims.gg/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/strims.gg/privkey.pem;
