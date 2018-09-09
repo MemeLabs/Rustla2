@@ -177,56 +177,48 @@ class Stream {
 
   inline bool SetLive(const bool live) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    MaybeResetUpdatedTime(live_ != live);
     live_ = live;
     return true;
   }
 
   inline bool SetTitle(const std::string &title) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    MaybeResetUpdatedTime(title_ != title);
     title_ = title;
     return true;
   }
 
   inline bool SetThumbnail(const std::string &thumbnail) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    MaybeResetUpdatedTime(thumbnail_ != thumbnail);
     thumbnail_ = thumbnail;
     return true;
   }
 
   inline bool SetViewerCount(const uint64_t viewer_count) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    MaybeResetUpdatedTime(viewer_count_ != viewer_count);
     viewer_count_ = viewer_count;
     return true;
   }
 
   inline bool SetNSFW(const bool nsfw) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    ResetUpdatedTime();
     nsfw_ = nsfw;
     return true;
   }
 
   inline bool SetHidden(const bool hidden) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    ResetUpdatedTime();
     hidden_ = hidden;
     return true;
   }
 
   inline bool SetAFK(const bool afk) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    ResetUpdatedTime();
     afk_ = afk;
     return true;
   }
 
   inline bool SetPromoted(const bool promoted) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-    ResetUpdatedTime();
     promoted_ = promoted;
     return true;
   }
@@ -246,12 +238,6 @@ class Stream {
   }
 
  private:
-  inline void MaybeResetUpdatedTime(const bool condition) {
-    if (condition) {
-      ResetUpdatedTime();
-    }
-  }
-
   inline void ResetUpdatedTime() {
     update_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
                        std::chrono::steady_clock::now().time_since_epoch())
