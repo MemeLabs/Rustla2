@@ -121,13 +121,13 @@ class Stream {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
 
     ResetUpdatedTime();
-    if (rustler_count_ == 0) {
+    if (rustler_count_ == afk_count_) {
       reset_time_ = update_time_;
     }
     return ++rustler_count_;
   }
 
-  inline uint64_t DecrRustlerCount() {
+  inline uint64_t DecrRustlerCount(const bool decr_afk = false) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
 
     if (rustler_count_ == 0) {
@@ -136,6 +136,9 @@ class Stream {
     }
 
     ResetUpdatedTime();
+    if (decr_afk) {
+      --afk_count_;
+    }
     return --rustler_count_;
   }
 
@@ -160,6 +163,9 @@ class Stream {
     }
 
     ResetUpdatedTime();
+    if (rustler_count_ == afk_count_) {
+      reset_time_ = update_time_;
+    }
     return --afk_count_;
   }
 
@@ -171,24 +177,28 @@ class Stream {
 
   inline bool SetLive(const bool live) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    MaybeResetUpdatedTime(live_ != live);
     live_ = live;
     return true;
   }
 
   inline bool SetTitle(const std::string &title) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    MaybeResetUpdatedTime(title_ != title);
     title_ = title;
     return true;
   }
 
   inline bool SetThumbnail(const std::string &thumbnail) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    MaybeResetUpdatedTime(thumbnail_ != thumbnail);
     thumbnail_ = thumbnail;
     return true;
   }
 
   inline bool SetViewerCount(const uint64_t viewer_count) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    MaybeResetUpdatedTime(viewer_count_ != viewer_count);
     viewer_count_ = viewer_count;
     return true;
   }
@@ -236,6 +246,12 @@ class Stream {
   }
 
  private:
+  inline void MaybeResetUpdatedTime(const bool condition) {
+    if (condition) {
+      ResetUpdatedTime();
+    }
+  }
+
   inline void ResetUpdatedTime() {
     update_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
                        std::chrono::steady_clock::now().time_since_epoch())

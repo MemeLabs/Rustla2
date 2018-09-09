@@ -75,7 +75,7 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
     UnsetStream(ws);
     delete reinterpret_cast<WSState*>(ws->getUserData());
   });
-}  // namespace rustla2
+}
 
 WSService::~WSService() {
   stream_broadcast_timer_.stop();
@@ -315,11 +315,7 @@ void WSService::UnsetStream(uWS::WebSocket<uWS::SERVER>* ws) {
   auto ws_state = GetWSState(ws);
 
   if (stream != nullptr) {
-    stream->DecrRustlerCount();
-
-    if (ws_state->afk) {
-      stream->DecrAFKCount();
-    }
+    stream->DecrRustlerCount(ws_state->afk);
   }
 
   ws_state->stream_id = 0;
