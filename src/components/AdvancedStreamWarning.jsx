@@ -6,15 +6,10 @@ import '../css/AdvancedStreamWarning';
 const AdvancedStreamWarning = ({ channel, onAccept }) => {
   return (
     <div className='advanced-stream-warning'>
-      <h1>WARNING</h1>
+      <h1>EMBED NOTICE</h1>
       <p>
-        This stream embed is served by an untrusted 3rd party site. It may
-        contain obscene (NSFW/NSFL) content, execute JavaScript, or record
-        your IP address.
-      </p>
-      <p>
-        By clicking "Continue", you are indicating that you understand the
-        above risks, and have reasonable trust in the following page:
+        This is a custom stream embed. It may contain obscene
+        (NSFW/NSFL) content, or record your IP address. Continue?
       </p>
       <span><strong><code>{channel}</code></strong></span>
       <br />
