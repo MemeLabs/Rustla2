@@ -26,7 +26,7 @@ constexpr folly::StringPiece kVaughnService{"vaughn"};
 constexpr folly::StringPiece kYouTubePlaylistService{"youtube-playlist"};
 constexpr folly::StringPiece kYouTubeService{"youtube"};
 
-constexpr std::array<folly::StringPiece, 14> kServices{
+constexpr std::array<folly::StringPiece, 12> kServices{
     kAdvancedService,        kAngelThumpService,      kFacebookService,  
     kM3u8Service,            kNSFWChaturbateService,  kSmashcastService, 
     kTwitchService,          kTwitchVODService,       kUstreamService,   
