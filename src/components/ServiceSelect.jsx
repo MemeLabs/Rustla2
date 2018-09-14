@@ -6,6 +6,7 @@ const ServiceSelect = props =>
     <option value='angelthump'>AngelThump</option>
     <option value='facebook'>Facebook</option>
     <option value='m3u8'>m3u8</option>
+    <option value='mixer'>Mixer</option>
     <option value='nsfw-chaturbate'>Chaturbate (NSFW)</option>
     <option value='smashcast'>Smashcast</option>
     <option value='twitch'>Twitch</option>
