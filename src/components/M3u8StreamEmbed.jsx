@@ -21,6 +21,7 @@ class M3u8StreamEmbed extends Component<Props> {
       source: this.props.src,
       width: '100%',
       height: '100%',
+      autoPlay: true,
     });
   }
 
