@@ -17,6 +17,7 @@ constexpr folly::StringPiece kAdvancedService{"advanced"};
 constexpr folly::StringPiece kAngelThumpService{"angelthump"};
 constexpr folly::StringPiece kFacebookService{"facebook"};
 constexpr folly::StringPiece kM3u8Service{"m3u8"};
+constexpr folly::StringPiece kMixerService{"mixer"};
 constexpr folly::StringPiece kNSFWChaturbateService{"nsfw-chaturbate"};
 constexpr folly::StringPiece kSmashcastService{"smashcast"};
 constexpr folly::StringPiece kTwitchService{"twitch"};
@@ -28,9 +29,10 @@ constexpr folly::StringPiece kYouTubeService{"youtube"};
 
 constexpr std::array<folly::StringPiece, 12> kServices{
     kAdvancedService,        kAngelThumpService,      kFacebookService,  
-    kM3u8Service,            kNSFWChaturbateService,  kSmashcastService, 
-    kTwitchService,          kTwitchVODService,       kUstreamService,   
-    kVaughnService,          kYouTubePlaylistService, kYouTubeService};
+    kM3u8Service,            kMixerService,           kNSFWChaturbateService,  
+    kSmashcastService,       kTwitchService,          kTwitchVODService,       
+    kUstreamService,         kVaughnService,          kYouTubePlaylistService, 
+    kYouTubeService};
 
 constexpr std::array<folly::StringPiece, 3> kCaseInsensitiveServices{
     kAngelThumpService, kTwitchService, kUstreamService};
