@@ -27,7 +27,7 @@ function streamsReducer(state = INITIAL_STATE.streams, action) {
     case RUSTLERS_SET: {
       const [ id, rustlers ] = action.payload;
 
-      // Flush this stream is there are no viewers.
+      // Flush this stream if there are no viewers.
       if (!rustlers) {
         return omit(state, [id]);
       }
