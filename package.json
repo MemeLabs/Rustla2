@@ -12,8 +12,7 @@
     "build:bundle": "webpack --progress",
     "build:production": "npm run --prod build",
     "dev-server": "npm run build && webpack-dev-server --inline --hot",
-    "lint": "eslint webpack.config.js --ext .js --ext .jsx src",
-    "migrate": "sequelize db:migrate --config sequelize.config.json"
+    "lint": "eslint webpack.config.js --ext .js --ext .jsx src"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
@@ -66,9 +65,6 @@
     "node-sass": "^4.2.0",
     "postcss-loader": "^2.0.1",
     "sass-loader": "^6.0.1",
-    "sequelize": "^4.22.6",
-    "sequelize-cli": "^2.8.0",
-    "sqlite3": "^4.0.2",
     "style-loader": "^0.20.3",
     "uglifyjs-webpack-plugin": "^2.0.1",
     "url-loader": "^1.0.1",
