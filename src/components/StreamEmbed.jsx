@@ -39,7 +39,7 @@ const getSrc = (channel, service) => {
   }
 };
 
-const StreamEmbed = ({ channel, service, ...rest }) => {
+const StreamEmbed = ({ channel, service }) => {
   if (service === 'advanced') {
     if (isValidAdvancedUrl(channel)) {
       return (
@@ -73,11 +73,10 @@ const StreamEmbed = ({ channel, service, ...rest }) => {
         allow='autoplay; fullscreen'
         allowFullScreen
         src={src}
-        {...rest}
         />
     );
   }
-  return <div className='jiggle-background' style={{ width: '100%', height: '100%' }} {...rest} />;
+  return <div className='jiggle-background' style={{ width: '100%', height: '100%' }} />;
 };
 
 StreamEmbed.propTypes = {
