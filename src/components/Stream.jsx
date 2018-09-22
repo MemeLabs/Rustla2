@@ -92,6 +92,7 @@ Stream.propTypes = {
   setChatSize: PropTypes.func.isRequired,
   showChat: PropTypes.func.isRequired,
   rustlerCount: PropTypes.arrayOf(PropTypes.number),
+  setAfk: PropTypes.func.isRequired,
 };
 
 export default compose(
