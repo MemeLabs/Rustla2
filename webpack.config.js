@@ -20,7 +20,7 @@ module.exports = {
   entry: {
     main: [
       'bootstrap/dist/css/bootstrap.css',
-      'babel-polyfill',
+      '@babel/polyfill',
       'isomorphic-fetch',
       path.resolve(__dirname, 'src/css/main.scss'),
       path.resolve(__dirname, 'src/client.jsx'),
@@ -73,7 +73,6 @@ module.exports = {
         loader: 'babel-loader',
         options: {
           cacheDirectory: true,
-          forceEnv: NODE_ENV || 'development',
         },
       },
       {

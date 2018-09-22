@@ -2,27 +2,31 @@
   "env": {
     "development": {
       "presets": [
-        ["env", {
+        ["@babel/preset-env", {
           "targets": {
             "browsers": ["last 2 versions"]
           }
         }],
-        "react",
-        "stage-0"
+        "@babel/preset-react"
       ],
-      "plugins": ["idx"]
+      "plugins": [
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-syntax-dynamic-import",
+        "idx"
+      ]
     },
     "production": {
       "presets": [
-        ["env", {
+        ["@babel/preset-env", {
           "targets": {
             "browsers": ["last 2 versions"]
           }
         }],
-        "react",
-        "stage-0"
+        "@babel/preset-react"
       ],
       "plugins": [
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-syntax-dynamic-import",
         "idx",
         ["transform-react-remove-prop-types", {
           "mode": "remove",
