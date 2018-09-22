@@ -67,7 +67,7 @@
     "sass-loader": "^6.0.1",
     "sequelize": "^4.22.6",
     "sequelize-cli": "^2.8.0",
-    "sqlite3": "^3.1.13",
+    "sqlite3": "^4.0.2",
     "style-loader": "^0.20.3",
     "uglifyjs-webpack-plugin": "^1.2.4",
     "url-loader": "^1.0.1",
