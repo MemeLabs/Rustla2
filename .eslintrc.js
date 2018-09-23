@@ -7,6 +7,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'plugin:flowtype/recommended',
     'plugin:react/recommended',
   ],
   parserOptions: {
@@ -18,6 +19,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
+    'flowtype',
     'react',
   ],
   rules: {

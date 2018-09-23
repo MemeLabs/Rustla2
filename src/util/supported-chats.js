@@ -1,6 +1,7 @@
+// @flow
 /* global process */
 
-const supportedChats = {
+const supportedChats: { [key: string]: (channel: string) => string } = {
   'twitch-vod': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
   'twitch': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
   'ustream': channel => `https://www.ustream.tv/socialstream/${channel}`,
@@ -9,4 +10,4 @@ const supportedChats = {
 };
 
 export default supportedChats;
-export const supportedChatServices = new Set(Object.keys(supportedChats));
+export const supportedChatServices = new Set<string>(Object.keys(supportedChats));
