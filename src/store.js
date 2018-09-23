@@ -1,3 +1,4 @@
+// @flow
 /* global process */
 
 import { createStore, applyMiddleware, compose } from 'redux';
