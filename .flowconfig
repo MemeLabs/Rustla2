@@ -8,5 +8,7 @@
 [lints]
 
 [options]
+module.name_mapper='^.*\/css\/.*$' -> 'css-module-flow'
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe
 
 [strict]

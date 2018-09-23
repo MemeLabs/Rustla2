@@ -9,6 +9,7 @@ type Props = {
   onAccept: () => void
 }
 
+// $FlowFixMe
 const AdvancedStreamWarning = ({ channel, onAccept }: Props) =>
   <div className='advanced-stream-warning'>
     <h1>EMBED NOTICE</h1>

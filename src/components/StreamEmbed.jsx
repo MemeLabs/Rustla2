@@ -1,16 +1,22 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
+import type { StatelessFunctionalComponent } from 'react';
 import { Redirect } from 'react-router-dom';
+import { withProps } from 'recompose';
+import type { HOC } from 'recompose';
 
 import AdvancedStreamEmbed from './AdvancedStreamEmbed';
+import AdvancedStreamWarning from './AdvancedStreamWarning';
 import M3u8StreamEmbed from './M3u8StreamEmbed';
-import ThirdPartyWarning from './ThirdPartyWarning';
+import NsfwStreamWarning from './NsfwStreamWarning';
+import StreamWarning from './StreamWarning';
 
 // Use `window.URL` as our WHATWG `URL` implementation. See
 // <http://caniuse.com/#feat=url> for the browsers which do not support this.
 const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(window.URL);
 
-const getSrc = (channel, service) => {
+const getSrc = (channel: string, service: string) => {
   switch (service) {
     case 'angelthump':
       return `https://angelthump.com/embed/${channel}`;
@@ -39,13 +45,39 @@ const getSrc = (channel, service) => {
   }
 };
 
-const StreamEmbed = ({ channel, service }) => {
+type StreamService =
+  | 'advanced'
+  | 'afreeca'
+  | 'angelthump'
+  | 'dailymotion'
+  | 'facebook'
+  | 'm3u8'
+  | 'nsfw-chaturbate'
+  | 'smashcast'
+  | 'twitch-vod'
+  | 'twitch'
+  | 'ustream'
+  | 'vaughn'
+  | 'youtube-playlist'
+  | 'youtube';
+
+type Props = {
+  channel: string,
+  service: StreamService,
+  nsfw?: boolean
+};
+
+const StreamEmbed = ({ channel, service, nsfw = false }: Props) => {
+  const withChannelProp = withProps((props) => ({ channel, ...props }));
+  const withSrcProp = withProps((props) => ({ src: channel, ...props }));
+
   if (service === 'advanced') {
     if (isValidAdvancedUrl(channel)) {
       return (
-        <ThirdPartyWarning channel={channel}>
-          <AdvancedStreamEmbed channel={channel} />
-        </ThirdPartyWarning>
+        <StreamWarning
+          stream={withChannelProp(AdvancedStreamEmbed)}
+          warning={withChannelProp(AdvancedStreamWarning)}
+        />
       );
     }
     return <Redirect to='/' />;
@@ -53,50 +85,40 @@ const StreamEmbed = ({ channel, service }) => {
 
   if (service === 'm3u8') {
     return (
-      <ThirdPartyWarning channel={channel}>
-        <M3u8StreamEmbed src={channel} />
-      </ThirdPartyWarning>
+      <StreamWarning
+        stream={withSrcProp(M3u8StreamEmbed)}
+        warning={withChannelProp(AdvancedStreamWarning)}
+      />
     );
   }
 
   const src = getSrc(channel, service);
   if (src) {
-    return (
-      <iframe
-        width='100%'
-        height='100%'
-        marginHeight='0'
-        marginWidth='0'
-        frameBorder='0'
-        scrolling='no'
-        seamless
-        allow='autoplay; fullscreen'
-        allowFullScreen
-        src={src}
+    const frame: StatelessFunctionalComponent<{}> = () => <iframe
+      width='100%'
+      height='100%'
+      marginHeight='0'
+      marginWidth='0'
+      frameBorder='0'
+      scrolling='no'
+      seamless
+      allow='autoplay; fullscreen'
+      allowFullScreen
+      src={src}
+    />;
+    if (nsfw) {
+      return (
+        <StreamWarning
+          stream={frame}
+          warning={NsfwStreamWarning}
         />
-    );
+      );
+    }
+
+    // $FlowFixMe
+    return frame();
   }
   return <div className='jiggle-background' style={{ width: '100%', height: '100%' }} />;
-};
-
-StreamEmbed.propTypes = {
-  channel: PropTypes.string,
-  service: PropTypes.oneOf([
-    'advanced',
-    'afreeca',
-    'angelthump',
-    'dailymotion',
-    'facebook',
-    'm3u8',
-    'nsfw-chaturbate',
-    'smashcast',
-    'twitch-vod',
-    'twitch',
-    'ustream',
-    'vaughn',
-    'youtube-playlist',
-    'youtube',
-  ]),
 };
 
 export default StreamEmbed;

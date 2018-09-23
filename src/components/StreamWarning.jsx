@@ -1,8 +1,8 @@
 // @flow
 
 import React from 'react';
+import type { ComponentType } from 'react';
 import { compose, withStateHandlers } from 'recompose';
-import type { Component } from 'recompose';
 
 type WarningProps = {
   onAccept: () => void
@@ -11,10 +11,11 @@ type WarningProps = {
 type Props = {
   acceptedWarning: boolean,
   acceptWarning: () => void,
-  stream: Component<*>,
-  warning: Component<WarningProps>
+  stream: ComponentType<{||}>,
+  warning: ComponentType<WarningProps>
 };
 
+// $FlowFixMe
 const StreamWarning = ({ acceptedWarning, acceptWarning, stream, warning }: Props) =>
   acceptedWarning
     ? React.createElement(stream)
