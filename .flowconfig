@@ -1,0 +1,12 @@
+[ignore]
+<PROJECT_ROOT>/api
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
