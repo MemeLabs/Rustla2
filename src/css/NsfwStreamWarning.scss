@@ -1,0 +1,26 @@
+.nsfw-stream-warning {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+
+  &:before {
+    background-image: url('/image/pepos.png');
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    content: ' ';
+    display: block;
+    filter: blur(2px);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+  }
+
+  button, h2, p, span {
+    position: relative;
+    z-index: 2;
+  }
+}

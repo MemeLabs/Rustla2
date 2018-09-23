@@ -35,10 +35,11 @@ export const Stream = ({
   showChat,
   rustlerCount,
   showLeftChat = false,
+  nsfw = false,
 }) => {
   let left = (
     <div style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` }}>
-      <StreamEmbed channel={channel} service={service} />
+      <StreamEmbed channel={channel} service={service} nsfw={nsfw} />
     </div>
   );
   let right = chatClosed ? null : (
@@ -93,6 +94,7 @@ Stream.propTypes = {
   showChat: PropTypes.func.isRequired,
   rustlerCount: PropTypes.arrayOf(PropTypes.number),
   setAfk: PropTypes.func.isRequired,
+  nsfw: PropTypes.bool,
 };
 
 export default compose(
@@ -103,6 +105,7 @@ export default compose(
       showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
       isFetchingProfile: state.self.profile.isFetching,
       chatClosed: !state.ui.showChat,
+      nsfw: !!idx(state, _ => _.streams[state.stream].nsfw),
     }),
     {
       setAfk,
