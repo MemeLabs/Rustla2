@@ -1,14 +1,29 @@
-/* global API */
+// @flow
+
+// Global variable.
+declare var API: string;
+
 import React from 'react';
+import type { History } from 'react-router';
 
 import Error404 from './Error404';
 import Loadable from './Loadable';
 
+type Props = {
+  history: History,
+  match: {
+    params: {
+      channel: string,
+      service: string,
+      streamer: string
+    }
+  }
+}
 
 const AsyncStream = ({
   history,
   match: { params: { service, channel, streamer } },
-}) => {
+}: Props) => {
   const LoadableStream = Loadable.Map({
     loader: {
       Component: () => import(/* webpackChunkName: "stream" */ './Stream'),
