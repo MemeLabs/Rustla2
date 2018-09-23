@@ -1,11 +1,15 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import clappr from 'clappr';
 
-class M3u8StreamEmbed extends Component {
-  static propTypes = {
-    src: PropTypes.string.isRequired,
-  };
+type Props = {
+  src: string
+};
+
+class M3u8StreamEmbed extends Component<Props> {
+  player: clappr.Player;
+  playerNode: HTMLDivElement | null;
 
   createPlayer() {
     if (this.player) {
@@ -36,7 +40,7 @@ class M3u8StreamEmbed extends Component {
     this.destroyPlayer();
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps: Props) {
     if (nextProps.src !== this.props.src) {
       this.createPlayer();
     }
