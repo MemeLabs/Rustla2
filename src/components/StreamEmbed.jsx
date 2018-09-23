@@ -4,7 +4,6 @@ import React from 'react';
 import type { StatelessFunctionalComponent } from 'react';
 import { Redirect } from 'react-router-dom';
 import { withProps } from 'recompose';
-import type { HOC } from 'recompose';
 
 import AdvancedStreamEmbed from './AdvancedStreamEmbed';
 import AdvancedStreamWarning from './AdvancedStreamWarning';
