@@ -19,8 +19,6 @@ const getSrc = (channel: string, service: string): string | null => {
       return `https://www.facebook.com/video/embed?video_id=${channel}&autoplay=true`;
     case 'mixer':
       return `https://mixer.com/embed/player/${channel}`;
-    case 'nsfw-chaturbate':
-      return `https://chaturbate.com/embed/${channel}?bgcolor=black`;
     case 'smashcast':
       return `https://www.smashcast.tv/embed/${channel}?popout=true&autoplay=true`;
     case 'twitch-vod':

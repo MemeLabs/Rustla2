@@ -27,12 +27,11 @@ constexpr folly::StringPiece kVaughnService{"vaughn"};
 constexpr folly::StringPiece kYouTubePlaylistService{"youtube-playlist"};
 constexpr folly::StringPiece kYouTubeService{"youtube"};
 
-constexpr std::array<folly::StringPiece, 13> kServices{
+constexpr std::array<folly::StringPiece, 12> kServices{
     kAdvancedService,        kAngelThumpService,      kFacebookService,  
-    kM3u8Service,            kMixerService,           kNSFWChaturbateService,  
-    kSmashcastService,       kTwitchService,          kTwitchVODService,       
-    kUstreamService,         kVaughnService,          kYouTubePlaylistService, 
-    kYouTubeService};
+    kM3u8Service,            kMixerService,           kSmashcastService,       
+    kTwitchService,          kTwitchVODService,       kUstreamService,         
+    kVaughnService,          kYouTubePlaylistService, kYouTubeService};
 
 constexpr std::array<folly::StringPiece, 3> kCaseInsensitiveServices{
     kAngelThumpService, kTwitchService, kUstreamService};
