@@ -11,7 +11,7 @@ import ThirdPartyWarning from './ThirdPartyWarning';
 // <http://caniuse.com/#feat=url> for the browsers which do not support this.
 const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(window.URL);
 
-const getSrc = (channel: string, service: string): string => {
+const getSrc = (channel: string, service: string): string | null => {
   switch (service) {
     case 'angelthump':
       return `https://angelthump.com/embed/${channel}`;
@@ -37,6 +37,8 @@ const getSrc = (channel: string, service: string): string => {
       return `https://www.youtube.com/embed/${channel}?autoplay=1`;
     case 'afreeca':
       return `https://play.afreecatv.com/${channel}/embed`;
+    default:
+      return null;
   }
 };
 
