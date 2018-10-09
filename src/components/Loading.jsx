@@ -1,14 +1,10 @@
 // @flow
 
 import React from 'react';
+import type { LoadingProps } from 'react-loadable';
 
-type Props = {
-  error: Error;
-  pastDelay: boolean;
-  timedOut: boolean;
-};
 
-const Loading = ({ error, pastDelay, timedOut }: Props) => {
+const Loading = ({ error, pastDelay, timedOut }: LoadingProps) => {
   // If the loader errored, display generic error message.
   if (error) {
     return <p>Error!</p>;
