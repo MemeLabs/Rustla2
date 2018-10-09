@@ -1,21 +1,17 @@
 // @flow
 
 import React from 'react';
-import type { StatelessFunctionalComponent } from 'react';
 import { Redirect } from 'react-router-dom';
-import { withProps } from 'recompose';
 
 import AdvancedStreamEmbed from './AdvancedStreamEmbed';
-import AdvancedStreamWarning from './AdvancedStreamWarning';
 import M3u8StreamEmbed from './M3u8StreamEmbed';
-import NsfwStreamWarning from './NsfwStreamWarning';
-import StreamWarning from './StreamWarning';
+import ThirdPartyWarning from './ThirdPartyWarning';
 
 // Use `window.URL` as our WHATWG `URL` implementation. See
 // <http://caniuse.com/#feat=url> for the browsers which do not support this.
 const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(window.URL);
 
-const getSrc = (channel: string, service: string) => {
+const getSrc = (channel: string, service: string): string => {
   switch (service) {
     case 'angelthump':
       return `https://angelthump.com/embed/${channel}`;
@@ -44,7 +40,7 @@ const getSrc = (channel: string, service: string) => {
   }
 };
 
-type StreamService =
+type Service =
   | 'advanced'
   | 'afreeca'
   | 'angelthump'
@@ -62,21 +58,16 @@ type StreamService =
 
 type Props = {
   channel: string,
-  service: StreamService,
-  nsfw?: boolean
+  service: Service
 };
 
-const StreamEmbed = ({ channel, service, nsfw = false }: Props) => {
-  const withChannelProp = withProps((props) => ({ channel, ...props }));
-  const withSrcProp = withProps((props) => ({ src: channel, ...props }));
-
+const StreamEmbed = ({ channel, service }: Props) => {
   if (service === 'advanced') {
     if (isValidAdvancedUrl(channel)) {
       return (
-        <StreamWarning
-          stream={withChannelProp(AdvancedStreamEmbed)}
-          warning={withChannelProp(AdvancedStreamWarning)}
-        />
+        <ThirdPartyWarning channel={channel}>
+          <AdvancedStreamEmbed channel={channel} />
+        </ThirdPartyWarning>
       );
     }
     return <Redirect to='/' />;
@@ -84,38 +75,28 @@ const StreamEmbed = ({ channel, service, nsfw = false }: Props) => {
 
   if (service === 'm3u8') {
     return (
-      <StreamWarning
-        stream={withSrcProp(M3u8StreamEmbed)}
-        warning={withChannelProp(AdvancedStreamWarning)}
-      />
+      <ThirdPartyWarning channel={channel}>
+        <M3u8StreamEmbed src={channel} />
+      </ThirdPartyWarning>
     );
   }
 
   const src = getSrc(channel, service);
   if (src) {
-    const frame: StatelessFunctionalComponent<{}> = () => <iframe
-      width='100%'
-      height='100%'
-      marginHeight='0'
-      marginWidth='0'
-      frameBorder='0'
-      scrolling='no'
-      seamless
-      allow='autoplay; fullscreen'
-      allowFullScreen
-      src={src}
-    />;
-    if (nsfw) {
-      return (
-        <StreamWarning
-          stream={frame}
-          warning={NsfwStreamWarning}
+    return (
+      <iframe
+        width='100%'
+        height='100%'
+        marginHeight='0'
+        marginWidth='0'
+        frameBorder='0'
+        scrolling='no'
+        seamless
+        allow='autoplay; fullscreen'
+        allowFullScreen
+        src={src}
         />
-      );
-    }
-
-    // $FlowFixMe
-    return frame();
+    );
   }
   return <div className='jiggle-background' style={{ width: '100%', height: '100%' }} />;
 };
