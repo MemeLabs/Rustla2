@@ -1,19 +1,30 @@
+// @flow
+
 import React from 'react';
 
+type Props = {
+  error: Error;
+  pastDelay: boolean;
+  timedOut: boolean;
+};
 
-const Loading = ({ error, isLoading, pastDelay, timedOut }) => {
-  if (isLoading) {
-    if (timedOut) {
-      return <div>Loader timed out</div>;
-    }
-    if (pastDelay) {
-      return <div className='jiggle-background fill-percentage' />;
-    }
-    return null;
-  }
+const Loading = ({ error, pastDelay, timedOut }: Props) => {
+  // If the loader errored, display generic error message.
   if (error) {
     return <p>Error!</p>;
   }
+
+  // If the loader took too long, display generic timeout message.
+  if (timedOut) {
+    return <div>Loader timed out</div>;
+  }
+
+  // If the loader has taken long enough, then show the loading screen.
+  if (pastDelay) {
+    return <div className='jiggle-background fill-percentage' />;
+  }
+
+  // Loader has only just started; do not display anything yet.
   return null;
 };
 
