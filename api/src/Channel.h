@@ -18,7 +18,6 @@ constexpr folly::StringPiece kAngelThumpService{"angelthump"};
 constexpr folly::StringPiece kFacebookService{"facebook"};
 constexpr folly::StringPiece kM3u8Service{"m3u8"};
 constexpr folly::StringPiece kMixerService{"mixer"};
-constexpr folly::StringPiece kNSFWChaturbateService{"nsfw-chaturbate"};
 constexpr folly::StringPiece kSmashcastService{"smashcast"};
 constexpr folly::StringPiece kTwitchService{"twitch"};
 constexpr folly::StringPiece kTwitchVODService{"twitch-vod"};
