@@ -13,7 +13,7 @@ server {
     # CSP also denies framing
     add_header X-Frame-Options DENY;
     add_header X-Content-Type-Options nosniff;
-    add_header Referrer-Policy "no-referrer";
+    add_header Referrer-Policy "strict-origin-when-cross-origin";
     add_header Feature-Policy "geolocation 'none'; microphone 'none'; camera 'none'";
     add_header Content-Security-Policy "default-src 'none'; connect-src 'self' https: wss:; frame-src https:; img-src 'self' https:; script-src 'self' 'unsafe-eval' blob:; media-src blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'";
 
