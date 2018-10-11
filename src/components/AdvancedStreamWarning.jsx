@@ -1,9 +1,15 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import '../css/AdvancedStreamWarning';
 
-const AdvancedStreamWarning = ({ channel, onAccept }) => {
+type Props = {
+  channel: string,
+  onAccept: () => void
+};
+
+const AdvancedStreamWarning = ({ channel, onAccept }: Props) => {
   return (
     <div className='advanced-stream-warning'>
       <h1>EMBED NOTICE</h1>
@@ -18,11 +24,6 @@ const AdvancedStreamWarning = ({ channel, onAccept }) => {
       </button>
     </div>
   );
-};
-
-AdvancedStreamWarning.propTypes = {
-  channel: PropTypes.string.isRequired,
-  onAccept: PropTypes.func.isRequired,
 };
 
 export default AdvancedStreamWarning;
