@@ -11,4 +11,4 @@ const supportedChats: {
 };
 
 export default supportedChats;
-export const supportedChatServices = new Set <string> (Object.keys(supportedChats));
+export const supportedChatServices = new Set<string>(Object.keys(supportedChats));
