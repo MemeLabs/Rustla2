@@ -1,3 +1,5 @@
+// @flow
+
 import Loadable from './Loadable';
 
 
