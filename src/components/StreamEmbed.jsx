@@ -15,12 +15,10 @@ const getSrc = (channel: string, service: string): string | null => {
   switch (service) {
     case 'angelthump':
       return `https://angelthump.com/embed/${channel}`;
-    case 'dailymotion':
-      return `//www.dailymotion.com/embed/video/${channel}?autoplay=1`;
     case 'facebook':
       return `https://www.facebook.com/video/embed?video_id=${channel}&autoplay=true`;
-    case 'nsfw-chaturbate':
-      return `https://chaturbate.com/embed/${channel}?bgcolor=black`;
+    case 'mixer':
+      return `https://mixer.com/embed/player/${channel}`;
     case 'smashcast':
       return `https://www.smashcast.tv/embed/${channel}?popout=true&autoplay=true`;
     case 'twitch-vod':
@@ -35,8 +33,6 @@ const getSrc = (channel: string, service: string): string | null => {
       return `https://www.youtube.com/embed/videoseries?list=${channel}&autoplay=1`;
     case 'youtube':
       return `https://www.youtube.com/embed/${channel}?autoplay=1`;
-    case 'afreeca':
-      return `https://play.afreecatv.com/${channel}/embed`;
     default:
       return null;
   }
@@ -44,12 +40,10 @@ const getSrc = (channel: string, service: string): string | null => {
 
 type Service =
   | 'advanced'
-  | 'afreeca'
   | 'angelthump'
-  | 'dailymotion'
   | 'facebook'
   | 'm3u8'
-  | 'nsfw-chaturbate'
+    'mixer'
   | 'smashcast'
   | 'twitch-vod'
   | 'twitch'
@@ -97,7 +91,7 @@ const StreamEmbed = ({ channel, service }: Props) => {
         allow='autoplay; fullscreen'
         allowFullScreen
         src={src}
-        />
+      />
     );
   }
   return <div className='jiggle-background' style={{ width: '100%', height: '100%' }} />;
