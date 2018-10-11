@@ -23,7 +23,7 @@ const Checkbox = ({
       className={classes}
       onChange={toggle}
       {...miscProps}
-    />
+     />
   );
 };
 Checkbox.propTypes = {
