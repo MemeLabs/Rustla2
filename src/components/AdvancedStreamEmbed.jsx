@@ -1,7 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+// @flow
 
-const AdvancedStreamEmbed = ({ channel }) =>
+import React from 'react';
+
+type Props = {
+  channel: string
+};
+
+const AdvancedStreamEmbed = ({ channel }: Props) =>
   <iframe
     width='100%'
     height='100%'
@@ -14,10 +19,6 @@ const AdvancedStreamEmbed = ({ channel }) =>
     allowFullScreen
     allowTransparency
     src={channel}
-    />;
-
-AdvancedStreamEmbed.propTypes = {
-  channel: PropTypes.string.isRequired,
-};
+  />;
 
 export default AdvancedStreamEmbed;
