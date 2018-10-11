@@ -43,6 +43,7 @@ type Service =
   | 'angelthump'
   | 'facebook'
   | 'm3u8'
+    'mixer'
   | 'smashcast'
   | 'twitch-vod'
   | 'twitch'
