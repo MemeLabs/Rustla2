@@ -1,11 +1,19 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import cs from 'classnames';
 
 // eslint-disable-next-line no-empty-function
 function noop() {}
 
-const Chat = ({ className, onClose = noop, src, style, ...rest }) =>
+type Props = {
+  className?: string,
+  onClose?: () => void,
+  src: string,
+  style?: Object
+};
+
+const Chat = ({ className, onClose = noop, src, style, ...rest }: Props) =>
   <div
     {...rest}
     className={cs('fill-percentage', className)}
@@ -38,10 +46,7 @@ const Chat = ({ className, onClose = noop, src, style, ...rest }) =>
   ;
 
 Chat.propTypes = {
-  className: PropTypes.string,
-  onClose: PropTypes.func,
-  src: PropTypes.string.isRequired,
-  style: PropTypes.object,
+
 };
 
 export default Chat;
