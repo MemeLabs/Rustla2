@@ -11,8 +11,7 @@
 
 #include "Status.h"
 
-namespace rustla2
-{
+namespace rustla2 {
 
 constexpr folly::StringPiece kAdvancedService{"advanced"};
 constexpr folly::StringPiece kAngelThumpService{"angelthump"};
@@ -28,35 +27,31 @@ constexpr folly::StringPiece kYouTubePlaylistService{"youtube-playlist"};
 constexpr folly::StringPiece kYouTubeService{"youtube"};
 
 constexpr std::array<folly::StringPiece, 12> kServices{
-    kAdvancedService, kAngelThumpService, kFacebookService,
-    kM3u8Service, kMixerService, kSmashcastService,
-    kTwitchService, kTwitchVODService, kUstreamService,
-    kVaughnService, kYouTubePlaylistService, kYouTubeService};
+    kAdvancedService,        kAngelThumpService,      kFacebookService,  
+    kM3u8Service,            kMixerService,           kSmashcastService,       
+    kTwitchService,          kTwitchVODService,       kUstreamService,         
+    kVaughnService,          kYouTubePlaylistService, kYouTubeService};
 
 constexpr std::array<folly::StringPiece, 3> kCaseInsensitiveServices{
     kAngelThumpService, kTwitchService, kUstreamService};
 
-class Channel
-{
-public:
+class Channel {
+ public:
   static Channel Create(const std::string &channel, const std::string &service,
                         const std::string &stream_path, Status *status);
 
   static Channel Create(const std::string &channel, const std::string &service,
-                        const std::string &stream_path = "")
-  {
+                        const std::string &stream_path = "") {
     Status status;
     return Create(channel, service, stream_path, &status);
   }
 
   static Channel Create(const std::string &channel, const std::string &service,
-                        Status *status)
-  {
+                        Status *status) {
     return Create(channel, service, "", status);
   }
 
-  inline operator std::shared_ptr<Channel>() const
-  {
+  inline operator std::shared_ptr<Channel>() const {
     return std::shared_ptr<Channel>(
         new Channel(channel_, service_, stream_path_));
   }
@@ -65,8 +60,7 @@ public:
 
   inline const std::string &GetService() const { return service_; }
 
-  inline const std::string GetPath() const
-  {
+  inline const std::string GetPath() const {
     return !stream_path_.empty() ? folly::sformat("/{}", stream_path_)
                                  : folly::sformat("/{}/{}", service_, channel_);
   }
@@ -79,7 +73,7 @@ public:
 
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
 
-private:
+ private:
   Channel() {}
 
   Channel(const std::string &channel, const std::string &service,
@@ -112,10 +106,8 @@ private:
   friend class ChannelSourceEqual;
 };
 
-struct ChannelHash : public std::unary_function<Channel, std::size_t>
-{
-  std::size_t operator()(const Channel &k) const
-  {
+struct ChannelHash : public std::unary_function<Channel, std::size_t> {
+  std::size_t operator()(const Channel &k) const {
     auto hash = std::hash<std::string>{}(k.channel_);
     boost::hash_combine(hash, std::hash<std::string>{}(k.service_));
     boost::hash_combine(hash, std::hash<std::string>{}(k.stream_path_));
@@ -123,19 +115,15 @@ struct ChannelHash : public std::unary_function<Channel, std::size_t>
   }
 };
 
-struct ChannelEqual : public std::binary_function<Channel, Channel, bool>
-{
-  bool operator()(const Channel &a, const Channel &b) const
-  {
+struct ChannelEqual : public std::binary_function<Channel, Channel, bool> {
+  bool operator()(const Channel &a, const Channel &b) const {
     return a.channel_ == b.channel_ && a.service_ == b.service_ &&
            a.stream_path_ == b.stream_path_;
   }
 };
 
-struct ChannelSourceHash : public std::unary_function<Channel, std::size_t>
-{
-  std::size_t operator()(const Channel &k) const
-  {
+struct ChannelSourceHash : public std::unary_function<Channel, std::size_t> {
+  std::size_t operator()(const Channel &k) const {
     auto hash = std::hash<std::string>{}(k.channel_);
     boost::hash_combine(hash, std::hash<std::string>{}(k.service_));
     return hash;
@@ -143,12 +131,10 @@ struct ChannelSourceHash : public std::unary_function<Channel, std::size_t>
 };
 
 struct ChannelSourceEqual
-    : public std::binary_function<Channel, Channel, bool>
-{
-  bool operator()(const Channel &a, const Channel &b) const
-  {
+    : public std::binary_function<Channel, Channel, bool> {
+  bool operator()(const Channel &a, const Channel &b) const {
     return a.channel_ == b.channel_ && a.service_ == b.service_;
   }
 };
 
-} // namespace rustla2
+}  // namespace rustla2
