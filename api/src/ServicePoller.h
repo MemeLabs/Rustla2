@@ -27,17 +27,17 @@ public:
 
   void Run();
 
-  const Status CheckAngelThump(const std::string &name, ChannelState *state);
+  const Status CheckAngelThump(const std::string& name, ChannelState* state);
 
-  const Status CheckM3u8(const std::string &name, ChannelState *state);
+  const Status CheckM3u8(const std::string& name, ChannelState* state);
 
-  const Status CheckTwitchStream(const std::string &name, ChannelState *state);
+  const Status CheckTwitchStream(const std::string& name, ChannelState* state);
 
-  const Status CheckTwitchVOD(const std::string &name, ChannelState *state);
+  const Status CheckTwitchVOD(const std::string& name, ChannelState* state);
 
-  const Status CheckYouTube(const std::string &name, ChannelState *state);
+  const Status CheckYouTube(const std::string& name, ChannelState* state);
 
-  const Status CheckMixer(const std::string &name, ChannelState *state);
+  const Status CheckMixer(const std::string& name, ChannelState* state);
 
 private:
   std::shared_ptr<DB> db_;
@@ -45,4 +45,4 @@ private:
   std::unique_ptr<youtube::Client> youtube_;
 };
 
-} // namespace rustla2
+}  // namespace rustla2
