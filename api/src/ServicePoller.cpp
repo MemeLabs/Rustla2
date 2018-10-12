@@ -34,6 +34,8 @@ void ServicePoller::Run() {
       status = CheckYouTube(channel->GetChannel(), &state);
     } else if (channel->GetService() == kM3u8Service) {
       status = CheckM3u8(channel->GetChannel(), &state);
+    } else if (channel->GetService() == kMixerService) {
+      status = CheckMixer(channel->GetChannel(), &state);
     }
 
     if (status.Ok()) {
@@ -78,10 +80,10 @@ const Status ServicePoller::CheckM3u8(const std::string& name,
     return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
   }
 
-  state->live = true;   
+  state->live = true;
 
-  return Status::OK;   
-}                         
+  return Status::OK;
+}
 
 const Status ServicePoller::CheckTwitchStream(const std::string& name,
                                               ChannelState* state) {
@@ -153,6 +155,22 @@ const Status ServicePoller::CheckYouTube(const std::string& name,
   }
 
   return status;
+}
+
+const Status ServicePoller::CheckMixer(const std::string& name,
+                                            ChannelState* state) {
+  mixer::Client client;
+  mixer::ChannelResult channel;
+  auto status = client.GetChannelByName(name, &channel);
+
+  if (!status.Ok()) {
+    return status;
+  }
+
+  state->name = channel.GetName();
+  state->live = channel.GetLive();
+  state->thumbnail = channel.GetThumbnail();
+  state->viewers = channel.GetViewers();
 }
 
 }  // namespace rustla2
