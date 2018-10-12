@@ -74,6 +74,7 @@ set(SOURCE_FILES
         src/HTTPService.cpp
         src/IPRanges.cpp
         src/MIMETypes.cpp
+        src/MixerClient.cpp
         src/ServicePoller.cpp
         src/Session.cpp
         src/StaticHTTPService.cpp
