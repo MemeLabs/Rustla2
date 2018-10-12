@@ -8,6 +8,7 @@
 #include "Status.h"
 #include "TwitchClient.h"
 #include "YoutubeClient.h"
+#include "MixerClient.h"
 
 namespace rustla2 {
 
@@ -36,7 +37,9 @@ class ServicePoller {
 
   const Status CheckYouTube(const std::string& name, ChannelState* state);
 
- private:
+  const Status CheckMixer(const std::string& name, ChannelState* state);
+
+private:
   std::shared_ptr<DB> db_;
   std::unique_ptr<twitch::Client> twitch_;
   std::unique_ptr<youtube::Client> youtube_;
