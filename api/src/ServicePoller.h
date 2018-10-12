@@ -10,11 +10,9 @@
 #include "YoutubeClient.h"
 #include "MixerClient.h"
 
-namespace rustla2
-{
+namespace rustla2 {
 
-struct ChannelState
-{
+struct ChannelState {
   ChannelState() : thumbnail(""), viewers(0), live(false) {}
 
   std::string title;
@@ -23,8 +21,7 @@ struct ChannelState
   bool live;
 };
 
-class ServicePoller
-{
+class ServicePoller {
 public:
   explicit ServicePoller(std::shared_ptr<DB> db);
 
