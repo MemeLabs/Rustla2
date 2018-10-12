@@ -11,8 +11,7 @@ rapidjson::Document ChannelResult::GetSchema() {
   schema.Parse(R"json(
       {
         "type": "object",
-        "properties":
-        {
+        "properties": {
           "title": {"type": "string"},
           "live": {"type": "boolean"},
           "poster": {
