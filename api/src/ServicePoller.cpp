@@ -158,7 +158,7 @@ const Status ServicePoller::CheckYouTube(const std::string& name,
 }
 
 const Status ServicePoller::CheckMixer(const std::string& name,
-                                            ChannelState* state) {
+                                       ChannelState* state) {
   mixer::Client client;
   mixer::ChannelResult channel;
   auto status = client.GetChannelByName(name, &channel);
@@ -167,7 +167,7 @@ const Status ServicePoller::CheckMixer(const std::string& name,
     return status;
   }
 
-  state->name = channel.GetName();
+  state->title = channel.GetName();
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
