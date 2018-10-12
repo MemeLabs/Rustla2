@@ -22,7 +22,7 @@ struct ChannelState {
 };
 
 class ServicePoller {
-public:
+ public:
   explicit ServicePoller(std::shared_ptr<DB> db);
 
   void Run();
