@@ -1,3 +1,5 @@
+@import './colors';
+
 .header {
   border-radius: 0px;
 }
@@ -8,4 +10,8 @@
   color: #fafafa;
   text-shadow: 1px 1px 0 rgba(0,0,0,0.25);
   padding: 1px 4px;
+}
+
+.navbar-nav > .active > a {
+  background-color: $navbar-active-background-color;
 }

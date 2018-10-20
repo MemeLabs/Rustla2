@@ -11,7 +11,7 @@ import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
 
 const Thumbnail = stream => (
-  <div className='col-xs-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+  <div className='col-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
     <StreamThumbnail {...stream} />
   </div>
 );
@@ -28,7 +28,7 @@ const Category = ({ header, streams }) => {
 
   return (
     <div className='streams'>
-      <h3 className='col-xs-12'>{header}</h3>
+      <h3 className='col-12 mt-4'>{header}</h3>
       {thumbnails}
     </div>
   );
@@ -72,8 +72,8 @@ const Streams = ({ history, streams }) => {
 
   return (
     <MainLayout history={history}>
-      <h1 className='streams-heading'>See what {viewerCount} rustlers are watching!</h1>
-      <div className='flex-column grow-1'>{grid}</div>
+      <h1 className='streams-heading mt-4'>See what {viewerCount} rustlers are watching!</h1>
+      <div className='d-flex flex-column'>{grid}</div>
     </MainLayout>
   );
 };

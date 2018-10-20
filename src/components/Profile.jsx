@@ -23,7 +23,7 @@ const Profile = ({
 }) =>
   <MainLayout history={history}>
     <div className='container'>
-      <h1 className='text-center'>Settings</h1>
+      <h1 className='mt-4 text-center'>Settings</h1>
       {profile.isFetching ? <div className='h3 text-center'>LOADING...</div> : null}
       {profile.data ?
         <form
@@ -59,59 +59,52 @@ const Profile = ({
               </div>
             </div>
           : null}
-          <div className={cs({ 'form-group': true, 'form-group-highlight': !isUsernameSet })}>
-            <label htmlFor='profile-username' className='col-sm-2 control-label'>Username</label>
-            <div className='col-sm-10'>
-              <input
-                className='form-control'
-                id='profile-username'
-                type='text'
-                name='username'
-                defaultValue={profile.data.username || defaultUsername}
-                />
-              <small className='form-text text-muted'>Choose carefully, your username cannot be changed!</small>
-            </div>
+          <div className={cs('form-group', { 'form-group-highlight': !isUsernameSet })}>
+            <label htmlFor='profile-username'>Username</label>
+            <input
+              className='form-control'
+              id='profile-username'
+              type='text'
+              name='username'
+              defaultValue={profile.data.username || defaultUsername}
+              />
+            <small className='form-text text-muted'>Choose carefully, your username cannot be changed!</small>
           </div>
           <div className='form-group'>
-            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Stream Path</label>
-            <div className='col-sm-10'>
-              <input
-                className='form-control'
-                id='profile-stream-path'
-                type='text'
-                name='stream_path'
-                defaultValue={profile.data.stream_path}
-                />
-              <small className='form-text text-muted'>{location.origin}/<strong>my_stream_path</strong></small>
-            </div>
+            <label htmlFor='profile-channel'>Stream Path</label>
+            <input
+              className='form-control'
+              id='profile-stream-path'
+              type='text'
+              name='stream_path'
+              defaultValue={profile.data.stream_path}
+              />
+            <small className='form-text text-muted'>{location.origin}/<strong>my_stream_path</strong></small>
           </div>
-          <div className='form-group'>
-            <label htmlFor='profile-service-select' className='col-sm-2 control-label'>Streaming Service</label>
-            <div className='col-sm-10'>
+          <div className="form-row">
+            <div className="form-group col-md-6">
+              <label htmlFor='profile-service-select'>Streaming Service</label>
               <ServiceSelect id='profile-service-select' defaultValue={profile.data.service} />
             </div>
-          </div>
-          <div className='form-group'>
-            <label htmlFor='profile-channel' className='col-sm-2 control-label'>Channel/Video ID</label>
-            <div className='col-sm-10'>
+            <div className="form-group col-md-6">
+              <label htmlFor='profile-channel'>Channel/Video ID</label>
               <input
                 className='form-control'
                 id='profile-channel'
                 type='text'
                 name='channel'
                 defaultValue={profile.data.channel}
-                />
+              />
             </div>
           </div>
           <div className='form-group'>
-            <label htmlFor='profile-leftchat' className='col-sm-2 control-label'>Use Left Chat</label>
-            <div className='col-sm-10'>
+            <div className='form-check'>
               <Checkbox
-                className='form-control'
                 id='profile-leftchat'
                 name='left_chat'
                 defaultChecked={profile.data.left_chat}
-                />
+              />
+              <label htmlFor='profile-leftchat' className='form-check-label'>Use Left Chat</label>
             </div>
           </div>
           <button type='submit' className='btn btn-primary' disabled={profile.isFetching}>Save Changes</button>

@@ -60,7 +60,7 @@ export const Stream = ({
         timeout={AFK_TIMEOUT}
         />
       <Resizeable
-        className='grow-1'
+        className='flex-grow-1'
         onResize={e => {
           let newChatSize;
           if (showLeftChat) {

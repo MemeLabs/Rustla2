@@ -24,10 +24,10 @@ const Chat = ({ className, onClose = noop, src, style, ...rest }: Props) =>
     >
     <div>
       <a title='Close' onClick={onClose}>
-        <span className='glyphicon glyphicon-remove pull-right' />
+        <span className='glyphicon glyphicon-remove float-right' />
       </a>
       <a href={src} target='_blank' rel='noopener noreferrer'>
-        <span className='glyphicon glyphicon-share-alt pull-right' />
+        <span className='glyphicon glyphicon-share-alt float-right' />
       </a>
     </div>
     <iframe

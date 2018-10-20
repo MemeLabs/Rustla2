@@ -14,9 +14,9 @@ const MainLayout = ({
   history,
   children,
 }) =>
-  <div className='main-layout flex-column'>
+  <div className='main-layout d-flex flex-column'>
     {showHeader ? <Header rustlerCount={rustlerCount} history={history} /> : null}
-    <div className='flex-column grow-1'>
+    <div className='d-flex flex-column flex-grow-1'>
       {children}
     </div>
     {showFooter ? <Footer /> : null}

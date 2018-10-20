@@ -14,6 +14,7 @@ import { toggleChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '
 import { supportedChatServices } from '../util/supported-chats';
 import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
+import NavButtonLink from './NavButtonLink';
 
 
 const Header = ({
@@ -40,48 +41,42 @@ const Header = ({
   }
   return (
     <nav
-      className='header navbar navbar-default navbar-inverse'
+      className='header navbar navbar-dark navbar-expand-lg px-3'
       role='navigation'
     >
-      <div className='container-fluid'>
-        <div className='navbar-header'>
-          <Link className='navbar-brand' to='/'>Strims</Link>
-        </div>
-        <div className='collapse navbar-collapse'>
-          <ul className='nav navbar-nav'>
-            {rustlers}
-            {viewers}
-            {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
-          </ul>
-          <ul className='nav navbar-nav navbar-right'>
-            {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs({ active: isStrimsChat })}><a role='button'>Strims Chat</a></li>}
-            {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs({ active: isDggChat })}><a role='button'>Destiny Chat</a></li>}
-            {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('text-capitalize', { 'active': isServiceChat })}><a role='button'>{currentStreamService} Chat</a></li>}
-            <li>
-              <HeaderForm history={history} />
-            </li>
-            <li>
-              <div className='btn-group'>
-                {
-                  isLoggedIn ?
-                  <Link className='btn btn-default navbar-btn' to='/profile' title='Profile'>
-                    <span className='glyphicon glyphicon-user' />
-                  </Link>
-                  : null
-                }
-                {
-                  isLoggedIn ?
-                  <Link className='btn btn-default navbar-btn' to='/logout' title='Log Out'>
-                    <span className='glyphicon glyphicon-log-out' />
-                  </Link>
-                  :
-                  <a className='btn btn-default navbar-btn' href='/login' title='Log In'>
-                    <span className='glyphicon glyphicon-log-in' />
-                  </a>
-                }
-              </div>
-            </li>
-          </ul>
+      <div className='navbar-header'>
+        <Link className='navbar-brand' to='/'>Strims</Link>
+      </div>
+      <div className='collapse navbar-collapse'>
+        <ul className='navbar-nav mr-auto'>
+          {rustlers}
+          {viewers}
+          {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
+        </ul>
+        <ul className='navbar-nav'>
+          {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs('nav-item', { active: isStrimsChat })}><NavButtonLink>Strims Chat</NavButtonLink></li>}
+          {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs('nav-item', { active: isDggChat })}><NavButtonLink>Destiny Chat</NavButtonLink></li>}
+          {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('nav-item', 'text-capitalize', { 'active': isServiceChat })}><NavButtonLink>{currentStreamService} Chat</NavButtonLink></li>}
+        </ul>
+        <HeaderForm history={history} />
+        <div className='btn-group'>
+          {
+            isLoggedIn ?
+            <Link className='btn btn-default navbar-btn' to='/profile' title='Profile'>
+              <span className='glyphicon glyphicon-user' />
+            </Link>
+            : null
+          }
+          {
+            isLoggedIn ?
+            <Link className='btn btn-default navbar-btn' to='/logout' title='Log Out'>
+              <span className='glyphicon glyphicon-log-out' />
+            </Link>
+            :
+            <a className='btn btn-default navbar-btn' href='/login' title='Log In'>
+              <span className='glyphicon glyphicon-log-in' />
+            </a>
+          }
         </div>
       </div>
     </nav>

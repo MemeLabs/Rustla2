@@ -16,7 +16,7 @@ const HeaderForm = ({ history }) => {
 
   return (
     <form
-      className='navbar-form navbar-left'
+      className='form-inline pr-3'
       role='search'
       onSubmit={handleSubmit}
     >

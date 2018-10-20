@@ -1,5 +1,15 @@
+// Configure path to glyphicons font and the class prefix before importing it.
+$glyphicons-halflings-font-path: './fonts';
+$glyphicons-halflings-class-prefix: glyphicon;
+@import '~glyphicons-halflings/scss/glyphicons-halflings';
 
+// Import colors before bootstrap so that bootstrap color variables may be
+// overwritten first.
 @import './colors';
+
+$font-size-base: 0.876rem;
+
+@import '~bootstrap/scss/bootstrap';
 
 html, body, #main, .fill-percentage, .routes {
   margin: 0;
@@ -24,20 +34,12 @@ iframe {
   animation: jiggle_background 100ms infinite;
 }
 
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-@for $i from 1 through 6 {
-  .grow-#{$i} {
-    flex-grow: $i;
-  }
-}
-
 .navbar {
+  background-color: #222;
   border: 0;
   margin-bottom: 0;
+  min-height: 50px;
+  padding: 0;
 }
 
 a {

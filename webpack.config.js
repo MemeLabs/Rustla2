@@ -19,7 +19,6 @@ module.exports = {
   devtool: !IS_PRODUCTION && 'eval-source-map',
   entry: {
     main: [
-      'bootstrap/dist/css/bootstrap.css',
       '@babel/polyfill',
       'isomorphic-fetch',
       path.resolve(__dirname, 'src/css/main.scss'),

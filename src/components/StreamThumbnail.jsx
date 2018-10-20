@@ -58,7 +58,7 @@ const StreamThumbnail = ({
         <Link to={url}>
           <span
             title={`${afk_rustlers} afk`}
-            className={`pull-right label label-as-badge label-${live ? 'success' : 'danger'}`}>
+            className={`float-right badge badge-${live ? 'success' : 'danger'}`}>
             <span>{rustlers}</span>
             {'\u00a0'}
             <span className='glyphicon glyphicon-user' />
