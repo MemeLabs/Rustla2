@@ -1,8 +1,15 @@
-import PropTypes from 'prop-types';
+// @flow
+
+import * as React from 'react';
 import compose from 'recompose/compose';
 import lifecycle from 'recompose/lifecycle';
 import withState from 'recompose/withState';
 
+type Props = {
+  children?: React.Node,
+  loaded?: boolean,
+  visible?: boolean
+};
 
 /**
  * Helper component for lazily loading child components, but never unmounting
@@ -10,7 +17,7 @@ import withState from 'recompose/withState';
  * After this happens, the children will always be rendered regardless of
  * `visible`'s value.
  */
-const LazyLoadOnce = ({ children, loaded, visible }) => {
+const LazyLoadOnce = ({ children, loaded, visible }: Props) => {
   if (loaded) {
     return children;
   }
@@ -20,13 +27,6 @@ const LazyLoadOnce = ({ children, loaded, visible }) => {
   }
 
   return children;
-};
-
-LazyLoadOnce.propTypes = {
-  children: PropTypes.node,
-  loaded: PropTypes.bool,
-  setLoaded: PropTypes.func,
-  visible: PropTypes.bool,
 };
 
 export default compose(
