@@ -1,5 +1,10 @@
-/* global API_WS process */
+// @flow
+
+declare var API_WS: string;
+/* global process */
+
 import WebSocket from 'reconnecting-websocket';
+import type { Store } from 'redux';
 
 import history from '../history';
 import { setStream, setAfk } from '.';
@@ -55,7 +60,7 @@ const thunks = {
   },
 };
 
-export const init = store => {
+export const init = (store: Store<*, *, *>) => {
   socket = new WebSocket(API_WS || `ws://${location.host}`);
   let messageQueue = [];
   let wasReconnect = false;
@@ -91,7 +96,7 @@ export const init = store => {
     wasReconnect = true;
   };
 
-  socket.onclose = function onclose(event) {
+  socket.onclose = function onclose() {
     clearInterval(pingInterval);
   };
 
