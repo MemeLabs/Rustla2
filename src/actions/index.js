@@ -1,4 +1,4 @@
-/* global API JWT_NAME */
+/* global API JWT_NAME SCALA_API */
 import cookies from 'browser-cookies';
 import { emit } from './websocket';
 
@@ -165,3 +165,97 @@ export const toggleChat = host => dispatch => {
     payload: host,
   });
 };
+
+
+export const POLL_SET = Symbol('POLL_SET');
+export const setPoll = poll => {
+  return {
+    type: POLL_SET,
+    payload: poll,
+  };
+};
+
+export const POLL_FETCH_START = Symbol('POLL_FETCH_START');
+export const POLL_FETCH_FAILURE = Symbol('POLL_FETCH_FAILURE');
+export const fetchPoll = (id) => async dispatch => {
+  dispatch({
+    type: POLL_FETCH_START,
+    payload: {id},
+  });
+  const res = await fetch(`${SCALA_API}/v1/poll/${id}`, {
+    credentials: 'include',
+    headers: {
+      'jwt': cookies.get(JWT_NAME),
+    },
+  });
+  if (res.status !== 200) {
+    const error = await res.json();
+    return dispatch({
+      type: POLL_FETCH_FAILURE,
+      payload: {
+        id,
+        error,
+      },
+    });
+  }
+  const poll = await res.json();
+  return dispatch(setPoll(poll));
+};
+
+export const POLL_CREATE_FAILURE = Symbol('POLL_CREATE_FAILURE');
+export const createPoll = (poll, history) => async dispatch => {
+  const res = await fetch(`${SCALA_API}/v1/poll`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'jwt': cookies.get(JWT_NAME),
+    },
+    body: JSON.stringify(poll),
+  });
+  if (res.status !== 201) {
+    const error = await res.json();
+    return dispatch({
+      type: POLL_CREATE_FAILURE,
+      error,
+    });
+  }
+  const resPoll = await res.json();
+  history.push(`/poll/${resPoll.id}`);
+  return dispatch(setPoll(resPoll));
+};
+
+export const POLL_VOTE_START = Symbol('POLL_VOTE_START');
+export const POLL_VOTE_FAILURE = Symbol('POLL_VOTE_FAILURE');
+export const submitPollVote = (id, options, history) => async dispatch => {
+  dispatch({
+    type: POLL_VOTE_START,
+    id,
+  });
+  const res = await fetch(`${SCALA_API}/v1/poll/${id}/vote`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      'jwt': cookies.get(JWT_NAME),
+    },
+    body: JSON.stringify(options),
+  });
+  if (res.status !== 204) {
+    const error = await res.json();
+    return dispatch({
+      type: POLL_VOTE_FAILURE,
+      payload: {
+        id,
+        error,
+      },
+    });
+  }
+  history.push(`/poll/${id}/results`);
+};
+
+export const beginPollingPoll = id => dispatch => {
+  let intervalId = setInterval(() => dispatch(fetchPoll(id)), 1000);
+
+  return () => clearInterval(intervalId);
+}
