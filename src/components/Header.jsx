@@ -33,10 +33,20 @@ const Header = ({
   if (rustlerCount) {
     const [ rCount, vCount ] = rustlerCount;
     if (rCount) {
-      rustlers = <li><a>{rCount} Rustlers</a></li>;
+      rustlers = (
+        <li className="nav-item">
+          <a className="nav-link">{rCount} Rustlers</a>
+        </li>
+      );
     }
     if (vCount) {
-      viewers = <li><a>{vCount} {viewerTitle}</a></li>;
+      viewers = (
+        <li className="nav-item">
+          <a className="nav-link">
+            {vCount} {viewerTitle}
+          </a>
+        </li>
+      );
     }
   }
   return (
@@ -51,7 +61,7 @@ const Header = ({
         <ul className='navbar-nav mr-auto'>
           {rustlers}
           {viewers}
-          {DONATE_PAYPAL_URL ? <li><a target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
+          {DONATE_PAYPAL_URL ? <li className='nav-item'><a className='nav-link' target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
         </ul>
         <ul className='navbar-nav'>
           {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs('nav-item', { active: isStrimsChat })}><NavButtonLink>Strims Chat</NavButtonLink></li>}
