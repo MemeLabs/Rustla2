@@ -51,6 +51,17 @@ module.exports = {
     watchOptions: {
       aggregateTimeout: 100,
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        secure: false,
+      },
+      '/scala-api': {
+        target: 'http://localhost:3002',
+        pathRewrite: {'^/scala-api' : ''},
+        secure: false,
+      },
+    },
   },
   cache: true,
   stats: {
@@ -125,6 +136,7 @@ module.exports = {
           /* eslint-disable quotes */
           'process.env.NODE_ENV': `"${NODE_ENV}"`,
           API: process.env.API ? `"${process.env.API}"` : "'/api'",
+          SCALA_API: process.env.SCALA_API ? `"${process.env.SCALA_API}"` : "'/scala-api'",
           API_WS: process.env.API_WS ? `"${process.env.API_WS}"` : undefined,
           JWT_NAME: process.env.JWT_NAME
             ? `"${process.env.JWT_NAME}"`
