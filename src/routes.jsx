@@ -9,6 +9,9 @@ import AsyncStreams from './components/AsyncStreams';
 import Banned from './components/Banned';
 import Error404 from './components/Error404';
 import Logout from './components/Logout';
+import PollCreate from './components/PollCreate';
+import PollVote from './components/PollVote';
+import PollResult from './components/PollResult';
 
 
 const Routes = () =>
@@ -19,6 +22,9 @@ const Routes = () =>
       <Route path='/profile' component={AsyncProfile} />
       <Route path='/logout' component={Logout} />
       <Route path='/beand' component={Banned} />
+      <Route path='/poll/create' component={PollCreate} />
+      <Route path='/poll/:poll' component={PollVote} exact />
+      <Route path='/poll/:poll/results' component={PollResult} />
       <Route path='/:service/:channel(.+)' component={AsyncStream} />
       <Route path='/:streamer' component={AsyncStream} />
       <Route component={Error404} />

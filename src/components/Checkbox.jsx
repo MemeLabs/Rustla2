@@ -24,7 +24,7 @@ const Checkbox = ({
   return (
     <input
       type='checkbox'
-      checked={checked}
+      checked={!!checked}
       className={classes}
       onChange={toggle}
       {...miscProps}

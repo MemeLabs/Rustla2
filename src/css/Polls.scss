@@ -1,0 +1,68 @@
+#poll-multi-vote,
+.poll-vote-input {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.poll-multi-vote-label {
+  display: inline-block;
+  margin: 4px 0 0 50px;
+}
+
+.poll-vote-container {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.poll-vote-row {
+  display: flex;
+}
+
+.poll-vote-input {
+  display: block;
+  flex: 34px 0 0;
+}
+
+.poll-vote-label {
+  display: block;
+  flex-grow: 1;
+  margin: 5px 0 0 10px;
+}
+
+.poll-result-label-row,
+.poll-result-chart-row {
+  display: flex;
+  margin-bottom: 6px;
+}
+
+.poll-result-chart-row {
+  margin-bottom: 24px;
+}
+
+.poll-result-label,
+.poll-result-bar-container {
+  display: block;
+  flex-grow: 1;
+}
+
+.poll-result-count,
+.poll-result-percent {
+  display: block;
+  flex: 100px 0 0;
+  text-align: right;
+  font-size: 16px;
+}
+
+.poll-result-percent {
+  line-height: 30px;
+  font-size: 24px;
+}
+
+.poll-result-bar {
+  display: block;
+  background-color: white;
+  min-width: 10px;
+  height: 30px;
+}
