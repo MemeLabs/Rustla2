@@ -1,9 +1,21 @@
+.poll-title {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.poll-loading {
+  margin: 80px 0;
+  text-align: center;
+}
+
 #poll-multi-vote,
 .poll-vote-input {
+  height: 34px;
   margin: 0;
   padding: 0;
   display: inline-block;
   vertical-align: middle;
+  width: 34px;
 }
 
 .poll-multi-vote-label {
@@ -21,12 +33,18 @@
 }
 
 .poll-vote-input {
-  display: block;
   flex: 34px 0 0;
+  height: 34px;
+  position: relative;
+}
+
+.form-checkbox-input {
+  display: block;
+  margin: 0;
 }
 
 .poll-vote-label {
-  display: block;
+  display: inline-block;
   flex-grow: 1;
   margin: 5px 0 0 10px;
 }

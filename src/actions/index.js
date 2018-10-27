@@ -241,7 +241,7 @@ export const submitPollVote = (id, options, history) => async dispatch => {
     },
     body: JSON.stringify(options),
   });
-  if (res.status !== 204) {
+  if (res.status < 200 || res.status >= 300) {
     const error = await res.json();
     return dispatch({
       type: POLL_VOTE_FAILURE,

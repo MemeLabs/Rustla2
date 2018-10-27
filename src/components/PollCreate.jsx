@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -9,7 +11,23 @@ import MainLayout from './MainLayout';
 
 import '../css/Polls';
 
-const OptionInput = ({ value, index, onChange }) => (
+type PollRequest = {
+  subject: string;
+  options: Array<string>;
+  multi_vote: boolean;
+}
+
+type PollCreateAction = (PollRequest) => void;
+
+const OptionInput = ({
+  value,
+  index,
+  onChange,
+}: {
+  value: string;
+  index: number;
+  onChange: (any, number) => void;
+}) => (
   <div className='form-group'>
     <div className='col-sm-12'>
       <input
@@ -23,14 +41,24 @@ const OptionInput = ({ value, index, onChange }) => (
   </div>
 );
 
-OptionInput.propTypes = {
-  value: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
+type PollCreateFormDefaultProps = {
+  minOptionCount: number;
+}
 
-class PollCreateForm extends React.Component {
-  constructor(props) {
+type PollCreateFormProps = PollCreateFormDefaultProps & {
+  onSubmit: PollCreateAction;
+}
+
+type PollCreateFormState = {
+  options: Array<string>;
+}
+
+class PollCreateForm extends React.Component<PollCreateFormProps, PollCreateFormState> {
+  static defaultProps: PollCreateFormDefaultProps = {
+    minOptionCount: 3,
+  };
+
+  constructor(props: PollCreateFormProps) {
     super(props);
 
     this.state = {
@@ -105,7 +133,6 @@ class PollCreateForm extends React.Component {
                 className='form-control'
                 id='poll-multi-vote'
                 name='multi_vote'
-                defaultChecked={this.state.multi_vote}
               />
               <span className="poll-multi-vote-label">Allow multiple poll answers</span>
             </label>
@@ -127,28 +154,20 @@ class PollCreateForm extends React.Component {
   }
 }
 
-PollCreateForm.defaultProps = {
-  minOptionCount: 3,
-}
-
-PollCreateForm.propTypes = {
-  minOptionCount: PropTypes.number,
-  onSubmit: PropTypes.func.isRequired,
-}
-
-const PollCreate = ({ history, createPoll }) => (
+const PollCreate = ({
+  history,
+  createPoll,
+}: {
+  history: any;
+  createPoll: PollCreateAction;
+}) => (
   <MainLayout history={history}>
     <div className='container'>
-      <h1 className='text-center'>Create Poll</h1>
+      <h1 className='poll-title'>Create Poll</h1>
       <PollCreateForm onSubmit={createPoll} />
     </div>
   </MainLayout>
 );
-
-PollCreate.propTypes = {
-  history: PropTypes.object.isRequired,
-  createPoll: PropTypes.func.isRequired,
-};
 
 function mapDispatchToProps(dispatch, props) {
   return {

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -9,43 +11,47 @@ import { fetchPoll, submitPollVote } from '../actions';
 import MainLayout from './MainLayout';
 import Checkbox from './Checkbox';
 
+import type { Poll } from '../records/polls';
 
-const SingleSelectInput = ({ value }) => (
-  <div className='form-group'>
+type SubmitPollVote = ({ options: Array<string> }) => void;
+
+const SingleSelectInput = ({ value }: { value: string }) => (
+  <div className='form-group col-sm-12'>
     <label>
-      <input
-        className='form-control form-radio-input poll-vote-input'
-        name='options'
-        value={value}
-        type='radio'
-      />
+      <div className='poll-vote-input'>
+        <input
+          className='form-control form-radio-input'
+          name='options'
+          value={value}
+          type='radio'
+        />
+      </div>
       <span className='poll-vote-label'>{value}</span>
     </label>
   </div>
 );
 
-SingleSelectInput.propTypes = {
-  value: PropTypes.string.isRequired,
-};
-
-const MultiSelectInput = ({ value }) => (
+const MultiSelectInput = ({ value }: { value: string }) => (
   <div className='form-group col-sm-12'>
     <label className='poll-vote-row'>
-      <Checkbox
-        className='form-control poll-vote-input'
-        name={`options`}
-        value={value}
-      />
+      <div className='poll-vote-input'>
+        <Checkbox
+          className='form-control form-checkbox-input'
+          name={`options`}
+          value={value}
+        />
+      </div>
       <span className='poll-vote-label'>{value}</span>
     </label>
   </div>
 );
 
-MultiSelectInput.propTypes = {
-  value: PropTypes.string.isRequired,
+type PollFormProps = {
+  onSubmit: SubmitPollVote;
+  poll: Poll;
 };
 
-class PollForm extends React.Component {
+class PollForm extends React.Component<PollFormProps> {
   handleSubmit = (event) => {
     event.preventDefault();
 
@@ -74,7 +80,7 @@ class PollForm extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <h1 className='col-sm-12'>{subject}</h1>
+        <h1 className='col-sm-12 poll-title'>{subject}</h1>
         {optionInputs}
         <div className='form-group'>
           <div className='col-sm-12'>
@@ -92,15 +98,18 @@ class PollForm extends React.Component {
   }
 }
 
-PollForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-  poll: PropTypes.object.isRequired,
-};
-
-const PollVote = ({ poll, history, submitPollVote }) => {
-  const pollForm = poll && !poll.loading
+const PollVote = ({
+  poll,
+  history,
+  submitPollVote,
+}: {
+  poll: ?Poll;
+  history: any;
+  submitPollVote: SubmitPollVote;
+}) => {
+  const pollForm = poll && poll.loaded
     ? <PollForm onSubmit={submitPollVote} poll={poll} />
-    : <h4>Loading...</h4>;
+    : <h4 className='poll-loading'>Loading...</h4>;
 
   return (
     <MainLayout history={history}>
@@ -109,11 +118,6 @@ const PollVote = ({ poll, history, submitPollVote }) => {
       </div>
     </MainLayout>
   );
-};
-
-PollVote.propTypes = {
-  poll: PropTypes.object,
-  history: PropTypes.object.isRequired,
 };
 
 function mapDispatchToProps(dispatch, props) {

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -6,8 +8,17 @@ import idx from 'idx';
 import { beginPollingPoll } from '../actions';
 import MainLayout from './MainLayout';
 
+import type { Poll } from '../records/polls';
 
-const PollResultRow = ({ value, votes, percent }) => (
+const PollResultRow = ({
+  value,
+  votes,
+  percent,
+}: {
+  value: string;
+  votes: number;
+  percent: number;
+}) => (
   <React.Fragment>
     <div className='poll-result-label-row'>
       <span className='poll-result-label'>{value}</span>
@@ -29,15 +40,12 @@ const PollResultRow = ({ value, votes, percent }) => (
   </React.Fragment>
 );
 
-PollResultRow.propTypes = {
-  value: PropTypes.string.isRequired,
-};
+const PollResultChart = ({ poll: { subject, options } }: { poll: Poll }) => {
+  const maxValue = Object.keys(options)
+    .reduce((maxValue, key) => Math.max(maxValue, options[key]), 0);
 
-const PollResultChart = ({ poll: { subject, options } }) => {
-  const maxValue = Object.values(options)
-    .reduce((maxValue, value) => Math.max(maxValue, value), 0);
-
-  const optionRows = Object.entries(options)
+  const optionRows = Object.keys(options)
+    .map((key: string): [string, number] => [key, options[key]])
     .sort((a, b) => b[1] - a[1])
     .map(([value, votes], i) => (
       <PollResultRow
@@ -50,17 +58,24 @@ const PollResultChart = ({ poll: { subject, options } }) => {
 
   return (
     <div>
-      <h1>{subject}</h1>
+      <h1 className='poll-title'>{subject}</h1>
       {optionRows}
     </div>
   );
 };
 
-PollResultChart.propTypes = {
-  poll: PropTypes.object.isRequired,
+
+type PollResultProps = {
+  id: string;
+  poll?: Poll;
+  history: any;
+  beginPollingPoll: () => void;
+  beginPollingPoll: (string) => () => void;
 };
 
-class PollResult extends React.Component {
+class PollResult extends React.Component<PollResultProps> {
+  stopPolling: () => void;
+
   componentDidMount() {
     this.stopPolling = this.props.beginPollingPoll(this.props.id);
   }
@@ -73,8 +88,8 @@ class PollResult extends React.Component {
     const { poll, history } = this.props;
 
     const pollChart = poll && !poll.loading
-    ? <PollResultChart poll={poll} />
-    : <h4>Loading...</h4>;
+      ? <PollResultChart poll={poll} />
+      : <h4 className='poll-loading'>Loading...</h4>;
 
     return (
       <MainLayout history={history}>
@@ -85,13 +100,6 @@ class PollResult extends React.Component {
     );
   }
 }
-
-PollResult.propTypes = {
-  id: PropTypes.string.isRequired,
-  poll: PropTypes.object,
-  history: PropTypes.object.isRequired,
-  beginPollingPoll: PropTypes.func.isRequired,
-};
 
 function mapDispatchToProps(dispatch) {
   return {
