@@ -70,8 +70,7 @@ const AsyncStream = ({
     },
   });
 
-  // $FlowFixMe: lack of props here apparently doesn't work with `TProps` being
-  // `empty`.
+  // $FlowFixMe: lack of props here doesn't work with `TProps` being `empty`.
   return <LoadableStream />;
 };
 
