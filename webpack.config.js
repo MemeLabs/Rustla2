@@ -66,7 +66,9 @@ module.exports = {
   },
   cache: true,
   stats: {
-    colors: true,
+    children: false,
+    entrypoints: false,
+    modules: false,
   },
   resolve: {
     extensions: ['.js', '.jsx', '.scss', '.json'],
