@@ -34,6 +34,14 @@ const Category = ({ header, streams }) => {
   );
 };
 
+Category.propTypes = {
+  header: PropTypes.string.isRequired,
+  streams: PropTypes.arrayOf(PropTypes.shape({
+    promoted: PropTypes.bool,
+    rustlers: PropTypes.number
+  }))
+};
+
 const Streams = ({ history, streams }) => {
   const visibleStreams = Object.values(streams).filter(({ hidden }) => !hidden);
 

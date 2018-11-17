@@ -7,7 +7,7 @@ export const setStream = (...args) => () => {
   emit('setStream', ...args);
 };
 
-export const setAfk = (afk) => (dispatch) => {
+export const setAfk = (afk) => () => {
   emit('setAfk', afk);
 };
 

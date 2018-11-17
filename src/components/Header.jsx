@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import cs from 'classnames';
-import setPropTypes from 'recompose/setPropTypes';
 import idx from 'idx';
 
 import '../css/Header';
@@ -101,12 +100,10 @@ Header.propTypes = {
   currentStreamService: PropTypes.string,
   toggleChat: PropTypes.func.isRequired,
   history: PropTypes.object,
+  rustlerCount: PropTypes.arrayOf(PropTypes.number)
 };
 
 export default compose(
-  setPropTypes({
-    rustlerCount: PropTypes.arrayOf(PropTypes.number), // [rustlers, viewers] tuple
-  }),
   connect(
     state => ({
       isLoggedIn: state.self.isLoggedIn,

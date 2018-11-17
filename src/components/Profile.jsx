@@ -132,6 +132,9 @@ Profile.propTypes = {
     isUsernameSet: PropTypes.bool,
     defaultUsername: PropTypes.string,
   }),
+  updateProfile: PropTypes.func.isRequired,
+  isUsernameSet: PropTypes.bool,
+  defaultUsername: PropTypes.string.isRequired
 };
 
 function mapDispatchToProps(dispatch) {

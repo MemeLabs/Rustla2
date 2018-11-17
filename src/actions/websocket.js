@@ -76,7 +76,7 @@ export const init = (store: Store<*, *, *>) => {
   const ping = () => socket.send('');
   let pingInterval;
 
-  socket.onopen = function onopen(event) {
+  socket.onopen = function onopen() {
     pingInterval = setInterval(ping, 20000);
     messageQueue.forEach(args => emit(...args));
     messageQueue = [];
@@ -127,6 +127,7 @@ export const init = (store: Store<*, *, *>) => {
       }
     }
     catch (err) {
+      /* eslint-disable-next-line no-console */
       console.error(`Failed to handle incoming websocket action\n${data}\n`, err);
     }
   };

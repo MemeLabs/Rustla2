@@ -23,7 +23,7 @@ class Resizeable extends React.Component {
     onResize: PropTypes.func,
   };
 
-  dragStart(e, dragData) {
+  dragStart() {
     if (!this.state.dragging) {
       this.setState({ dragging: true });
     }
