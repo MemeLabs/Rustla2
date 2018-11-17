@@ -117,10 +117,12 @@ module.exports = {
       filename: '../index.html',
       chunksSortMode: 'none',
       inject: true,
-      minify: {
-        minifyCSS: true,
-        minifyJS: true,
-        collapseWhitespace: IS_PRODUCTION,
+      minify: IS_PRODUCTION && {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
       },
     }),
     new (require('webpack-subresource-integrity'))({
