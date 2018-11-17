@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const gitHash = require('helper-git-hash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const LodashWebpackPlugin = require('lodash-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { NODE_ENV } = process.env;
 const IS_PRODUCTION = NODE_ENV === 'production';
@@ -115,7 +116,7 @@ module.exports = {
       debug: !IS_PRODUCTION,
       minimize: IS_PRODUCTION,
     }),
-    new (require('html-webpack-plugin'))({
+    new HtmlWebpackPlugin({
       template: './src/index.ejs',
       filename: '../index.html',
       chunksSortMode: 'none',
