@@ -5,20 +5,25 @@ import type { MapOptions, Options } from 'react-loadable';
 
 import Loading from './Loading';
 
+type Module<TProps> =
+  | React$ComponentType<TProps>
+  | { default: React$ComponentType<TProps> };
 
-const Loadable = (opts: Options<*, *>) =>
-  loadable({
+const Loadable = <TProps, TModule: Module<TProps>>(
+  opts: Options<TProps, TModule>
+) =>
+  loadable<TProps, TModule>({
     loading: Loading,
     ...opts,
-  })
-  ;
+  });
 
-const LoadableMap = (opts: MapOptions<*, *>) =>
-  loadable.Map({
+const LoadableMap = <TProps, TModules: { +[key: string]: * }>(
+  opts: MapOptions<TProps, TModules>
+) =>
+  loadable.Map<TProps, TModules>({
     loading: Loading,
     ...opts,
-  })
-  ;
+  });
 
 Loadable.Map = LoadableMap;
 

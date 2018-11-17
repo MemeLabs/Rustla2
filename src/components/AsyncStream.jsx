@@ -9,6 +9,18 @@ import type { History } from 'react-router';
 import Error404 from './Error404';
 import Loadable from './Loadable';
 
+type Module<TProps> =
+  // | React$ComponentType<TProps>
+  | { default: React$ComponentType<TProps> };
+
+type Modules = {
+  Component: Module<*>,
+  streamer: {
+    channel: string,
+    service: string
+  }
+};
+
 type Props = {
   history: History,
   match: {
@@ -18,13 +30,13 @@ type Props = {
       streamer: string
     }
   }
-}
+};
 
 const AsyncStream = ({
   history,
   match: { params: { service, channel, streamer } },
 }: Props) => {
-  const LoadableStream = Loadable.Map({
+  const LoadableStream = Loadable.Map<*, Modules>({
     loader: {
       Component: () => import(/* webpackChunkName: "stream" */ './Stream'),
       streamer: () => {
@@ -58,6 +70,8 @@ const AsyncStream = ({
     },
   });
 
+  // $FlowFixMe: lack of props here apparently doesn't work with `TProps` being
+  // `empty`.
   return <LoadableStream />;
 };
 
