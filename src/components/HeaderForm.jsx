@@ -1,14 +1,26 @@
+// @flow
+
+import type { BrowserHistory } from 'history/createBrowserHistory';
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import ServiceSelect from './ServiceSelect';
 
+type SubmitEventTarget = EventTarget & {
+  elements: {
+    channel: HTMLInputElement,
+    service: HTMLInputElement
+  }
+}
 
-const HeaderForm = ({ history }) => {
-  const handleSubmit = event => {
+type Props = {
+  history: BrowserHistory
+};
+
+const HeaderForm = ({ history }: Props) => {
+  const handleSubmit = (event: SyntheticEvent<SubmitEventTarget>) => {
     event.preventDefault();
-    const service = event.target.elements.service.value;
-    const channel = event.target.elements.channel.value;
+    const service = event.currentTarget.elements.service.value;
+    const channel = event.currentTarget.elements.channel.value;
     if (channel && channel.length) {
       history.push(`/${service}/${channel}`);
     }
@@ -44,10 +56,6 @@ const HeaderForm = ({ history }) => {
       </div>
     </form>
   );
-};
-
-HeaderForm.propTypes = {
-  history: PropTypes.object.isRequired,
 };
 
 export default HeaderForm;
