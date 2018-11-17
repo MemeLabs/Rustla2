@@ -10,7 +10,7 @@ type SubmitEventTarget = EventTarget & {
     channel: HTMLInputElement,
     service: HTMLInputElement
   }
-}
+};
 
 type Props = {
   history: BrowserHistory

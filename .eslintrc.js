@@ -26,6 +26,10 @@ module.exports = {
     // eslint rules
     'no-console': 'warn',
     'no-unused-vars': 'warn',
+    'semi': 'warn',
+
+    // eslint-plugin-flowtype rules
+    'flowtype/semi': 'warn',
 
     // eslint-plugin-react rules
     'react/no-unescaped-entities': 'warn',

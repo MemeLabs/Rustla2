@@ -258,4 +258,4 @@ export const beginPollingPoll = id => dispatch => {
   let intervalId = setInterval(() => dispatch(fetchPoll(id)), 1000);
 
   return () => clearInterval(intervalId);
-}
+};

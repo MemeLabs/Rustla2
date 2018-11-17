@@ -14,7 +14,7 @@ type PollRequest = {
   subject: string;
   options: Array<string>;
   multi_vote: boolean;
-}
+};
 
 type PollCreateAction = (PollRequest) => void;
 
@@ -42,15 +42,15 @@ const OptionInput = ({
 
 type PollCreateFormDefaultProps = {
   minOptionCount: number;
-}
+};
 
 type PollCreateFormProps = PollCreateFormDefaultProps & {
   onSubmit: PollCreateAction;
-}
+};
 
 type PollCreateFormState = {
   options: Array<string>;
-}
+};
 
 class PollCreateForm extends React.Component<PollCreateFormProps, PollCreateFormState> {
   static defaultProps: PollCreateFormDefaultProps = {
