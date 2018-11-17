@@ -112,10 +112,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.LoaderOptionsPlugin({
-      debug: !IS_PRODUCTION,
-      minimize: IS_PRODUCTION,
-    }),
     new HtmlWebpackPlugin({
       template: './src/index.ejs',
       filename: '../index.html',
