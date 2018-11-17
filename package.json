@@ -52,7 +52,7 @@
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^9.1.5",
-    "babel-eslint": "^9.0.0",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.2",
     "babel-plugin-idx": "^2.4.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.6",
