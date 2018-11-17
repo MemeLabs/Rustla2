@@ -1,7 +1,6 @@
 // @flow
 
-import loadable from 'react-loadable';
-import type { MapOptions, Options } from 'react-loadable';
+import loadable, { type MapOptions, type Options } from 'react-loadable';
 
 import Loading from './Loading';
 
