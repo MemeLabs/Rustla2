@@ -1,5 +1,15 @@
-/* global GITHUB_URL DONATE_PAYPAL_URL DONATE_LINODE_URL DONATE_DO_URL
-          DISCORD_URL GIT_COMMIT_HASH GIT_SHORT_COMMIT_HASH CHAT_URL */
+// @flow
+
+// Globals
+declare var CHAT_URL: string;
+declare var DISCORD_URL: string;
+declare var DONATE_DO_URL: string;
+declare var DONATE_LINODE_URL: string;
+declare var DONATE_PAYPAL_URL: string;
+declare var GIT_COMMIT_HASH: string;
+declare var GIT_SHORT_COMMIT_HASH: string;
+declare var GITHUB_URL: string;
+
 import React from 'react';
 
 import '../css/Footer';
