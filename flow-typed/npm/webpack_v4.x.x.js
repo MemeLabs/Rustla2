@@ -1,5 +1,5 @@
-// flow-typed signature: 2795c40d7224062bf0980781a3d4dad0
-// flow-typed version: 7f95efe47a/webpack_v4.x.x/flow_>=v0.71.x
+// flow-typed signature: 6abee6d817f96df34a8913c2be22c4c0
+// flow-typed version: e64da7782d/webpack_v4.x.x/flow_>=v0.71.x
 
 declare module 'webpack' {
   declare class WebpackError extends Error {
@@ -408,7 +408,48 @@ declare module 'webpack' {
     context?: string,
     dependencies?: Array<string>,
     devServer?: { [k: string]: any },
-    devtool?: string | false,
+    devtool?:
+      | '@cheap-eval-source-map'
+      | '@cheap-module-eval-source-map'
+      | '@cheap-module-source-map'
+      | '@cheap-source-map'
+      | '@eval-source-map'
+      | '@eval'
+      | '@hidden-source-map'
+      | '@inline-source-map'
+      | '@nosources-source-map'
+      | '@source-map'
+      | '#@cheap-eval-source-map'
+      | '#@cheap-module-eval-source-map'
+      | '#@cheap-module-source-map'
+      | '#@cheap-source-map'
+      | '#@eval-source-map'
+      | '#@eval'
+      | '#@hidden-source-map'
+      | '#@inline-source-map'
+      | '#@nosources-source-map'
+      | '#@source-map'
+      | '#cheap-eval-source-map'
+      | '#cheap-module-eval-source-map'
+      | '#cheap-module-source-map'
+      | '#cheap-source-map'
+      | '#eval-source-map'
+      | '#eval'
+      | '#hidden-source-map'
+      | '#inline-source-map'
+      | '#nosources-source-map'
+      | '#source-map'
+      | 'cheap-eval-source-map'
+      | 'cheap-module-eval-source-map'
+      | 'cheap-module-source-map'
+      | 'cheap-source-map'
+      | 'eval-source-map'
+      | 'eval'
+      | 'hidden-source-map'
+      | 'inline-source-map'
+      | 'nosources-source-map'
+      | 'source-map'
+      | false,
     entry?: Entry,
     externals?: Externals,
     loader?: { [k: string]: any },
