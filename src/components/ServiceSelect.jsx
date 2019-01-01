@@ -1,7 +1,9 @@
-import React from 'react';
+// @flow
+
+import * as React from 'react';
 
 
-const ServiceSelect = props =>
+const ServiceSelect = (props: React.ElementProps<'select'>) =>
   <select className='form-control' name='service' defaultValue='twitch' {...props}>
     <option value='angelthump'>AngelThump</option>
     <option value='facebook'>Facebook</option>
