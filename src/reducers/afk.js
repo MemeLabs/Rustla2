@@ -1,6 +1,4 @@
 import INITIAL_STATE from '../INITIAL_STATE';
-// @flow
-
 import { actions } from '../actions/websocket';
 
 const { AFK_SET } = actions;
