@@ -1,10 +1,15 @@
+// @flow
+
 import React from 'react';
-import PropTypes from 'prop-types';
+import type { BrowserHistory } from 'history/createBrowserHistory';
 
 import MainLayout from './MainLayout';
 
+type Props = {
+  history: BrowserHistory
+};
 
-const Error404 = ({ history }) =>
+const Error404 = ({ history }: Props) =>
   <MainLayout history={history}>
     <div className='text-center'>
       <h1>Strim Not Found</h1>
@@ -13,9 +18,5 @@ const Error404 = ({ history }) =>
     </div>
   </MainLayout>
   ;
-
-Error404.propTypes = {
-  history: PropTypes.object.isRequired,
-};
 
 export default Error404;
