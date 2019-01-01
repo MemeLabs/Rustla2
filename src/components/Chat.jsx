@@ -45,8 +45,4 @@ const Chat = ({ className, onClose = noop, src, style, ...rest }: Props) =>
   </div>
   ;
 
-Chat.propTypes = {
-
-};
-
 export default Chat;
