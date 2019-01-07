@@ -20,6 +20,12 @@ Edit `.env` to change various environment variables. Most importantly,
 $ sed -i "s/JWT_SECRET=/JWT_SECRET=$(head -c 22 /dev/urandom | base64 | tr -dc A-Za-z0-9)/" .env
 ```
 
+The command is a little different on macOS:
+
+```bash
+$ sed -i "" "s/JWT_SECRET=/JWT_SECRET=$(head -c 22 /dev/urandom | base64 | tr -dc A-Za-z0-9)/" .env
+```
+
 Install dependencies and build the frontend:
 
 ``` bash
