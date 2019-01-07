@@ -3,8 +3,14 @@ import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
+import renderNothing from 'recompose/renderNothing';
+import branch from 'recompose/branch';
+import idx from 'idx';
 
-import { setStream } from '../actions';
+import {
+  setStream,
+  fetchProfileIfLoggedIn,
+} from '../actions';
 
 import '../css/Streams';
 import MainLayout from './MainLayout';
@@ -42,8 +48,10 @@ Category.propTypes = {
   }))
 };
 
-const Streams = ({ history, streams }) => {
-  const visibleStreams = Object.values(streams).filter(({ hidden }) => !hidden);
+const Streams = ({ history, streams, showHiddenStreams = false }) => {
+  var visibleStreams = Object.values(streams);
+  if (!showHiddenStreams)
+    visibleStreams = visibleStreams.filter(({ hidden }) => !hidden);
 
   const categories = [
     {
@@ -94,17 +102,31 @@ Streams.propTypes = {
       id: PropTypes.number.isRequired,
     }).isRequired,
   ).isRequired,
+  showHiddenStreams: PropTypes.bool
 };
 
 export default compose(
   connect(
-    state => ({ streams: state.streams }),
-    { setStream },
+    state => ({
+      streams: state.streams,
+      showHiddenStreams: idx(state, _ => _.self.profile.data.show_hidden),
+      isFetchingProfile: state.self.profile.isFetching,
+    }),
+    {
+      setStream,
+      fetchProfileIfLoggedIn
+    },
   ),
   lifecycle({
     componentDidMount() {
       document.title = 'Strims';
       this.props.setStream(null);
+      this.props.fetchProfileIfLoggedIn();
     },
   }),
+  branch(
+    ({ isFetchingProfile }) => isFetchingProfile,
+    renderNothing,
+    Component => Component,
+  ),
 )(Streams);
