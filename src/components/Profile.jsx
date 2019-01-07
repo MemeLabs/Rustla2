@@ -37,6 +37,7 @@ const Profile = ({
               stream_path: event.target.elements.stream_path.value,
               username: event.target.elements.username.value,
               left_chat: event.target.elements.left_chat.checked,
+              show_hidden: event.target.elements.show_hidden.checked,
             };
             // Disallow blank inputs. The ORM will disallow these anyways but
             // there's arguably no point in even making the request if it's known
@@ -105,6 +106,16 @@ const Profile = ({
                 defaultChecked={profile.data.left_chat}
               />
               <label htmlFor='profile-leftchat' className='form-check-label'>Use Left Chat</label>
+            </div>
+          </div>
+          <div className='form-group'>
+            <div className='form-check'>
+              <Checkbox
+                id='profile-showhidden'
+                name='show_hidden'
+                defaultChecked={profile.data.show_hidden}
+              />
+              <label htmlFor='profile-showhidden' className='form-check-label'>Show Hidden Streams</label>
             </div>
           </div>
           <button type='submit' className='btn btn-primary' disabled={profile.isFetching}>Save Changes</button>
