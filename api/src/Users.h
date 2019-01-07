@@ -27,7 +27,7 @@ class User {
   User(sqlite::database db, const boost::uuids::uuid id,
        const int64_t twitch_id, const std::string &name, const Channel &channel,
        const std::string &last_ip, const time_t last_seen, const bool left_chat,
-       const bool is_admin)
+       const bool is_admin, const bool show_hidden)
       : db_(db),
         id_(id),
         twitch_id_(twitch_id),
@@ -36,7 +36,8 @@ class User {
         last_ip_(last_ip),
         last_seen_(last_seen),
         left_chat_(left_chat),
-        is_admin_(is_admin) {}
+        is_admin_(is_admin),
+        show_hidden_(show_hidden) {}
 
   User(sqlite::database db, const uint64_t twitch_id, const Channel &channel,
        const std::string &last_ip)
@@ -47,7 +48,8 @@ class User {
         last_ip_(last_ip),
         last_seen_(time(nullptr)),
         left_chat_(false),
-        is_admin_(false) {}
+        is_admin_(false),
+        show_hidden_(false) {}
 
   User(const User &user)
       : db_(user.db_),
@@ -58,7 +60,8 @@ class User {
         last_ip_(user.last_ip_),
         last_seen_(user.last_seen_),
         left_chat_(user.left_chat_),
-        is_admin_(user.is_admin_) {}
+        is_admin_(user.is_admin_),
+        show_hidden_(user.show_hidden_) {}
 
   inline boost::uuids::uuid GetID() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -105,6 +108,11 @@ class User {
     return is_admin_;
   }
 
+  inline bool GetShowHidden() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return show_hidden_;
+  }
+
   std::string GetStreamJSON();
 
   std::string GetUsernameJSON();
@@ -123,6 +131,8 @@ class User {
 
   bool SetLastSeen(const time_t last_seen);
 
+  bool SetShowHidden(bool show_hidden);
+
   bool Save();
 
   bool SaveNew();
@@ -138,6 +148,7 @@ class User {
   time_t last_seen_;
   bool left_chat_;
   bool is_admin_;
+  bool show_hidden_;
 
   friend class Users;
   friend std::ostream &operator<<(std::ostream &os, const User &user);
