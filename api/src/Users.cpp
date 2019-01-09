@@ -52,6 +52,8 @@ std::string User::GetProfileJSON() {
   writer.Bool(left_chat_);
   writer.Key("is_admin");
   writer.Bool(is_admin_);
+  writer.Key("show_hidden");
+  writer.Bool(show_hidden_);
   writer.EndObject();
 
   return buf.GetString();
@@ -73,6 +75,8 @@ void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Int(last_seen_);
   writer->Key("is_admin");
   writer->Bool(is_admin_);
+  writer->Key("show_hidden");
+  writer->Bool(show_hidden_);
   writer->EndObject();
 }
 
@@ -173,6 +177,12 @@ bool User::SetLastSeen(const time_t last_seen) {
   return true;
 }
 
+bool User::SetShowHidden(bool show_hidden) {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  show_hidden_ = show_hidden;
+  return true;
+}
+
 bool User::Save() {
   boost::shared_lock<boost::shared_mutex> read_lock(lock_);
   try {
@@ -186,12 +196,13 @@ bool User::Save() {
           `last_seen` = datetime(?, 'unixepoch'),
           `left_chat` = ?,
           `is_admin` = ?,
+          `show_hidden` = ?,
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
     db_ << sql << name_ << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
-        << is_admin_ << GetIDString();
+        << is_admin_ << show_hidden_ << GetIDString();
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -218,6 +229,7 @@ bool User::SaveNew() {
           `last_seen`,
           `left_chat`,
           `is_admin`,
+          `show_hidden`,
           `ban_reason`,
           `created_at`,
           `updated_at`
@@ -234,6 +246,7 @@ bool User::SaveNew() {
           datetime(?, 'unixepoch'),
           ?,
           ?,
+          ?,
           '',
           datetime(),
           datetime()
@@ -242,7 +255,7 @@ bool User::SaveNew() {
     db_ << sql << GetIDString() << twitch_id_ << channel_->GetChannel() << name_
         << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
-        << is_admin_;
+        << is_admin_ << show_hidden_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -261,7 +274,8 @@ std::ostream &operator<<(std::ostream &os, const User &user) {
      << "last_ip: " << user.last_ip_ << ", "
      << "last_seen: " << user.last_seen_ << ", "
      << "left_chat: " << user.left_chat_ << ", "
-     << "is_admin: " << user.is_admin_;
+     << "is_admin: " << user.is_admin_ << ", "
+     << "show_hidden: " << user.show_hidden_;
   return os;
 }
 
@@ -279,7 +293,8 @@ Users::Users(sqlite::database db) : db_(db) {
         `last_ip`,
         strftime('%s', `last_seen`),
         `left_chat`,
-        `is_admin`
+        `is_admin`,
+        `show_hidden`
       FROM `users`
     )sql";
   auto query = db_ << sql;
@@ -288,12 +303,14 @@ Users::Users(sqlite::database db) : db_(db) {
                const std::string &name, const std::string &stream_path,
                const std::string &service, const std::string &channel,
                const std::string &last_ip, const time_t last_seen,
-               const bool left_chat, const bool is_admin) {
+               const bool left_chat, const bool is_admin,
+               const bool show_hidden) {
     boost::uuids::string_generator to_uuid;
     auto user_channel = Channel::Create(channel, service, stream_path);
     auto user =
         std::make_shared<User>(db_, to_uuid(id), twitch_id, name, user_channel,
-                               last_ip, last_seen, left_chat, is_admin);
+                               last_ip, last_seen, left_chat, is_admin,
+                               show_hidden);
 
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
@@ -322,6 +339,7 @@ void Users::InitTable() {
         `created_at` DATETIME NOT NULL,
         `updated_at` DATETIME NOT NULL,
         `is_admin` TINYINT(1) DEFAULT 0,
+        `show_hidden` TINYINT(1) DEFAULT 0,
         UNIQUE (`id`),
         UNIQUE (`twitch_id`)
       );

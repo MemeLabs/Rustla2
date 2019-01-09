@@ -17,7 +17,8 @@ APIHTTPService::APIHTTPService(std::shared_ptr<DB> db) : db_(db) {
           "stream_path": {"type": "string"},
           "service": {"type": "string"},
           "channel": {"type": "string"},
-          "left_chat": {"type": "boolean"}
+          "left_chat": {"type": "boolean"},
+          "show_hidden": {"type": "boolean"}
         },
         "required": ["username", "stream_path", "service", "channel"]
       }
@@ -111,6 +112,10 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
 
     if (input.HasMember("left_chat")) {
       newUser->SetLeftChat(input["left_chat"].GetBool());
+    }
+
+    if (input.HasMember("show_hidden")) {
+      newUser->SetShowHidden(input["show_hidden"].GetBool());
     }
 
     auto name = json::StringRef(input["username"]);
