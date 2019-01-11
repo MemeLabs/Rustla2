@@ -61,7 +61,7 @@ const thunks = {
 };
 
 export const init = (store: Store<*, *, *>) => {
-  socket = new WebSocket(API_WS || `ws://${location.host}`);
+  socket = new WebSocket(API_WS || `ws://${location.host}`, [], {minReconnectionDelay: 1});
   let messageQueue = [];
   let wasReconnect = false;
   emit = (...args) => {
