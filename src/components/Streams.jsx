@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
-import renderNothing from 'recompose/renderNothing';
-import branch from 'recompose/branch';
 import idx from 'idx';
 
 import {
@@ -110,7 +108,6 @@ export default compose(
     state => ({
       streams: state.streams,
       showHiddenStreams: idx(state, _ => _.self.profile.data.show_hidden),
-      isFetchingProfile: state.self.profile.isFetching,
     }),
     {
       setStream,
@@ -124,9 +121,4 @@ export default compose(
       this.props.fetchProfileIfLoggedIn();
     },
   }),
-  branch(
-    ({ isFetchingProfile }) => isFetchingProfile,
-    renderNothing,
-    Component => Component,
-  ),
 )(Streams);
