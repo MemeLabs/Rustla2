@@ -25,6 +25,7 @@ const Header = ({
   currentStreamService,
   toggleChat,
   history,
+  showDggChat,
 }) => {
   let rustlers = null;
   let viewers = null;
@@ -48,6 +49,20 @@ const Header = ({
       );
     }
   }
+
+  const chatButtons = [];
+  if (currentStreamService) {
+    chatButtons.push(<li key="strims" onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs('nav-item', { active: isStrimsChat })}><NavButtonLink>Strims Chat</NavButtonLink></li>);
+
+    if (currentStreamService !== 'angelthump' || showDggChat) {
+      chatButtons.push(<li key="dgg" onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs('nav-item', { active: isDggChat })}><NavButtonLink>Destiny Chat</NavButtonLink></li>);
+    }
+
+    if (supportedChatServices.has(currentStreamService)) {
+      chatButtons.push(<li key="service" onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('nav-item', 'text-capitalize', { 'active': isServiceChat })}><NavButtonLink>{currentStreamService} Chat</NavButtonLink></li>)
+    }
+  }
+
   return (
     <nav
       className='header navbar navbar-dark navbar-expand-lg px-3'
@@ -63,9 +78,7 @@ const Header = ({
           {DONATE_PAYPAL_URL ? <li className='nav-item'><a className='nav-link' target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
         </ul>
         <ul className='navbar-nav'>
-          {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs('nav-item', { active: isStrimsChat })}><NavButtonLink>Strims Chat</NavButtonLink></li>}
-          {!currentStreamService ? null : <li onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs('nav-item', { active: isDggChat })}><NavButtonLink>Destiny Chat</NavButtonLink></li>}
-          {!currentStreamService || !supportedChatServices.has(currentStreamService) ? null : <li onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('nav-item', 'text-capitalize', { 'active': isServiceChat })}><NavButtonLink>{currentStreamService} Chat</NavButtonLink></li>}
+          {chatButtons}
         </ul>
         <HeaderForm history={history} />
         <div className='btn-group'>
@@ -100,7 +113,8 @@ Header.propTypes = {
   currentStreamService: PropTypes.string,
   toggleChat: PropTypes.func.isRequired,
   history: PropTypes.object,
-  rustlerCount: PropTypes.arrayOf(PropTypes.number)
+  rustlerCount: PropTypes.arrayOf(PropTypes.number),
+  showDggChat: PropTypes.bool.isRequired,
 };
 
 export default compose(
@@ -111,6 +125,7 @@ export default compose(
       isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
       isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
       currentStreamService: idx(state, _ => _.streams[state.stream].service),
+      showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
     }),
     { toggleChat }
   ),
