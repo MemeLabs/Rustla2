@@ -38,6 +38,7 @@ const Profile = ({
               username: event.target.elements.username.value,
               left_chat: event.target.elements.left_chat.checked,
               show_hidden: event.target.elements.show_hidden.checked,
+              show_dgg_chat: event.target.elements.show_dgg_chat.checked,
             };
             // Disallow blank inputs. The ORM will disallow these anyways but
             // there's arguably no point in even making the request if it's known
@@ -116,6 +117,16 @@ const Profile = ({
                 defaultChecked={profile.data.show_hidden}
               />
               <label htmlFor='profile-showhidden' className='form-check-label'>Show Hidden Streams</label>
+            </div>
+          </div>
+          <div className='form-group'>
+            <div className='form-check'>
+              <Checkbox
+                id='profile-showdgg'
+                name='show_dgg_chat'
+                defaultChecked={profile.data.show_dgg_chat}
+              />
+              <label htmlFor='profile-showdgg' className='form-check-label'>Show DGG Chat With AngelThump</label>
             </div>
           </div>
           <button type='submit' className='btn btn-primary' disabled={profile.isFetching}>Save Changes</button>
