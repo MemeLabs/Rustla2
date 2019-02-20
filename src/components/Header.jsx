@@ -59,7 +59,7 @@ const Header = ({
     }
 
     if (supportedChatServices.has(currentStreamService)) {
-      chatButtons.push(<li key="service" onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('nav-item', 'text-capitalize', { 'active': isServiceChat })}><NavButtonLink>{currentStreamService} Chat</NavButtonLink></li>)
+      chatButtons.push(<li key="service" onClick={() => toggleChat(CHAT_HOST_SERVICE)} className={cs('nav-item', 'text-capitalize', { 'active': isServiceChat })}><NavButtonLink>{currentStreamService} Chat</NavButtonLink></li>);
     }
   }
 
