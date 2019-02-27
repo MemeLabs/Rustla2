@@ -1,3 +1,7 @@
 User-agent: *
 Disallow: /
 
+# Google gets to read the X-Robots headers everywhere. wowee.
+User-agent: Googlebot
+Allow: /
+
