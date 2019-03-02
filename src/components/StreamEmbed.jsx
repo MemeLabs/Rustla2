@@ -14,7 +14,7 @@ const isValidAdvancedUrl = require('../util/is-valid-advanced-url')(window.URL);
 const getSrc = (channel: string, service: string): string | null => {
   switch (service) {
     case 'angelthump':
-      return `https://angelthump.com/embed/${channel}`;
+      return `https://player.angelthump.com/?channel=${channel}`;
     case 'facebook':
       return `https://www.facebook.com/video/embed?video_id=${channel}&autoplay=true`;
     case 'mixer':
