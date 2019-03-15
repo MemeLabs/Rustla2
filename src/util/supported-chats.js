@@ -4,6 +4,7 @@
 const supportedChats: {
   [key: string]: (channel: string) => string
 } = {
+  'mixer': channel => `https://mixer.com/embed/chat/${channel}`,
   'twitch-vod': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
   'twitch': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
   'vaughn': channel => `https://vaughnlive.tv/popout/chat/${channel}`,
