@@ -177,15 +177,15 @@ const Status ServicePoller::CheckMixer(const std::string& name,
 
 const Status ServicePoller::CheckSmashcast(const std::string& name,
                                            ChannelState* state) {
-  mixer::Client client;
-  mixer::ChannelResult channel;
+  smashcast::Client client;
+  smashcast::ChannelResult channel;
   auto status = client.GetChannelByName(name, &channel);
 
   if (!status.Ok()) {
     return status;
   }
 
-  state->title = channel.GetName();
+  state->title = channel.GetTitle();
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();

@@ -25,7 +25,7 @@ without the need to go through the Twitch OAuth setup.
      after first running the server):
         ```
         $ sqlite3 ./overrustle.sqlite
-        sqlite> INSERT INTO "users" VALUES('13374242-1337-1337-1337-cccccccccccc',1337,'testuser','testuser','','twitch','admin','','2018-04-16 19:53:02',0,0,'','2018-04-01 20:00:00','2018-04-11 20:00:00',0,0);
+        sqlite> INSERT INTO "users" VALUES('13374242-1337-1337-1337-cccccccccccc',1337,'testuser','testuser','','twitch','admin','','2018-04-16 19:53:02',0,0,'','2018-04-01 20:00:00','2018-04-11 20:00:00',0,0,0);
         ```
   2. Forge the correct jwt cookie to be able to access this account:
         ```
