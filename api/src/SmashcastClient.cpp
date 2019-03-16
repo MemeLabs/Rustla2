@@ -5,58 +5,53 @@
 
 namespace rustla2 {
 namespace smashcast {
-
 rapidjson::Document ChannelResult::GetSchema() {
   rapidjson::Document schema;
   schema.Parse(R"json(
       {
         "type": "object",
         "properties": {
-          "name": {"type": "string"},
-          "online": {"type": "boolean"},
-          "thumbnail": {
-            "type": "object",
-            "properties": {
-              "url": {
-                "type": "string",
-                "format": "uri"
-              },
-              "required": ["url"]
-            }
-          },
-          "viewersCurrent": {"type": "integer"}
+          "media_title": {"type": "string"},
+          "media_is_live": {"type": "integer"},
+          "media_thumbnail": {"type": "string"},
+          "media_views": {"type": "integer"}
         },
-        "required": ["name", "online", "thumbnail", "viewersCurrent"]
+        "required": ["media_title", "media_is_live", "media_thumbnail", "media_views"]
       }
     )json");
   return schema;
 }
 
-std::string ChannelResult::GetName() const {
-  return json::StringRef(GetData()["name"]);
+std::string ChannelResult::GetTitle() const {
+  return json::StringRef(GetData()["media_title"]);
 }
 
-bool ChannelResult::GetLive() const { return GetData()["online"].GetBool(); }
+bool ChannelResult::GetLive() const {
+  if(GetData().HasMember("media_is_live") && GetData()["media_is_live"].GetUint64() == 1) {
+    return true;
+  }
+  return false;
+}
 
 std::string ChannelResult::GetThumbnail() const {
-  return json::StringRef(GetData()["thumbnail"]["url"]);
+  return json::StringRef(GetData()["media_thumbnail"]);
 }
 
 uint64_t ChannelResult::GetViewers() const {
-  return GetData()["viewersCurrent"].GetUint64();
+  return GetData().HasMember("media_views") ? GetData()["media_views"].GetUint64() : 0;
 }
 
-Status Client::GetChannelByName(const std::string& name,
-                                ChannelResult* result) {
-  CurlRequest req("https://smashcast.com/api/v1/channels/" + name);
+Status Client::GetChannelByName(const std::string& name, ChannelResult* result) {
+  CurlRequest req("https://api.smashcast.tv/media/live/" + name);
   req.Submit();
 
-  if (!req.Ok()) {
+  if(!req.Ok()) {
     return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
   }
-  if (req.GetResponseCode() != 200) {
+
+  if(req.GetResponseCode() != 200) {
     return Status(
-        StatusCode::API_ERROR, "recieve non 200 response",
+        StatusCode::API_ERROR, "received non 200 response",
         "api returned status code " + std::to_string(req.GetResponseCode()));
   }
 
@@ -64,5 +59,5 @@ Status Client::GetChannelByName(const std::string& name,
   return result->SetData(response.c_str(), response.size());
 }
 
-}  // namespace smashcast
-}  // namespace rustla2
+} // namespace smashcast
+} // namespace rustla2

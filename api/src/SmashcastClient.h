@@ -11,22 +11,22 @@ namespace rustla2 {
 namespace smashcast {
 
 class ChannelResult : public APIResult {
- public:
-  rapidjson::Document GetSchema() final;
+  public:
+    rapidjson::Document GetSchema() final;
 
-  std::string GetName() const;
+    std::string GetTitle() const;
 
-  bool GetLive() const;
+    bool GetLive() const;
 
-  std::string GetThumbnail() const;
+    std::string GetThumbnail() const;
 
-  uint64_t GetViewers() const;
+    uint64_t GetViewers() const;
 };
 
 class Client {
- public:
-  Status GetChannelByName(const std::string& name, ChannelResult* result);
+  public:
+    Status GetChannelByName(const std::string& name, ChannelResult* result);
 };
 
-}  // namespace smashcast
-}  // namespace rustla2
+} // namespace smashcast
+} // namespace rustla2
