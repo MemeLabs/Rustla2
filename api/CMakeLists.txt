@@ -77,6 +77,7 @@ set(SOURCE_FILES
         src/MixerClient.cpp
         src/ServicePoller.cpp
         src/Session.cpp
+        src/SmashcastClient.cpp
         src/StaticHTTPService.cpp
         src/Status.cpp
         src/Streams.cpp
