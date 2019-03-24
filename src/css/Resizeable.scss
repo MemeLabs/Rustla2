@@ -20,6 +20,7 @@
   border-radius: 4px;
   transition: background-color 0.25s ease;
   cursor: col-resize;
+  z-index: 2;
   &.react-draggable-dragging, &.react-draggable-dragging:hover {
     background-color: rgba(255, 255, 255, 1);
   }
