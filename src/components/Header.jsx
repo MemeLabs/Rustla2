@@ -54,7 +54,7 @@ const Header = ({
   if (currentStreamService) {
     chatButtons.push(<li key="strims" onClick={() => toggleChat(CHAT_HOST_STRIMS)} className={cs('nav-item', { active: isStrimsChat })}><NavButtonLink>Strims Chat</NavButtonLink></li>);
 
-    if (currentStreamService !== 'angelthump' || showDggChat) {
+    if (currentStreamService == 'youtube' || currentStreamService == 'twitch' || showDggChat) {
       chatButtons.push(<li key="dgg" onClick={() => toggleChat(CHAT_HOST_DGG)} className={cs('nav-item', { active: isDggChat })}><NavButtonLink>Destiny Chat</NavButtonLink></li>);
     }
 

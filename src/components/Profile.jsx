@@ -126,7 +126,7 @@ const Profile = ({
                 name='show_dgg_chat'
                 defaultChecked={profile.data.show_dgg_chat}
               />
-              <label htmlFor='profile-showdgg' className='form-check-label'>Show DGG Chat With AngelThump</label>
+              <label htmlFor='profile-showdgg' className='form-check-label'>Show DGG Chat With All Streams</label>
             </div>
           </div>
           <button type='submit' className='btn btn-primary' disabled={profile.isFetching}>Save Changes</button>
