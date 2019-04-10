@@ -1,3 +1,5 @@
+/* global CHAT2_DOMAIN, CHAT2_URL, CHAT_URL */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compose } from 'redux';
@@ -29,7 +31,7 @@ const ChatEmbed = ({
       <Chat
         onClose={onClose}
         style={{ visibility: isStrimsChat ? undefined : 'hidden' }}
-        src='https://chat.strims.gg'
+        src={location.host === CHAT2_DOMAIN ? CHAT2_URL : CHAT_URL}
         />
       <LazyLoadOnce visible={isDggChat}>
         <Chat

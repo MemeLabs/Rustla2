@@ -160,6 +160,12 @@ module.exports = {
           CHAT_URL: process.env.CHAT_URL
             ? `"${process.env.CHAT_URL}"`
             : undefined,
+          CHAT2_URL: process.env.CHAT2_URL
+            ? `"${process.env.CHAT2_URL}"`
+            : undefined,
+          CHAT2_DOMAIN: process.env.CHAT2_DOMAIN
+            ? `"${process.env.CHAT2_DOMAIN}"`
+            : undefined,
           THUMBNAIL_REFRESH_INTERVAL: process.env.THUMBNAIL_REFRESH_INTERVAL
             ? `"${process.env.THUMBNAIL_REFRESH_INTERVAL}"`
             : undefined,
