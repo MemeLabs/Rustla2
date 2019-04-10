@@ -31,7 +31,7 @@ const ChatEmbed = ({
       <Chat
         onClose={onClose}
         style={{ visibility: isStrimsChat ? undefined : 'hidden' }}
-        src={location.host === CHAT2_DOMAIN ? CHAT2_URL : CHAT_URL}
+        src={window.location.toString() === CHAT2_DOMAIN ? CHAT2_URL : CHAT_URL}
         />
       <LazyLoadOnce visible={isDggChat}>
         <Chat
