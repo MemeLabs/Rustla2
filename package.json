@@ -19,7 +19,7 @@
     "bluebird": "^3.4.7",
     "bootstrap": "^4.3.1",
     "browser-cookies": "^1.1.0",
-    "clappr": "^0.3.1",
+    "clappr": "^0.3.3",
     "classnames": "^2.2.5",
     "dotenv": "^6.0.0",
     "glyphicons-halflings": "^1.9.1",
