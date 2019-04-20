@@ -34,5 +34,10 @@ module.exports = {
     // eslint-plugin-react rules
     'react/no-unescaped-entities': 'warn',
     'react/prop-types': 'warn',
+  },
+  settings: {
+    react: {
+      version: 'detect'
+    }
   }
 };
