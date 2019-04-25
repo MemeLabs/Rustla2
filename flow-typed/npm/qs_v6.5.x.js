@@ -1,4 +1,4 @@
-// flow-typed signature: 715c2f8b80fc0049acaff07253098596
+// flow-typed signature: fe47522610e311cd96309a3936d447e4
 // flow-typed version: a7cda84c32/qs_v6.5.x/flow_>=v0.45.x
 
 declare module "qs" {

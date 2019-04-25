@@ -1,5 +1,5 @@
-// flow-typed signature: b9b7f7cbfe41f4e7d48a790df32071b7
-// flow-typed version: e529cd1be1/bluebird_v3.x.x/flow_>=v0.70.x
+// flow-typed signature: e0974d6c2c04803a78c4faa3e848c72a
+// flow-typed version: 34fbdaa6f3/bluebird_v3.x.x/flow_>=v0.70.x
 
 type Bluebird$RangeError = Error;
 type Bluebird$CancellationErrors = Error;
@@ -59,7 +59,7 @@ declare class Bluebird$Promise<+R> extends Promise<R> {
   static TimeoutError: Class<Bluebird$TimeoutError>;
   static RejectionError: Class<Bluebird$RejectionError>;
   static OperationalError: Class<Bluebird$OperationalError>;
-  
+
   static Defer: Class<Bluebird$Defer>;
   static PromiseInspection: Class<Bluebird$PromiseInspection<*>>;
 
@@ -192,7 +192,8 @@ declare class Bluebird$Promise<+R> extends Promise<R> {
   constructor(
     callback: (
       resolve: (result?: $Promisable<R>) => void,
-      reject: (error?: any) => void
+      reject: (error?: any) => void,
+      onCancel?: (fn?: () => void) => void,
     ) => mixed
   ): void;
   then(onFulfill: null | void, onReject: null | void): Bluebird$Promise<R>;
@@ -311,7 +312,7 @@ declare class Bluebird$Promise<+R> extends Promise<R> {
     disposable: Bluebird$Disposable<T>,
     handler: (value: T) => $Promisable<A>
   ): Bluebird$Promise<A>;
-  
+
   suppressUnhandledRejections(): void;
 }
 
