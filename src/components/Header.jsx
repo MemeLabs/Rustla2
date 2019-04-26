@@ -1,4 +1,4 @@
-/* global DONATE_PAYPAL_URL */
+/* global DONATE_PAYPAL_URL, DISCORD_URL */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
@@ -98,6 +98,13 @@ const Header = ({
             <a className='btn btn-default navbar-btn' href='/login' title='Log In'>
               <span className='glyphicon glyphicon-log-in' />
             </a>
+          }
+          {
+            DISCORD_URL ?
+            <a className='btn btn-default navbar-btn' href={`${DISCORD_URL}`} title='Discord'>
+              <img className='glyphicon discord-logo' src='https://i.imgur.com/R9vrzVF.png' />
+            </a>
+            : null
           }
         </div>
       </div>
