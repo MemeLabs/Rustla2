@@ -1,16 +1,18 @@
-/* global GITHUB_URL */
+// @flow
+
+// Global
+declare var GITHUB_URL;
+
 import React from 'react';
-import PropTypes from 'prop-types';
 
+type Props = {
+  hash: string,
+  short: string
+};
 
-const GitHubCommitLink = ({ hash, short }) =>
+const GitHubCommitLink = ({ hash, short }: Props) =>
   <a href={`${GITHUB_URL}/commit/${hash}`}>
     {short}
   </a>;
-
-GitHubCommitLink.propTypes = {
-  hash: PropTypes.string.isRequired,
-  short: PropTypes.string.isRequired,
-};
 
 export default GitHubCommitLink;
