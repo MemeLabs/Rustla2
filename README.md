@@ -29,7 +29,7 @@ $ sed -i "" "s/JWT_SECRET=/JWT_SECRET=$(head -c 22 /dev/urandom | base64 | tr -d
 Install dependencies and build the frontend:
 
 ``` bash
-$ npm install
+$ npm ci
 $ npm run build
 ```
 
