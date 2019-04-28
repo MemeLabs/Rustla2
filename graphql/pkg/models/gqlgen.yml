@@ -1,0 +1,29 @@
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+
+models:
+  User:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.User
+  UserConfig:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.UserConfig
+  Tag:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.Tag
+  Room:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.Room
+  Channel:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.Channel
+  UserConfigData:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.UserConfigData
+  Timestamp:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.Timestamp
+  ID:
+    model: github.com/MemeLabs/Rustla2/graphql/pkg/models.ID
+schema:
+- ../../api/schema.graphql
+exec:
+  filename: generated.go
+model:
+  filename: models_gen.go
+resolver:
+  filename: ../resolvers/resolver.go
+  type: Resolver

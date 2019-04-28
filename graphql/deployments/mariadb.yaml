@@ -1,0 +1,15 @@
+apiVersion: k3s.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: mariadb
+  namespace: kube-system
+spec:
+  chart: stable/mariadb
+  targetNamespace: rustla3
+  set:
+    serviceAccount.create: "true"
+    rbac.create: "true"
+    rootUser.password: "secretpassword"
+    db.user: "rustla"
+    replication.enabled: "false"
+    slave.replicas: 0

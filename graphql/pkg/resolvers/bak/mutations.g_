@@ -1,0 +1,71 @@
+package resolvers
+
+import (
+	"context"
+
+	"github.com/MemeLabs/Rustla2/graphql/api/gql"
+)
+
+type mutationResolver struct{ *Resolver }
+
+func (r *mutationResolver) UpdateUserConfig(ctx context.Context, name string, preferences string) (*string, error) {
+	config := ""
+
+	return &config, nil
+}
+func (r *mutationResolver) GetOrCreateChannel(ctx context.Context, service gql.Service, channel string, tags []string) (*gql.Channel, error) {
+	// tx, err := r.db.BeginTx(ctx, nil)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// ch := models.Channel{}
+	// ch.Service = null.String{service.String()}
+	// ch.Channel = channel
+
+	// if err := ch.Upsert(ctx, tx, false, nil, boil.Infer()); err != nil {
+	// 	tx.Rollback()
+	// 	return nil, err
+	// }
+
+	// tx.Commit()
+
+	return nil, nil
+}
+func (r *mutationResolver) UpdateChannel(ctx context.Context, id string, tags []string) (*gql.Channel, error) {
+	panic("not implemented")
+}
+func (r *mutationResolver) UpdateRoom(
+	ctx context.Context,
+	id string,
+	tags []string,
+	path *string,
+	title *string,
+	description *string,
+	thumbnailURL *string,
+) (*gql.Room, error) {
+
+	// db := boil.ContextExecutor{}
+
+	// // models.FindRoom(ctx, db, 123, ...cols)
+
+	// room := models.Room{}
+
+	// // INSERT INTO pilots ("id", "name") VALUES($1, $2)
+	// // ON CONFLICT DO NOTHING
+	// err := room.Upsert(ctx, db, false, nil, boil.Infer())
+
+	// // INSERT INTO pilots ("id", "name") VALUES ($1, $2)
+	// // ON CONFLICT ("id") DO UPDATE SET "name" = EXCLUDED."name"
+	// err := room.Upsert(ctx, db, true, []string{"id"}, boil.Whitelist("name"), boil.Infer())
+
+	// // Set room.ID to a zero value. We will have to use the whitelist now.
+	// room.ID = 0
+	// room.Name = "Hogan"
+
+	// // INSERT INTO pilots ("id", "name") VALUES ($1, $2)
+	// // ON CONFLICT ("id") DO UPDATE SET "name" = EXCLUDED."name"
+	// err := room.Upsert(ctx, db, true, []string{"id"}, boil.Whitelist("name"), boil.Whitelist("id", "name"))
+
+	return nil, nil
+}

@@ -1,0 +1,56 @@
+package resolvers
+
+import (
+	"database/sql"
+
+	"github.com/MemeLabs/Rustla2/graphql/api/gql"
+	"github.com/go-redis/redis"
+
+	// "github.com/MemeLabs/Rustla2/graphql/pkg/models"
+	// "github.com/davecgh/go-spew/spew"
+	_ "github.com/go-sql-driver/mysql"
+	// "github.com/volatiletech/null"
+	// "github.com/volatiletech/sqlboiler/boil"
+)
+
+// "github.com/volatiletech/sqlboiler/queries"
+// "github.com/volatiletech/sqlboiler/queries/qm"
+// "github.com/volatiletech/sqlboiler/queries/qmhelper"
+// "github.com/volatiletech/sqlboiler/strmangle"
+
+// Resolver ...
+type Resolver struct {
+	db    *sql.DB
+	cache *redis.Client
+}
+
+// New ...
+func New() (*Resolver, error) {
+	db, err := sql.Open("mysql", "root:secretpassword@/rustla3")
+	if err != nil {
+		return nil, err
+	}
+
+	cache := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "secretpassword", // no password set
+		DB:       0,                // use default DB
+	})
+
+	return &Resolver{db, cache}, nil
+}
+
+// Mutation ...
+func (r *Resolver) Mutation() gql.MutationResolver {
+	return &mutationResolver{r}
+}
+
+// Query ...
+func (r *Resolver) Query() gql.QueryResolver {
+	return &queryResolver{r}
+}
+
+// Subscription ...
+func (r *Resolver) Subscription() gql.SubscriptionResolver {
+	return &subscriptionResolver{r}
+}

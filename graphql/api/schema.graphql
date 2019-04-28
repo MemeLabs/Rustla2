@@ -1,0 +1,168 @@
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+type Query {
+    viewer: User!
+    channels: [Channel!]!
+}
+
+type Mutation {
+    updateUserConfig(name: String!, data: UserConfigData!): UserConfigData
+    getOrCreateChannel(
+        service: Service!
+        channel: String!
+        tags: [String!]! @hasRole(role: ADMIN)
+    ): Channel!
+    updateChannel(id: ID!, tags: [String!]!): Channel
+    updateRoom(
+        id: ID!,
+        tags: [String!],
+        path: String,
+        title: String,
+        description: String,
+        thumbnailUrl: String
+    ): Room
+}
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum Role {
+    ADMIN
+    USER
+}
+
+type Subscription {
+    channelChanged: Channel
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+}
+
+scalar Timestamp
+
+scalar Cursor
+
+scalar UserConfigData
+
+type UserConfig {
+    id: ID!
+    name: String!
+    data: UserConfigData
+}
+
+type User {
+    id: ID!
+    createdAt: Timestamp
+    lastSeenAt: Timestamp
+    twitchId: String!
+    name: String!
+    # isBanned: Boolean!
+    # isAdmin: Boolean!
+    # showHiddenRooms: Boolean!
+    # showDggChat: Boolean!
+    # leftChat: Boolean!
+    channels: [Channel!]!
+    room: Room!
+    roomsOccupied(
+        first: Int,
+        after: Cursor,
+        last: Int,
+        before: Cursor
+    ): UserRoomsOccupiedConnection
+}
+
+type UserRoomsOccupiedConnection {
+    pageInfo: PageInfo!
+    edges: [UserOccupiedRoomEdge]
+}
+
+type UserOccupiedRoomEdge {
+    cursor: Cursor!
+    enteredAt: Timestamp!
+    node: Room!
+}
+
+enum Service {
+    ADVANCED
+    ANGELTHUMP
+    FACEBOOK
+    M3U8
+    MIXER
+    SMASHCAST
+    TWITCH
+    TWTICH_VOD
+    USTREAM
+    VAUGN
+    YOUTUBE_PLAYLIST
+    YOUTUBE
+}
+
+type Channel {
+    id: ID!
+    updatedAt: Timestamp!
+    service: Service!
+    channel: String!
+    viewerCount: Int!
+    tags: [String!]!
+    serviceInfo: ServiceInfo
+    rooms: [Room!]!
+}
+
+type NewChannel {
+    service: Service!
+    channel: String!
+}
+
+type ServiceInfo {
+    channel: Channel!
+    updatedAt: Timestamp!
+    title: String!
+    thumbnailUrl: String!
+    live: Boolean!
+    viewerCount: Int!
+}
+
+type Room {
+    id: ID!
+    path: String!
+    owner: User
+    editors: [User!]!
+    channel: Channel!
+    viewerCount: Int!
+    tags: [String!]!
+    occupants(
+        first: Int,
+        after: Cursor,
+        last: Int,
+        before: Cursor
+    ): RoomOccupantsConnection
+    title: String!
+    description: String!
+    thumbnailUrl: String!
+}
+
+type RoomOccupantsConnection {
+    pageInfo: PageInfo!
+    edges: [RoomOccupantEdge]
+}
+
+type RoomOccupantEdge {
+    cursor: Cursor!
+    enteredAt: Timestamp!
+    node: User!
+}
+
+type NewRoom {
+    path: String!
+    channel: NewChannel!
+}
+
+type RoomInput {
+    path: String
+    service: Service
+    channel: String
+}

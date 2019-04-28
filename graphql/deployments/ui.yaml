@@ -1,0 +1,14 @@
+apiVersion: k3s.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: jenkins
+  namespace: kube-system
+spec:
+  chart: stable/jenkins
+  targetNamespace: jenkins
+  valuesContent: |-
+    Master:
+      AdminUser: admin
+      AdminPassword: secretpassword
+    rbac:
+      install: true

@@ -1,0 +1,214 @@
+package server
+
+import (
+	"context"
+	"encoding/json"
+	"time"
+)
+
+// Channels ...
+type Channels struct {
+	models []Channel
+}
+
+// Rooms ...
+type Rooms struct {
+	byID   map[int64]*Room
+	byPath map[string]*Room
+}
+
+// NewRooms ...
+func NewRooms() *Rooms {
+	return &Rooms{
+		byID:   make(map[int64]*Room),
+		byPath: make(map[string]*Room),
+	}
+}
+
+func (r *Rooms) insert(room *Room) {
+	r.byID[room.ID] = room
+	r.byPath[room.Path] = room
+}
+
+// GetByID ...
+func (r *Rooms) GetByID(ctx context.Context, id int64) (room *Room, ok bool) {
+	room, ok = r.byID[id]
+	return
+}
+
+// GetByPath ...
+func (r *Rooms) GetByPath(ctx context.Context, path string) (room *Room, ok bool) {
+	room, ok = r.byPath[path]
+	return
+}
+
+// Users ...
+type Users struct {
+	byID       map[int64]*User
+	byName     map[string]*User
+	byTwitchID map[string]*User
+}
+
+// NewUsers ...
+func NewUsers() *Users {
+	return &Users{
+		byID:       make(map[int64]*User),
+		byName:     make(map[string]*User),
+		byTwitchID: make(map[string]*User),
+	}
+}
+
+func (r *Users) insert(user *User) {
+	r.byID[user.ID] = user
+	r.byName[user.Name] = user
+	r.byTwitchID[user.TwitchID] = user
+}
+
+// GetByID ...
+func (r *Users) GetByID(ctx context.Context, id int64) (user *User, ok bool) {
+	user, ok = r.byID[id]
+	return
+}
+
+// GetByName ...
+func (r *Users) GetByName(ctx context.Context, name string) (user *User, ok bool) {
+	user, ok = r.byName[name]
+	return
+}
+
+// GetByTwitchID ...
+func (r *Users) GetByTwitchID(ctx context.Context, twitchID string) (user *User, ok bool) {
+	user, ok = r.byTwitchID[twitchID]
+	return
+}
+
+// ID ...
+type ID int64
+
+// Timestamp ...
+type Timestamp time.Time
+
+// Cursor ...
+type Cursor json.RawMessage
+
+// UserConfigData ...
+type UserConfigData json.RawMessage
+
+// PageInfo ...
+type PageInfo struct {
+	HasNextPage bool
+}
+
+// User ...
+type User struct {
+	ID              int64
+	CreatedAt       time.Time
+	LastSeenAt      time.Time
+	TwitchID        string
+	Name            string
+	IsBanned        bool
+	IsAdmin         bool
+	ShowHiddenRooms bool
+	ShowDggChat     bool
+	LeftChat        bool
+	Channels        []Channel
+	Room            Room
+}
+
+// UserRoomsOccupiedConnection ...
+type UserRoomsOccupiedConnection struct {
+	PageInfo PageInfo
+	Edges    []UserOccupiedRoomEdge
+}
+
+// UserOccupiedRoomEdge ...
+type UserOccupiedRoomEdge struct {
+	Cursor    Cursor
+	EnteredAt time.Time
+	Node      *Room
+}
+
+// Service ...
+type Service int
+
+// Service types
+const (
+	ServiceADVANCED Service = iota + 1
+	ServiceANGELTHUMP
+	ServiceFACEBOOK
+	ServiceM3U8
+	ServiceMIXER
+	ServiceSMASHCAST
+	ServiceTWITCH
+	ServiceTWTICHVOD
+	ServiceUSTREAM
+	ServiceVAUGN
+	ServiceYOUTUBEPLAYLIST
+	ServiceYOUTUBE
+)
+
+// Channel ...
+type Channel struct {
+	ID          int64
+	UpdatedAt   time.Time
+	Service     Service
+	Channel     string
+	Viewers     int64
+	Tags        []string
+	ServiceInfo ServiceInfo
+}
+
+// NewChannel ...
+type NewChannel struct {
+	Service Service
+	Channel string
+}
+
+// ServiceInfo ...
+type ServiceInfo struct {
+	ChannelID int64
+	UpdatedAt time.Time
+	Title     string
+	Thumbnail string
+	Live      bool
+	Viewers   int64
+}
+
+// Room ...
+type Room struct {
+	ID          int64
+	Path        string
+	Owner       *User
+	Editors     []*User
+	Channel     Channel
+	Viewers     int64
+	Tags        []string
+	Title       string
+	Description string
+}
+
+// RoomOccupantsConnection ...
+type RoomOccupantsConnection struct {
+	PageInfo PageInfo
+	Edges    []RoomOccupantEdge
+}
+
+// RoomOccupantEdge ...
+type RoomOccupantEdge struct {
+	Cursor    Cursor
+	EnteredAt time.Time
+	Node      *User
+}
+
+// NewRoom ...
+type NewRoom struct {
+	Path    string
+	Channel NewChannel
+}
+
+// RoomInput ...
+type RoomInput struct {
+	Path    string
+	Service Service
+	Channel string
+}

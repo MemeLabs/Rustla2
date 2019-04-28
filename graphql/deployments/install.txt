@@ -1,0 +1,7 @@
+https://medium.com/@zhimin.wen/deploy-jenkins-helm-chart-on-k3s-running-on-macbook-484bb7ba588f
+
+
+curl -LO https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+kubectl apply -f local-path-storage.yaml
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'

@@ -1,0 +1,19 @@
+[mysql]
+  dbname  = "rustla3"
+  host    = "localhost"
+  port    = 3306
+  user    = "root"
+  pass    = "secretpassword"
+  sslmode = "false"
+  blacklist = ["migrations"]
+
+# non nullable id
+[[types]]
+  [types.match]
+    type = "uint64"
+
+  [types.replace]
+    type = "null.Uint64"
+
+  [types.imports]
+    third_party = ['"github.com/volatiletech/null"']

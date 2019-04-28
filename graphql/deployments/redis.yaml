@@ -1,0 +1,14 @@
+apiVersion: k3s.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: redis
+  namespace: kube-system
+spec:
+  chart: stable/redis
+  targetNamespace: rustla3
+  set:
+    serviceAccount.create: "true"
+    rbac.create: "true"
+    cluster.enabled: "false"
+    cluster.slaveCount: 0
+    password: "secretpassword"
