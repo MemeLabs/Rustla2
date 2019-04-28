@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import clappr from 'clappr';
+import LevelSelector from 'level-selector';
 
 type Props = {
   src: string
@@ -18,6 +19,7 @@ class M3u8StreamEmbed extends Component<Props> {
 
     this.player = new clappr.Player({
       parent: this.playerNode,
+      plugins: [LevelSelector],
       source: this.props.src,
       width: '100%',
       height: '100%',
