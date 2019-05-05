@@ -30,9 +30,9 @@ const getSrc = (channel: string, service: string): string | null => {
     case 'vaughn':
       return `https://vaughnlive.tv/embed/video/${channel}`;
     case 'youtube-playlist':
-      return `https://www.youtube.com/embed/videoseries?list=${channel}&autoplay=1`;
+      return `https://www.youtube-nocookie.com/embed/videoseries?list=${channel}&autoplay=1`;
     case 'youtube':
-      return `https://www.youtube.com/embed/${channel}?autoplay=1`;
+      return `https://www.youtube-nocookie.com/embed/${channel}?autoplay=1`;
     default:
       return null;
   }
