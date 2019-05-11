@@ -6,7 +6,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import cs from 'classnames';
 import idx from 'idx';
-import logo from '../../public/image/ComfyApe.png'
 import '../css/Header';
 
 import { toggleChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
@@ -70,7 +69,7 @@ const Header = ({
     >
       <div className='navbar-header'>
         <Link className='navbar-brand' to='/'>
-          <img src={logo} />
+          <img src='/image/comfyape.png' alt='Strims' />
         </Link>
       </div>
       <div className='collapse navbar-collapse'>
