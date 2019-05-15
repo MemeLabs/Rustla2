@@ -69,7 +69,7 @@ const Header = ({
     >
       <div className='navbar-header'>
         <Link className='navbar-brand' to='/'>
-          <img src='/image/comfyape.png' alt='Strims' />
+          <img src='/image/comfyape.png' alt='Strims' /> Strims
         </Link>
       </div>
       <div className='collapse navbar-collapse'>
