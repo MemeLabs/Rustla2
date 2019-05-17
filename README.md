@@ -56,6 +56,31 @@ requires a registered Twitch client.
      TWITCH_REDIRECT_URI=http://localhost:3000/oauth
      ```
 
+## UI dev environment setup
+
+Install the latest stable version of Node.
+
+```bash
+$ git clone https://github.com/MemeLabs/Rustla2.git
+$ cd Rustla2/
+$ cp .env.example .env
+```
+
+Update `API_WS` in the config with the production WebSocket API URL.
+
+```
+API_WS=wss://strims.gg/ws
+```
+
+Install the dependencies and start the webpack dev server
+
+```bash
+$ npm ci
+$ npm run dev-server
+```
+
+You can access the dev server from your browser at `http://localhost:3000`.
+
 ## Building for production
 
 The process of building for development is essentially the same as building for
