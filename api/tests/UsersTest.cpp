@@ -14,11 +14,12 @@ TEST(UsersTest, TestSetName) {
   sqlite::database db(":memory:");
 
   auto channel = Channel::Create("twitch", "test");
+  auto chat_channel = Channel::Create("strims", "");
 
   auto names = std::vector<std::string>{"InfiniteJester", "beepybeepy",
                                         "SpiderTechnitian"};
   for (const auto &name : names) {
-    User user(db, 1, channel, "10.0.0.1");
+    User user(db, 1, channel, chat_channel, "10.0.0.1");
     auto status = user.SetName(name);
     LOG(INFO) << status.GetErrorMessage();
     EXPECT_TRUE(status.Ok());

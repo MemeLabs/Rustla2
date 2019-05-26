@@ -24,13 +24,14 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 class Stream {
  public:
   Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         bool nsfw = false, bool hidden = false, bool afk = false,
-         bool promoted = false, const std::string &title = "",
-         const std::string &thumbnail = "", const bool live = false,
-         const uint64_t viewer_count = 0)
+         const Channel &chat_channel, bool nsfw = false, bool hidden = false,
+         bool afk = false, bool promoted = false, bool bot = false,
+         const std::string &title = "", const std::string &thumbnail = "",
+         const bool live = false, const uint64_t viewer_count = 0)
       : db_(db),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
+        chat_channel_(std::shared_ptr<Channel>(chat_channel)),
         title_(title),
         thumbnail_(thumbnail),
         live_(live),
@@ -38,10 +39,13 @@ class Stream {
         hidden_(hidden),
         afk_(afk),
         promoted_(promoted),
+        bot_(bot),
         viewer_count_(viewer_count) {}
 
-  Stream(sqlite::database db, const Channel &channel)
-      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel) {}
+  Stream(sqlite::database db, const Channel &channel,
+         const Channel &chat_channel)
+      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel, chat_channel) {
+  }
 
   inline uint64_t GetID() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -51,6 +55,11 @@ class Stream {
   inline std::shared_ptr<Channel> GetChannel() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return channel_;
+  }
+
+  inline std::shared_ptr<Channel> GetChatChannel() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return chat_channel_;
   }
 
   inline std::string GetTitle() const {
@@ -86,6 +95,11 @@ class Stream {
   inline bool GetPromoted() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return promoted_;
+  }
+
+  inline bool GetBot() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return bot_;
   }
 
   inline uint64_t GetViewerCount() const {
@@ -175,6 +189,12 @@ class Stream {
     return true;
   }
 
+  inline bool SetChatChannel(std::shared_ptr<Channel> chat_channel) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    chat_channel_ = chat_channel;
+    return true;
+  }
+
   inline bool SetLive(const bool live) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
     live_ = live;
@@ -223,6 +243,12 @@ class Stream {
     return true;
   }
 
+  inline bool SetBot(const bool bot) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    bot_ = bot;
+    return true;
+  }
+
   bool Save();
 
   bool SaveNew();
@@ -248,6 +274,7 @@ class Stream {
   mutable boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
+  std::shared_ptr<Channel> chat_channel_;
   std::string title_;
   std::string thumbnail_;
   bool live_;
@@ -255,6 +282,7 @@ class Stream {
   bool hidden_;
   bool afk_;
   bool promoted_;
+  bool bot_;
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
   uint64_t afk_count_{0};

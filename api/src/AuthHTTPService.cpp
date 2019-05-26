@@ -89,7 +89,7 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
   auto user = db_->GetUsers()->GetByTwitchID(twitch_id);
   if (user == nullptr) {
     auto channel = Channel::Create(twitch_name, kTwitchService.toString());
-    user = db_->GetUsers()->Emplace(twitch_id, channel, ip);
+    user = db_->GetUsers()->Emplace(twitch_id, channel, channel, ip);
   } else {
     user->SetLastIP(ip);
     user->Save();

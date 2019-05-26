@@ -48,6 +48,10 @@ std::string User::GetProfileJSON() {
   writer.String(channel_->GetService());
   writer.Key("channel");
   writer.String(channel_->GetChannel());
+  writer.Key("chat_service");
+  writer.String(chat_channel_->GetService());
+  writer.Key("chat_channel");
+  writer.String(chat_channel_->GetChannel());
   writer.Key("left_chat");
   writer.Bool(left_chat_);
   writer.Key("is_admin");
@@ -69,6 +73,8 @@ void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->String(channel_->GetStreamPath());
   writer->Key("channel");
   channel_->WriteJSON(writer);
+  writer->Key("chat_channel");
+  chat_channel_->WriteJSON(writer);
   writer->Key("left_chat");
   writer->Bool(left_chat_);
   writer->Key("last-ip");
@@ -163,6 +169,12 @@ bool User::SetChannel(const Channel &channel) {
   return true;
 }
 
+bool User::SetChatChannel(const Channel &chat_channel) {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  chat_channel_ = std::make_shared<Channel>(chat_channel);
+  return true;
+}
+
 bool User::SetLeftChat(bool left_chat) {
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
   left_chat_ = left_chat;
@@ -202,6 +214,8 @@ bool User::Save() {
           `stream_path` = ?,
           `service` = ?,
           `channel` = ?,
+          `chat_service` = ?,
+          `chat_channel` = ?,
           `last_ip` = ?,
           `last_seen` = datetime(?, 'unixepoch'),
           `left_chat` = ?,
@@ -212,7 +226,8 @@ bool User::Save() {
         WHERE `id` = ?
       )sql";
     db_ << sql << name_ << channel_->GetStreamPath() << channel_->GetService()
-        << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
+        << channel_->GetChannel() << chat_channel_->GetService()
+        << chat_channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
         << is_admin_ << show_hidden_ << show_dgg_chat_ << GetIDString();
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating user " << this << ", "
@@ -236,6 +251,8 @@ bool User::SaveNew() {
           `stream_path`,
           `service`,
           `channel`,
+          `chat_service`,
+          `chat_channel`,
           `last_ip`,
           `last_seen`,
           `left_chat`,
@@ -247,6 +264,8 @@ bool User::SaveNew() {
           `updated_at`
         )
         VALUES (
+          ?,
+          ?,
           ?,
           ?,
           ?,
@@ -267,7 +286,8 @@ bool User::SaveNew() {
       )sql";
     db_ << sql << GetIDString() << twitch_id_ << channel_->GetChannel() << name_
         << channel_->GetStreamPath() << channel_->GetService()
-        << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
+        << channel_->GetChannel() << chat_channel_->GetService()
+        << chat_channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
         << is_admin_ << show_hidden_ << show_dgg_chat_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user " << this << ", "
@@ -284,6 +304,7 @@ std::ostream &operator<<(std::ostream &os, const User &user) {
      << "twitch_id: " << user.twitch_id_ << ", "
      << "name: " << user.name_ << ", "
      << "channel: " << *user.channel_ << ", "
+     << "chat_channel: " << *user.chat_channel_ << ", "
      << "last_ip: " << user.last_ip_ << ", "
      << "last_seen: " << user.last_seen_ << ", "
      << "left_chat: " << user.left_chat_ << ", "
@@ -306,6 +327,8 @@ Users::Users(sqlite::database db) : db_(db) {
         `stream_path`,
         `service`,
         `channel`,
+        `chat_service`,
+        `chat_channel`,
         `last_ip`,
         strftime('%s', `last_seen`),
         `left_chat`,
@@ -319,13 +342,15 @@ Users::Users(sqlite::database db) : db_(db) {
   query >> [&](const std::string &id, const uint64_t twitch_id,
                const std::string &name, const std::string &stream_path,
                const std::string &service, const std::string &channel,
+               const std::string &chat_service, const std::string &chat_channel,
                const std::string &last_ip, const time_t last_seen,
                const bool left_chat, const bool is_admin,
                const bool show_hidden, const bool show_dgg_chat) {
     boost::uuids::string_generator to_uuid;
     auto user_channel = Channel::Create(channel, service, stream_path);
     auto user = std::make_shared<User>(
-        db_, to_uuid(id), twitch_id, name, user_channel, last_ip, last_seen,
+        db_, to_uuid(id), twitch_id, name, user_channel,
+        Channel::Create(chat_channel, chat_service), last_ip, last_seen,
         left_chat, is_admin, show_hidden, show_dgg_chat);
 
     data_by_id_[user->GetID()] = user;
@@ -349,6 +374,8 @@ void Users::InitTable() {
         `stream_path` VARCHAR(255) NOT NULL,
         `service` VARCHAR(255) NOT NULL,
         `channel` VARCHAR(255) NOT NULL,
+        `chat_service` VARCHAR(255) NOT NULL DEFAULT 'strims',
+        `chat_channel` VARCHAR(255) NOT NULL DEFAULT '',
         `last_ip` VARCHAR(255) NOT NULL,
         `last_seen` DATETIME NOT NULL,
         `left_chat` TINYINT(1) DEFAULT 0,
@@ -408,8 +435,9 @@ std::shared_ptr<User> Users::GetByStreamPath(const std::string &stream_path) {
 
 std::shared_ptr<User> Users::Emplace(const uint64_t twitch_id,
                                      const Channel &channel,
+                                     const Channel &chat_channel,
                                      const std::string &ip) {
-  auto user = std::make_shared<User>(db_, twitch_id, channel, ip);
+  auto user = std::make_shared<User>(db_, twitch_id, channel, chat_channel, ip);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);

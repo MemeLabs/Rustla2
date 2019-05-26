@@ -19,6 +19,8 @@ void Stream::WriteAPIJSON(
   writer->Bool(afk_);
   writer->Key("promoted");
   writer->Bool(promoted_);
+  writer->Key("bot");
+  writer->Bool(bot_);
   writer->Key("rustlers");
   writer->Uint64(rustler_count_ - afk_count_);
   writer->Key("afk_rustlers");
@@ -27,6 +29,10 @@ void Stream::WriteAPIJSON(
   writer->String(channel_->GetService());
   writer->Key("channel");
   writer->String(channel_->GetChannel());
+  writer->Key("chat_channel");
+  writer->String(chat_channel_->GetChannel());
+  writer->Key("chat_service");
+  writer->String(chat_channel_->GetService());
   writer->Key("title");
   writer->String(title_);
   writer->Key("thumbnail");
@@ -51,6 +57,10 @@ void Stream::WriteJSON(
   writer->String(channel_->GetService());
   writer->Key("overrustle_id");
   writer->String(channel_->GetStreamPath());
+  writer->Key("chat_channel");
+  writer->String(chat_channel_->GetChannel());
+  writer->Key("chat_service");
+  writer->String(chat_channel_->GetService());
   writer->Key("title");
   writer->String(title_);
   writer->Key("thumbnail");
@@ -65,6 +75,8 @@ void Stream::WriteJSON(
   writer->Bool(afk_);
   writer->Key("promoted");
   writer->Bool(promoted_);
+  writer->Key("bot");
+  writer->Bool(bot_);
   writer->Key("viewers");
   writer->Uint64(viewer_count_);
   writer->Key("rustlers");
@@ -83,10 +95,13 @@ bool Stream::Save() {
           `channel` = ?,
           `service` = ?,
           `path` = ?,
+          `chat_channel` = ?,
+          `chat_service` = ?,
           `nsfw` = ?,
           `hidden` = ?,
           `afk` = ?,
           `promoted` = ?,
+          `bot` = ?,
           `title` = ?,
           `thumbnail` = ?,
           `live` = ?,
@@ -95,8 +110,9 @@ bool Stream::Save() {
         WHERE `id` = ?
       )sql";
     db_ << sql << channel_->GetChannel() << channel_->GetService()
-        << channel_->GetStreamPath() << nsfw_ << hidden_ << afk_ << promoted_
-        << title_ << thumbnail_ << live_ << viewer_count_ << id_;
+        << channel_->GetStreamPath() << chat_channel_->GetChannel()
+        << chat_channel_->GetService() << nsfw_ << hidden_ << afk_ << promoted_
+        << bot_ << title_ << thumbnail_ << live_ << viewer_count_ << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating stream " << this << ", "
                << "error: " << e.what() << ", "
@@ -116,11 +132,14 @@ bool Stream::SaveNew() {
           `id`,
           `channel`,
           `service`,
+          `chat_channel`,
+          `chat_service`,
           `path`,
           `nsfw`,
           `hidden`,
           `afk`,
           `promoted`,
+          `bot`,
           `title`,
           `thumbnail`,
           `live`,
@@ -141,13 +160,19 @@ bool Stream::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
+          ?,
+          ?,
+          ?,
+          ?,
           datetime(),
           datetime()
         )
       )sql";
     db_ << sql << id_ << channel_->GetChannel() << channel_->GetService()
-        << channel_->GetStreamPath() << nsfw_ << hidden_ << afk_ << promoted_
-        << title_ << thumbnail_ << live_ << viewer_count_;
+        << channel_->GetStreamPath() << chat_channel_->GetChannel()
+        << chat_channel_->GetService() << nsfw_ << hidden_ << afk_ << promoted_
+        << bot_ << title_ << thumbnail_ << live_ << viewer_count_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating stream " << this << ", "
                << "error: " << e.what() << ", "
@@ -168,10 +193,13 @@ Streams::Streams(sqlite::database db) : db_(db) {
         `channel`,
         `service`,
         `path`,
+        `chat_channel`,
+        `chat_service`,
         `nsfw`,
         `hidden`,
         `afk`,
         `promoted`,
+        `bot`,
         `title`,
         `thumbnail`,
         `live`,
@@ -181,14 +209,15 @@ Streams::Streams(sqlite::database db) : db_(db) {
   auto query = db_ << sql;
 
   query >> [&](const uint64_t id, const std::string &channel,
-               const std::string &service, const std::string &path, bool nsfw,
-               bool hidden, bool afk, bool promoted, const std::string &title,
-               const std::string &thumbnail, const bool live,
-               const uint64_t viewer_count) {
+               const std::string &service, const std::string &path,
+               const std::string &chat_channel, const std::string &chat_service,
+               bool nsfw, bool hidden, bool afk, bool promoted, bool bot,
+               const std::string &title, const std::string &thumbnail,
+               const bool live, const uint64_t viewer_count) {
     auto stream_channel = Channel::Create(channel, service, path);
-    auto stream = std::make_shared<Stream>(db_, id, stream_channel, nsfw,
-                                           hidden, afk, promoted, title,
-                                           thumbnail, live, viewer_count);
+    auto stream = std::make_shared<Stream>(
+        db_, id, stream_channel, Channel::Create(chat_channel, chat_service),
+        nsfw, hidden, afk, promoted, bot, title, thumbnail, live, viewer_count);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -204,10 +233,13 @@ void Streams::InitTable() {
         `channel` VARCHAR(255) NOT NULL,
         `service` VARCHAR(255) NOT NULL,
         `path` VARCHAR(255) REFERENCES `users` (`stream_path`) ON DELETE SET NULL ON UPDATE CASCADE,
+        `chat_channel` VARCHAR(255) NOT NULL DEFAULT '',
+        `chat_service` VARCHAR(255) NOT NULL DEFAULT 'strims',
         `nsfw` TINYINT(1) DEFAULT 0,
         `hidden` TINYINT(1) DEFAULT 0,
         `afk` TINYINT(1) DEFAULT 0,
         `promoted` TINYINT(1) DEFAULT 0,
+        `bot` TINYINT(1) DEFAULT 0,
         `title` VARCHAR(255) NOT NULL,
         `thumbnail` VARCHAR(255),
         `live` TINYINT(1) DEFAULT 0,
@@ -226,10 +258,13 @@ std::ostream &operator<<(std::ostream &os, const Stream &stream) {
      << "channel " << stream.channel_->GetChannel() << ", "
      << "service " << stream.channel_->GetService() << ", "
      << "path " << stream.channel_->GetStreamPath() << ", "
+     << "chat_channel " << stream.chat_channel_->GetChannel() << ", "
+     << "chat_service " << stream.chat_channel_->GetService() << ", "
      << "nsfw " << stream.nsfw_ << ", "
      << "hidden " << stream.hidden_ << ", "
      << "afk " << stream.afk_ << ", "
      << "promoted " << stream.promoted_ << ", "
+     << "bot " << stream.bot_ << ", "
      << "title " << stream.title_ << ", "
      << "thumbnail " << stream.thumbnail_ << ", "
      << "live " << stream.live_ << ", "
@@ -285,7 +320,7 @@ void Streams::WriteStreamsJSON(
 }
 
 std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
-  auto stream = std::make_shared<Stream>(db_, channel);
+  auto stream = std::make_shared<Stream>(db_, channel, channel);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);

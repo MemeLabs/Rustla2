@@ -17,11 +17,20 @@ APIHTTPService::APIHTTPService(std::shared_ptr<DB> db) : db_(db) {
           "stream_path": {"type": "string"},
           "service": {"type": "string"},
           "channel": {"type": "string"},
+          "chat_service": {"type": "string"},
+          "chat_channel": {"type": "string"},
           "left_chat": {"type": "boolean"},
           "show_hidden": {"type": "boolean"},
           "show_dgg_chat": {"type": "boolean"}
         },
-        "required": ["username", "stream_path", "service", "channel"]
+        "required": [
+          "username",
+          "stream_path",
+          "service",
+          "channel",
+          "chat_service",
+          "chat_channel"
+        ]
       }
     )json");
 }
@@ -138,6 +147,12 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
       newUser->SetChannel(Channel::Create(
           json::StringRef(input["channel"]), json::StringRef(input["service"]),
           json::StringRef(input["stream_path"]), &status));
+    }
+
+    if (status.Ok()) {
+      newUser->SetChatChannel(
+          Channel::Create(json::StringRef(input["chat_channel"]),
+                          json::StringRef(input["chat_service"]), &status));
     }
 
     if (status.Ok()) {

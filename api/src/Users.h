@@ -26,13 +26,15 @@ class User {
  public:
   User(sqlite::database db, const boost::uuids::uuid id,
        const int64_t twitch_id, const std::string &name, const Channel &channel,
-       const std::string &last_ip, const time_t last_seen, const bool left_chat,
-       const bool is_admin, const bool show_hidden, const bool show_dgg_chat)
+       const Channel &chat_channel, const std::string &last_ip,
+       const time_t last_seen, const bool left_chat, const bool is_admin,
+       const bool show_hidden, const bool show_dgg_chat)
       : db_(db),
         id_(id),
         twitch_id_(twitch_id),
         name_(name),
         channel_(std::shared_ptr<Channel>(channel)),
+        chat_channel_(std::shared_ptr<Channel>(chat_channel)),
         last_ip_(last_ip),
         last_seen_(last_seen),
         left_chat_(left_chat),
@@ -41,11 +43,12 @@ class User {
         show_dgg_chat_(show_dgg_chat) {}
 
   User(sqlite::database db, const uint64_t twitch_id, const Channel &channel,
-       const std::string &last_ip)
+       const Channel &chat_channel, const std::string &last_ip)
       : db_(db),
         id_(boost::uuids::random_generator()()),
         twitch_id_(twitch_id),
         channel_(std::shared_ptr<Channel>(channel)),
+        chat_channel_(std::shared_ptr<Channel>(chat_channel)),
         last_ip_(last_ip),
         last_seen_(time(nullptr)),
         left_chat_(false),
@@ -59,6 +62,7 @@ class User {
         twitch_id_(user.twitch_id_),
         name_(user.name_),
         channel_(user.channel_),
+        chat_channel_(user.chat_channel_),
         last_ip_(user.last_ip_),
         last_seen_(user.last_seen_),
         left_chat_(user.left_chat_),
@@ -89,6 +93,11 @@ class User {
   inline std::shared_ptr<Channel> GetChannel() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return channel_;
+  }
+
+  inline std::shared_ptr<Channel> GetChatChannel() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return chat_channel_;
   }
 
   inline std::string GetLastIP() {
@@ -133,6 +142,8 @@ class User {
 
   bool SetChannel(const Channel &channel);
 
+  bool SetChatChannel(const Channel &channel);
+
   bool SetLeftChat(bool left_chat);
 
   bool SetLastIP(const std::string &last_ip);
@@ -154,6 +165,7 @@ class User {
   uint64_t twitch_id_;
   std::string name_;
   std::shared_ptr<Channel> channel_;
+  std::shared_ptr<Channel> chat_channel_;
   std::string last_ip_;
   time_t last_seen_;
   bool left_chat_;
@@ -205,7 +217,9 @@ class Users {
   std::shared_ptr<User> GetByStreamPath(const std::string &stream_path);
 
   std::shared_ptr<User> Emplace(const uint64_t twitch_id,
-                                const Channel &channel, const std::string &ip);
+                                const Channel &channel,
+                                const Channel &chat_channel,
+                                const std::string &ip);
 
   Status Save(std::shared_ptr<User> user);
 
