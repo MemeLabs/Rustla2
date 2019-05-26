@@ -317,8 +317,9 @@ void Streams::WriteStreamsJSON(
   writer->EndArray();
 }
 
-std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
-  auto stream = std::make_shared<Stream>(db_, channel, channel);
+std::shared_ptr<Stream> Streams::Emplace(const Channel &channel,
+                                         const Channel &chat_channel) {
+  auto stream = std::make_shared<Stream>(db_, channel, chat_channel);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);

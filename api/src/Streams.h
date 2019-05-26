@@ -368,7 +368,8 @@ class Streams {
     return it == data_by_channel_.end() ? nullptr : it->second;
   }
 
-  std::shared_ptr<Stream> Emplace(const Channel &channel);
+  std::shared_ptr<Stream> Emplace(const Channel &channel,
+                                  const Channel &chat_channel);
 
  private:
   sqlite::database db_;

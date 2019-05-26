@@ -49,7 +49,7 @@ class WSService {
                              rapidjson::Writer<rapidjson::StringBuffer>* writer,
                              uint64_t* stream_id);
 
-  void SetStreamToChannel(const Channel& channel,
+  void SetStreamToChannel(const Channel& channel, const Channel& chat_channel,
                           rapidjson::Writer<rapidjson::StringBuffer>* writer,
                           uint64_t* stream_id);
 
