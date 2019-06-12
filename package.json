@@ -24,7 +24,7 @@
     "dotenv": "^6.0.0",
     "glyphicons-halflings": "^1.9.1",
     "history": "^4.7.2",
-    "idx": "^2.5.2",
+    "idx": "^2.5.6",
     "isomorphic-fetch": "^2.2.1",
     "jwt-simple": "^0.5.1",
     "level-selector": "^0.2.0",
