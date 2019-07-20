@@ -1,6 +1,6 @@
 // @flow
 
-import type { BrowserHistory } from 'history/createBrowserHistory';
+import type { BrowserHistory } from 'history';
 import React from 'react';
 
 import ServiceSelect from './ServiceSelect';

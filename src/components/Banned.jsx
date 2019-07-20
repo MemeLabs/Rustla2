@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import type { BrowserHistory } from 'history/createBrowserHistory';
+import type { BrowserHistory } from 'history';
 
 import MainLayout from './MainLayout';
 
