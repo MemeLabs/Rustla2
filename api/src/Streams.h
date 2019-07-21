@@ -98,6 +98,11 @@ class Stream {
     return rustler_count_ - afk_count_;
   }
 
+  inline uint64_t GetTotalRustlerCount() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return rustler_count_;
+  }
+
   inline uint64_t GetAFKCount() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return afk_count_;
@@ -277,7 +282,7 @@ class UpdatedSince {
 };
 
 struct HasRustlers {
-  bool Test(const Stream &stream) const { return stream.GetRustlerCount() > 0; }
+  bool Test(const Stream &stream) const { return stream.GetTotalRustlerCount() > 0; }
 };
 
 struct IsLive {
