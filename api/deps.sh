@@ -10,13 +10,6 @@ BASE_DIR="$(/bin/pwd)/third-party"
 
 set -e
 
-echo "installing openssl"
-
-cd "$BASE_DIR/openssl"
-./config
-make -j $JOBS
-make install
-
 echo "installing gtest"
 
 rm -rf "$BASE_DIR/googletest/build"
@@ -28,9 +21,19 @@ make install
 
 echo "installing folly"
 
-cd "$BASE_DIR/folly/folly"
-autoreconf --install
-./configure --with-openssl="$BASE_DIR/openssl"
+rm -rf "$BASE_DIR/folly/_build"
+mkdir "$BASE_DIR/folly/_build"
+cd "$BASE_DIR/folly/_build"
+cmake ..
+make -j $JOBS
+make install
+
+echo "installing fizz"
+
+rm -rf "$BASE_DIR/fizz/fizz/_build"
+mkdir "$BASE_DIR/fizz/fizz/_build"
+cd "$BASE_DIR/fizz/fizz/_build"
+cmake ..
 make -j $JOBS
 make install
 

@@ -10,14 +10,14 @@ find_path(
     FOLLY_INCLUDE_DIR
     NAMES "folly/String.h"
     HINTS
-        "/usr/local/facebook/include"
+        "/usr/local/include"
 )
 
 find_library(
     FOLLY_LIBRARY
     NAMES folly
     HINTS
-        "/usr/local/facebook/lib"
+        "/usr/local/lib"
 )
 
 set(FOLLY_LIBRARIES ${FOLLY_LIBRARY} ${DOUBLE_CONVERSION_LIBRARY})

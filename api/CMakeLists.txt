@@ -19,6 +19,7 @@ find_package(SQLite REQUIRED)
 find_package(rapidjson REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem system iostreams thread)
 find_package(Magic REQUIRED)
+find_package(Libiberty REQUIRED)
 find_package(JWT REQUIRED)
 find_package(Jansson REQUIRED)
 find_package(Folly REQUIRED)
@@ -35,6 +36,7 @@ set(LIB_HEADER
         ${RAPIDJSON_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
         ${MAGIC_INCLUDE_DIRS}
+        ${LIBIBERTY_INCLUDE_DIRS}
         ${JWT_INCLUDE_DIRS}
         ${JANSSON_INCLUDE_DIRS}
         ${FOLLY_INCLUDE_DIRS}
@@ -51,6 +53,7 @@ set(LIB
         ${RAPIDJSON_LIBRARIES}
         ${Boost_LIBRARIES}
         ${MAGIC_LIBRARIES}
+        ${LIBIBERTY_LIBRARIES}
         ${JWT_LIBRARIES}
         ${JANSSON_LIBRARIES}
         ${FOLLY_LIBRARIES}
@@ -90,8 +93,7 @@ set(SOURCE_FILES
 add_executable(rustla2_api ${SOURCE_FILES})
 
 target_include_directories(rustla2_api PRIVATE ${LIB_HEADER})
-target_link_libraries(rustla2_api PRIVATE ${LIB})
-
+target_link_libraries(rustla2_api PRIVATE ${LIB} ${CMAKE_DL_LIBS} ${LIBIBERTY_LIBRARIES})
 
 find_package(GTest REQUIRED)
 set(TEST_LIB_HEADER

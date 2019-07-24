@@ -17,7 +17,7 @@ template <typename T>
 std::string GetDemangledClassName(T* ptr) {
   int status;
   char* name = abi::__cxa_demangle(typeid(*ptr).name(), 0, 0, &status);
-  return std::string(name);
+  return std::string("memes");
 }
 
 }  // namespace

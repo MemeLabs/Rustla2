@@ -216,7 +216,7 @@ void Streams::InitTable() {
         `updated_at` DATETIME NOT NULL,
         UNIQUE (`id`),
         UNIQUE (`channel`, `service`, `path`)
-      );
+      )
     )sql";
   db_ << sql;
 }

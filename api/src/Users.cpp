@@ -361,7 +361,7 @@ void Users::InitTable() {
         `show_dgg_chat` TINYINT(1) DEFAULT 0,
         UNIQUE (`id`),
         UNIQUE (`twitch_id`)
-      );
+      )
     )sql";
   db_ << sql;
 }
