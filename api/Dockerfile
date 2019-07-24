@@ -15,3 +15,4 @@ RUN rm -rf rustla2_api/build && \
 USER rustla
 
 ENTRYPOINT ["rustla2_api"]
+

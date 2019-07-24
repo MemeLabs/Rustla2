@@ -25,3 +25,6 @@
 [submodule "api/third-party/openssl"]
 	path = api/third-party/openssl
 	url = https://github.com/openssl/openssl.git
+[submodule "api/third-party/fizz"]
+	path = api/third-party/fizz
+	url = https://github.com/facebookincubator/fizz.git
