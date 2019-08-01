@@ -1,4 +1,3 @@
-global.Promise = require('bluebird');
 import React from 'react';
 import { render } from 'react-dom';
 

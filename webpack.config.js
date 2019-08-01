@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const gitHash = require('helper-git-hash');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const LodashWebpackPlugin = require('lodash-webpack-plugin');
+const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { NODE_ENV } = process.env;
@@ -19,12 +20,12 @@ module.exports = {
   mode: IS_PRODUCTION ? 'production' : 'development',
   devtool: !IS_PRODUCTION && 'eval-source-map',
   entry: {
+    polyfills: path.resolve(__dirname, 'src/polyfills.js'),
     main: [
       '@babel/polyfill',
-      'isomorphic-fetch',
       path.resolve(__dirname, 'src/css/main.scss'),
       path.resolve(__dirname, 'src/client.jsx'),
-    ],
+    ]
   },
   output: {
     path: path.resolve(__dirname, './public/assets'),
@@ -117,9 +118,8 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.ejs',
+      excludeAssets: [/(main|polyfills)(\..*)?\.js$/],
       filename: '../index.html',
-      chunksSortMode: 'none',
       inject: true,
       minify: IS_PRODUCTION && {
         collapseWhitespace: true,
@@ -128,7 +128,9 @@ module.exports = {
         removeScriptTypeAttributes: true,
         removeStyleLinkTypeAttributes: true,
       },
+      template: './src/index.ejs',
     }),
+    new HtmlWebpackExcludeAssetsPlugin(),
     new (require('webpack-subresource-integrity'))({
       hashFuncNames: ['sha256', 'sha384'],
       enabled: IS_PRODUCTION,

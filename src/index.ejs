@@ -12,5 +12,18 @@
   </head>
   <body>
     <div id="main" class="jiggle-background"></div>
+    <script
+      nomodule
+      src="<%= htmlWebpackPlugin.files.chunks['polyfills'].entry %>"
+      <% if (htmlWebpackPlugin.files.jsIntegrity) { %> integrity="<%= htmlWebpackPlugin.files.jsIntegrity[0] %>" <% } %>
+      crossorigin="<%= webpackConfig.output.crossOriginLoading %>"
+    >
+    </script>
+    <script
+      src="<%= htmlWebpackPlugin.files.chunks['main'].entry %>"
+      <% if (htmlWebpackPlugin.files.jsIntegrity) { %> integrity="<%= htmlWebpackPlugin.files.jsIntegrity[1] %>" <% } %>
+      crossorigin="<%= webpackConfig.output.crossOriginLoading %>"
+    >
+    </script>
   </body>
 </html>
