@@ -57,7 +57,7 @@
     "babel-loader": "^8.0.6",
     "babel-plugin-idx": "^2.4.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "css-loader": "^1.0.0",
+    "css-loader": "^3.1.0",
     "css-module-flow": "^1.0.0",
     "eslint": "^5.16.0",
     "eslint-loader": "^2.1.2",
