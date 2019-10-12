@@ -1,0 +1,26 @@
+name: Frontend build
+on: [push]
+jobs:
+  build:
+    name: Node.js v${{ matrix.node-version }}, ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        node-version: [8, 10, 12]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Node.js v${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Update npm
+      run: npm install -g npm
+    - name: Build
+      run: |
+        npm ci
+        npm run build:production
+        npm run lint
+        npm run flow
+      env:
+        CI: true
