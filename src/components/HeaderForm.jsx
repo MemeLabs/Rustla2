@@ -2,6 +2,8 @@
 
 import type { BrowserHistory } from 'history';
 import React from 'react';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 import ServiceSelect from './ServiceSelect';
 
@@ -27,8 +29,9 @@ const HeaderForm = ({ history }: Props) => {
   };
 
   return (
-    <form
-      className='form-inline pr-3'
+    <Form
+      className='ml-3 mr-3'
+      inline
       role='search'
       onSubmit={handleSubmit}
     >
@@ -39,7 +42,7 @@ const HeaderForm = ({ history }: Props) => {
           borderTopRightRadius: 0,
         }}
         />
-      <div className='input-group'>
+      <InputGroup>
         <input
           className='form-control'
           placeholder='Stream/Video ID'
@@ -53,8 +56,8 @@ const HeaderForm = ({ history }: Props) => {
         <span className='input-group-btn'>
           <button type='submit' className='btn btn-default'>Go</button>
         </span>
-      </div>
-    </form>
+      </InputGroup>
+    </Form>
   );
 };
 

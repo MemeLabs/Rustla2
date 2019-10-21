@@ -23,6 +23,7 @@ import Resizeable from './Resizeable';
 import StreamEmbed from './StreamEmbed';
 import ChatEmbed from './ChatEmbed';
 
+import '../css/Stream';
 
 export const Stream = ({
   chatClosed,
@@ -37,12 +38,12 @@ export const Stream = ({
   showLeftChat = false,
 }) => {
   let left = (
-    <div style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` }}>
+    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` }}>
       <StreamEmbed channel={channel} service={service} />
     </div>
   );
   let right = chatClosed ? null : (
-    <div style={{ width: chatSize }}>
+    <div className='chat-embed' style={{ width: chatSize }}>
       <ChatEmbed onClose={() => showChat(false)} />
     </div>
   );
@@ -60,7 +61,7 @@ export const Stream = ({
         timeout={AFK_TIMEOUT}
         />
       <Resizeable
-        className='flex-grow-1'
+        className='flex-grow-1 flex-column flex-lg-row'
         onResize={e => {
           let newChatSize;
           if (showLeftChat) {

@@ -1,0 +1,16 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+
+@include media-breakpoint-down(md) {
+  .chat-embed {
+    height: 100%;
+    width: 100% !important;
+  }
+
+  .stream-embed {
+    // 16:9 ratio
+    height: 56.25vw;
+    width: 100% !important;
+  }
+}
