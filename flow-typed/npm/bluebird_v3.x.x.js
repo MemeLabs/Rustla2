@@ -1,5 +1,5 @@
-// flow-typed signature: e0974d6c2c04803a78c4faa3e848c72a
-// flow-typed version: 34fbdaa6f3/bluebird_v3.x.x/flow_>=v0.70.x
+// flow-typed signature: 0be44745cc772afd138b2fc5e4ca0f26
+// flow-typed version: c6154227d1/bluebird_v3.x.x/flow_>=v0.104.x
 
 type Bluebird$RangeError = Error;
 type Bluebird$CancellationErrors = Error;
@@ -7,20 +7,15 @@ type Bluebird$TimeoutError = Error;
 type Bluebird$RejectionError = Error;
 type Bluebird$OperationalError = Error;
 
-type Bluebird$ConcurrencyOption = {
-  concurrency: number
-};
-type Bluebird$SpreadOption = {
-  spread: boolean
-};
-type Bluebird$MultiArgsOption = {
-  multiArgs: boolean
-};
+type Bluebird$ConcurrencyOption = { concurrency: number, ... };
+type Bluebird$SpreadOption = { spread: boolean, ... };
+type Bluebird$MultiArgsOption = { multiArgs: boolean, ... };
 type Bluebird$BluebirdConfig = {
   warnings?: boolean,
   longStackTraces?: boolean,
   cancellation?: boolean,
-  monitoring?: boolean
+  monitoring?: boolean,
+  ...
 };
 
 declare class Bluebird$PromiseInspection<T> {
@@ -46,7 +41,8 @@ declare type Bluebird$PromisifyAllOptions = {
     passesDefaultFilter?: boolean
   ) => boolean,
   // The promisifier gets a reference to the original method and should return a function which returns a promise
-  promisifier?: (originalMethod: Function) => () => Bluebird$Promise<any>
+  promisifier?: (originalMethod: Function) => () => Bluebird$Promise<any>,
+  ...
 };
 
 declare type $Promisable<T> = Promise<T> | T;

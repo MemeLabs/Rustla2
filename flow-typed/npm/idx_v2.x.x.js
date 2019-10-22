@@ -1,5 +1,5 @@
-// flow-typed signature: e281911d77f576115c0519364cf5edb6
-// flow-typed version: 75f67f047c/idx_v2.x.x/flow_>=v0.33.x
+// flow-typed signature: 50ba22cd80c7da41ef603aaae19f8b57
+// flow-typed version: c6154227d1/idx_v2.x.x/flow_>=v0.104.x
 
 // From: https://github.com/facebookincubator/idx/blob/master/packages/idx/src/idx.js.flow
 
