@@ -1,5 +1,10 @@
 /* global DONATE_PAYPAL_URL */
+
 import React from 'react';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { compose } from 'redux';
@@ -64,44 +69,67 @@ const Header = ({
   }
 
   return (
-    <nav
-      className='header navbar navbar-dark navbar-expand-lg px-3'
-      role='navigation'
-    >
-      <div className='navbar-header'>
+    <Navbar expand='lg' variant='dark'>
+      <Navbar.Brand>
         <Link className='navbar-brand' to='/'>Strims</Link>
-      </div>
-      <div className='collapse navbar-collapse'>
-        <ul className='navbar-nav mr-auto'>
-          {rustlers}
-          {viewers}
+      </Navbar.Brand>
+      <Nav className='flex-row mr-auto'>{rustlers} {viewers}</Nav>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse>
+        <Nav className='mr-auto'>
           {DONATE_PAYPAL_URL ? <li className='nav-item'><a className='nav-link' target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
-        </ul>
-        <ul className='navbar-nav'>
+        </Nav>
+        <Nav>
           {chatButtons}
-        </ul>
-        <HeaderForm history={history} />
-        <div className='btn-group'>
-          {
-            isLoggedIn ?
-            <Link className='btn btn-default navbar-btn' to='/profile' title='Profile'>
-              <span className='glyphicon glyphicon-user' />
-            </Link>
-            : null
-          }
-          {
-            isLoggedIn ?
-            <Link className='btn btn-default navbar-btn' to='/logout' title='Log Out'>
-              <span className='glyphicon glyphicon-log-out' />
-            </Link>
-            :
-            <a className='btn btn-default navbar-btn' href='/login' title='Log In'>
-              <span className='glyphicon glyphicon-log-in' />
-            </a>
-          }
+        </Nav>
+        <div className='d-none d-lg-flex'>
+          <HeaderForm history={history} />
+          <ButtonGroup>
+            {
+              isLoggedIn ?
+              <Link className='btn btn-default navbar-btn' to='/profile' title='Profile'>
+                <span className='glyphicon glyphicon-user' />
+              </Link>
+              : null
+            }
+            {
+              isLoggedIn ?
+              <Link className='btn btn-default navbar-btn' to='/logout' title='Log Out'>
+                <span className='glyphicon glyphicon-log-out' />
+              </Link>
+              :
+              <Button href='/login' variant='outline-primary'>
+                <span className='glyphicon glyphicon-log-in' />
+              </Button>
+            }
+          </ButtonGroup>
         </div>
-      </div>
-    </nav>
+        <Nav className='d-lg-none'>
+          {
+            isLoggedIn
+              ? <Nav.Item as='li'>
+                  <Link to='/profile' title='Profile' className="nav-link p-3 pointer">
+                    Profile
+                  </Link>
+                </Nav.Item>
+              : null
+          }
+          {
+            isLoggedIn
+              ? <Nav.Item as='li'>
+                  <Link to='/logout' title='Log Out' className="nav-link p-3 pointer">
+                    Log Out
+                  </Link>
+                </Nav.Item>
+              : <Nav.Item as='li'>
+                  <Nav.Link href='/login' className="p-3 pointer">
+                    Log In
+                  </Nav.Link>
+                </Nav.Item>
+          }
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   );
 };
 
