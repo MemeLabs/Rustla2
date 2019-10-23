@@ -145,9 +145,13 @@ Profile.propTypes = {
   history: PropTypes.object.isRequired,
   profile: PropTypes.shape({
     data: PropTypes.shape({
-      username: PropTypes.string,
-      service: PropTypes.string,
       channel: PropTypes.string,
+      left_chat: PropTypes.bool,
+      service: PropTypes.string,
+      show_dgg_chat: PropTypes.bool,
+      show_hidden: PropTypes.bool,
+      stream_path: PropTypes.string,
+      username: PropTypes.string
     }),
     err: PropTypes.any,
     isFetching: PropTypes.bool,
