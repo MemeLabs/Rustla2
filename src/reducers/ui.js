@@ -38,7 +38,7 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
         ...state,
         showHeader: action.payload,
       };
-      case SHOW_FOOTER:
+    case SHOW_FOOTER:
       return {
         ...state,
         showFooter: action.payload,

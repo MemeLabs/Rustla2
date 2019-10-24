@@ -15,83 +15,81 @@ import Footer from './Footer';
 import '../css/Stream';
 
 import {
-    setChatSize,
-    showChat,
-  } from '../actions';
+  setChatSize,
+  showChat,
+} from '../actions';
 
 export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showLeftChat=false, chatClosed, chatSize}) =>
 {   
-    let left = (
-        <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` , display: 'flex', flexDirection: 'column'}}>
-            <Routes />
-            {showFooter ? <Footer /> : null}
-        </div>
-      );
-      let right = chatClosed ? null : (
-        <div className='chat-embed' style={{ width: chatSize, height: "inherit"}}>
-          <ChatEmbed onClose={() => showChat(false)} />
-        </div>
-      );
-    
+  let left = (
+    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` , display: 'flex', flexDirection: 'column'}}>
+      <Routes />
+      {showFooter ? <Footer /> : null}
+    </div>
+  );
+  let right = chatClosed ? null : (
+    <div className='chat-embed' style={{ width: chatSize, height: "inherit"}}>
+      <ChatEmbed onClose={() => showChat(false)} />
+    </div>
+  );
 
-    if (showLeftChat) {
+
+  if (showLeftChat) {
     const temp = left;
     left = right;
     right = temp;
-    }
+  }
 
-    return (
+  return (
     <div style={{height: "100%"}}>
-        <Router history={history}>
-            <div style={{height: "100%", display: 'flex', flexDirection: 'column'}}>
-                {showHeader ? <Header history={history} /> : null}
-                <Resizeable
-                    className='flex-grow-1 flex-column flex-lg-row'
-                    onResize={e => {
-                        let newChatSize;
-                        if (showLeftChat) {
-                            newChatSize = e.pageX;
-                        }
-                        else {
-                            newChatSize = window.innerWidth - e.pageX;
-                        }
-                            setChatSize(newChatSize);
-                        }}>
-                    {left}
-                    {right}
-                </Resizeable>
-           </div>
-        </Router>
+      <Router history={history}>
+        <div style={{height: "100%", display: 'flex', flexDirection: 'column'}}>
+          {showHeader ? <Header history={history} /> : null}
+          <Resizeable
+          className='flex-grow-1 flex-column flex-lg-row'
+          onResize={e => {
+          let newChatSize;
+          if (showLeftChat) {
+            newChatSize = e.pageX;
+          }
+          else {
+            newChatSize = window.innerWidth - e.pageX;
+          }
+            setChatSize(newChatSize);
+          }}>
+            {left}
+            {right}
+          </Resizeable>
+        </div>
+      </Router>
     </div>
-    );
+  );
 };
 
 RoutesWithChat.propTypes = {
-    showHeader: PropTypes.bool,
-    showFooter: PropTypes.bool,
-    showLeftChat: PropTypes.bool,
-    chatClosed: PropTypes.bool,
+  showHeader: PropTypes.bool,
+  showFooter: PropTypes.bool,
+  showLeftChat: PropTypes.bool,
+  chatClosed: PropTypes.bool,
 
-    chatSize: PropTypes.number.isRequired,
+  chatSize: PropTypes.number.isRequired,
 
-    setChatSize: PropTypes.func.isRequired,
-    showChat: PropTypes.func.isRequired,
-    
+  setChatSize: PropTypes.func.isRequired,
+  showChat: PropTypes.func.isRequired,
 };
 
 export default compose(
-    connect(
-      state => ({
-        showHeader: state.ui.showHeader,
-        showFooter: state.ui.showFooter,
-        chatSize: state.ui.chatSize,
-        showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
-        chatClosed: !state.ui.showChat,
-      }),
-      {
-          setChatSize,
-          showChat,
-      },
-    ),
-  )(RoutesWithChat);
-  
+  connect(
+    state => ({
+      showHeader: state.ui.showHeader,
+      showFooter: state.ui.showFooter,
+      chatSize: state.ui.chatSize,
+      showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
+      chatClosed: !state.ui.showChat,
+    }),
+    {
+      setChatSize,
+      showChat,
+    },
+  ),
+)(RoutesWithChat);
