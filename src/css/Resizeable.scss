@@ -1,6 +1,8 @@
 
 .resizeable {
   display: flex;
+  height: 100%;
+  overflow: hidden;
 }
 .resizeable-x {
   flex-direction: row;

@@ -4,6 +4,8 @@ import {
   SET_CHAT_SIZE,
   TOGGLE_CHAT,
   SHOW_CHAT,
+  SHOW_HEADER,
+  SHOW_FOOTER,
 } from '../actions';
 import { actions } from '../actions/websocket';
 
@@ -30,6 +32,16 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
       return {
         ...state,
         showChat: action.payload,
+      };
+    case SHOW_HEADER:
+      return {
+        ...state,
+        showHeader: action.payload,
+      };
+      case SHOW_FOOTER:
+      return {
+        ...state,
+        showFooter: action.payload,
       };
     default:
       return state;

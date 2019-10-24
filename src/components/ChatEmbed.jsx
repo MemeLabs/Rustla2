@@ -27,16 +27,16 @@ const ChatEmbed = ({
   }
 
   return (
-    <div className='fill-percentage' style={{ position: 'relative' }}>
+    <div style={{height: "inherit"}}>
       <Chat
         onClose={onClose}
-        style={{ visibility: isStrimsChat ? undefined : 'hidden' }}
+        style={{ display: isStrimsChat ? undefined : 'none' }}
         src={window.location.toString() === CHAT2_DOMAIN ? CHAT2_URL : CHAT_URL}
         />
       <LazyLoadOnce visible={isDggChat}>
         <Chat
           onClose={onClose}
-          style={{ visibility: isDggChat ? undefined : 'hidden' }}
+          style={{ display: isDggChat ? undefined : 'none' }}
           src='https://destiny.gg/embed/chat'
           />
       </LazyLoadOnce>
@@ -45,7 +45,7 @@ const ChatEmbed = ({
           <LazyLoadOnce visible={isServiceChat}>
             <Chat
               onClose={onClose}
-              style={{ visibility: isServiceChat ? undefined : 'hidden' }}
+              style={{ display: isServiceChat ? undefined : 'none' }}
               src={src}
               />
           </LazyLoadOnce>

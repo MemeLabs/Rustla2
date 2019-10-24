@@ -18,7 +18,6 @@ const Chat = ({ className, onClose = noop, src, style, ...rest }: Props) =>
     {...rest}
     className={cs('fill-percentage', className)}
     style={{
-      position: 'absolute',
       ...style,
     }}
     >

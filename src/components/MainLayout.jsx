@@ -3,23 +3,13 @@ import PropTypes from 'prop-types';
 
 import '../css/MainLayout';
 
-import Header from './Header';
-import Footer from './Footer';
-
-
 const MainLayout = ({
-  showHeader = true,
-  showFooter = true,
-  rustlerCount,
-  history,
   children,
 }) =>
-  <div className='main-layout d-flex flex-column'>
-    {showHeader ? <Header rustlerCount={rustlerCount} history={history} /> : null}
-    <div className='d-flex flex-column flex-grow-1'>
+  <div className='main-layout d-flex '>
+    <div className='d-flex flex-column flex-grow-1' style={{width: '100%'}}>
       {children}
     </div>
-    {showFooter ? <Footer /> : null}
   </div>
   ;
 

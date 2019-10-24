@@ -141,6 +141,23 @@ export const logout = () => dispatch => {
   });
 };
 
+export const SHOW_HEADER = Symbol('SHOW_HEADER');
+export const showHeader = value => dispatch => {
+  dispatch({
+    type: SHOW_HEADER,
+    payload: value,
+  });
+};
+
+
+export const SHOW_FOOTER = Symbol('SHOW_FOOTER');
+export const showFooter = value => dispatch => {
+  dispatch({
+    type: SHOW_FOOTER,
+    payload: value,
+  });
+};
+
 export const SHOW_CHAT = Symbol('SHOW_CHAT');
 export const showChat = value => dispatch => {
   if (localStorage) {
