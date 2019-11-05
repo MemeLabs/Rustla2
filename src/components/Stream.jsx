@@ -73,6 +73,7 @@ export default compose(
   lifecycle({
     componentDidMount() {
       const { channel, service, streamer } = this.props;
+      this.props.showFooter(false);
       if (streamer) {
         document.title = `${streamer} - Strims`;
         this.props.setStream(streamer);
@@ -82,7 +83,7 @@ export default compose(
       document.title = `${channel} on ${service} - Strims`;
       this.props.setStream(channel, service);
       this.props.fetchProfileIfLoggedIn();
-      this.props.showFooter(false);
+      
     },
 
     // Catch updates to this component, which usually happen when the user goes

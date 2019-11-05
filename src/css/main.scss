@@ -11,6 +11,7 @@ $font-size-base: 0.876rem;
 
 @import '~bootstrap/scss/bootstrap';
 
+
 html, body, #main, .fill-percentage, .routes {
   margin: 0;
   width: 100%;
@@ -19,6 +20,9 @@ html, body, #main, .fill-percentage, .routes {
   background-color: $background-gray;
 }
 
+.col-lg-2{
+  min-width:  25% !important;
+}
 
 iframe {
   display: block;

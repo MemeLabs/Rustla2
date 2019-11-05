@@ -19,10 +19,10 @@ import {
   showChat,
 } from '../actions';
 
-export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showLeftChat=false, chatClosed, chatSize}) =>
+export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, showLeftChat=false, chatClosed, chatSize}) =>
 {
   let left = (
-    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` , display: 'flex', flexDirection: 'column'}}>
+    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)`, height: chatClosed ? '100%' :  '', display: 'flex', flexDirection: 'column'}}>
       <Routes />
       {showFooter ? <Footer /> : null}
     </div>

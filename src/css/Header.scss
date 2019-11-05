@@ -8,6 +8,12 @@
   border-radius: 0px;
 }
 
+#open-chat-btn{
+  position: fixed;
+  right: 25px;
+  top: 65px;
+}
+
 .header-donate {
   background-color: #b91010;
   border-radius: 8px;
@@ -25,7 +31,6 @@
 }
 
 @include media-breakpoint-down(md) {
-
   .navbar{
     min-height: unset;
   }
@@ -40,5 +45,8 @@
       padding-left: 0.5rem;
       padding-right: 0.5rem;
     }
+  }
+  #open-chat-btn{
+    display: none;
   }
 }
