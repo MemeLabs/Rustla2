@@ -1,6 +1,6 @@
+// @flow
 /* global DONATE_PAYPAL_URL */
 
-// @flow
 declare var DISCORD_URL: string;
 
 import React from 'react';
