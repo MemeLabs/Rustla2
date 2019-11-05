@@ -37,6 +37,7 @@
     "qs": "^6.5.1",
     "react": "^16.8.4",
     "react-bootstrap": "1.0.0-beta.14",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^16.8.4",
     "react-draggable": "^2.2.3",
     "react-idle-timer": "^4.0.9",
