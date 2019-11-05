@@ -25,12 +25,20 @@
 }
 
 @include media-breakpoint-down(md) {
-  .navbar-collapse {
-    padding-bottom: 1rem;
-  }
 
-  .navbar-nav .nav-link {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+  .navbar{
+    min-height: unset;
+  }
+  @media (orientation:landscape){
+    .nav-item {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+  @media (orientation:portrait){
+    .navbar-nav .nav-link {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
   }
 }

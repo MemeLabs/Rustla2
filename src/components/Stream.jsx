@@ -7,110 +7,59 @@ import lifecycle from 'recompose/lifecycle';
 import setPropTypes from 'recompose/setPropTypes';
 import renderNothing from 'recompose/renderNothing';
 import branch from 'recompose/branch';
-import idx from 'idx';
 
 import {
   setAfk,
   setStream,
-  setChatSize,
-  showChat,
   fetchProfileIfLoggedIn,
+  showFooter,
 } from '../actions';
 
 import IdleTimer from 'react-idle-timer';
 import MainLayout from './MainLayout';
-import Resizeable from './Resizeable';
 import StreamEmbed from './StreamEmbed';
-import ChatEmbed from './ChatEmbed';
 
 import '../css/Stream';
 
 export const Stream = ({
-  chatClosed,
   history,
   service,
   channel,
-  chatSize,
   setAfk,
-  setChatSize,
-  showChat,
-  rustlerCount,
-  showLeftChat = false,
 }) => {
-  let left = (
-    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` }}>
-      <StreamEmbed channel={channel} service={service} />
-    </div>
-  );
-  let right = chatClosed ? null : (
-    <div className='chat-embed' style={{ width: chatSize }}>
-      <ChatEmbed onClose={() => showChat(false)} />
-    </div>
-  );
-  if (showLeftChat) {
-    const temp = left;
-    left = right;
-    right = temp;
-  }
+
   return (
-    <MainLayout history={history} showFooter={false} rustlerCount={rustlerCount}>
+    <MainLayout history={history} >
       <IdleTimer
         element={document}
         onActive={() => setAfk(false)}
         onIdle={() => setAfk(true)}
         timeout={AFK_TIMEOUT}
         />
-      <Resizeable
-        className='flex-grow-1 flex-column flex-lg-row'
-        onResize={e => {
-          let newChatSize;
-          if (showLeftChat) {
-            newChatSize = e.pageX;
-          }
-          else {
-            newChatSize = window.innerWidth - e.pageX;
-          }
-          setChatSize(newChatSize);
-        }}
-        >
-        {left}
-        {right}
-      </Resizeable>
+        <StreamEmbed channel={channel} service={service} />
     </MainLayout>
   );
 };
 
 Stream.propTypes = {
-  chatClosed: PropTypes.bool,
   history: PropTypes.object.isRequired,
 
   service: PropTypes.string.isRequired,
   channel: PropTypes.string.isRequired,
 
-  chatSize: PropTypes.number.isRequired,
-  showLeftChat: PropTypes.bool,
-
-  setChatSize: PropTypes.func.isRequired,
-  showChat: PropTypes.func.isRequired,
-  rustlerCount: PropTypes.arrayOf(PropTypes.number),
   setAfk: PropTypes.func.isRequired,
 };
 
 export default compose(
   connect(
     state => ({
-      chatSize: state.ui.chatSize,
-      rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
-      showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
       isFetchingProfile: state.self.profile.isFetching,
-      chatClosed: !state.ui.showChat,
     }),
     {
       setAfk,
       setStream,
-      setChatSize,
-      showChat,
       fetchProfileIfLoggedIn,
+      showFooter,
     },
   ),
   setPropTypes({
@@ -118,12 +67,6 @@ export default compose(
     service: PropTypes.string.isRequired,
     channel: PropTypes.string.isRequired,
 
-    chatSize: PropTypes.number.isRequired,
-    rustlerCount: PropTypes.arrayOf(PropTypes.number),
-    showLeftChat: PropTypes.bool,
-
-    setChatSize: PropTypes.func.isRequired,
-    showChat: PropTypes.func.isRequired,
     setAfk: PropTypes.func.isRequired,
     setStream: PropTypes.func.isRequired,
   }),
@@ -139,6 +82,7 @@ export default compose(
       document.title = `${channel} on ${service} - Strims`;
       this.props.setStream(channel, service);
       this.props.fetchProfileIfLoggedIn();
+      this.props.showFooter(false);
     },
 
     // Catch updates to this component, which usually happen when the user goes

@@ -8,6 +8,7 @@ import idx from 'idx';
 import {
   setStream,
   fetchProfileIfLoggedIn,
+  showFooter,
 } from '../actions';
 
 import '../css/Streams';
@@ -111,7 +112,8 @@ export default compose(
     }),
     {
       setStream,
-      fetchProfileIfLoggedIn
+      fetchProfileIfLoggedIn,
+      showFooter,
     },
   ),
   lifecycle({
@@ -119,6 +121,7 @@ export default compose(
       document.title = 'Strims';
       this.props.setStream(null);
       this.props.fetchProfileIfLoggedIn();
+      this.props.showFooter(true);
     },
   }),
 )(Streams);

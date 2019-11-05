@@ -153,6 +153,7 @@ export default compose(
       isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
       isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
       currentStreamService: idx(state, _ => _.streams[state.stream].service),
+      rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
       showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
     }),
     { toggleChat }

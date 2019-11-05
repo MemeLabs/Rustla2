@@ -1,5 +1,16 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
 
 .main-layout {
   width: 100%;
   min-height: 100%;
+}
+
+@include media-breakpoint-down(md) {
+  @media (orientation:landscape){
+    .flex-lg-row {
+      flex-direction: row !important;
+    }
+  }
 }
