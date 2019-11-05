@@ -1,5 +1,4 @@
 // @flow
-/* global DONATE_PAYPAL_URL */
 
 declare var DISCORD_URL: string;
 
