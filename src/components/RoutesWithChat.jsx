@@ -12,6 +12,8 @@ import idx from 'idx';
 import Header from './Header';
 import Footer from './Footer';
 
+import CustomScrollbar from './CustomScrollbar';
+
 import '../css/Stream';
 
 import {
@@ -19,11 +21,13 @@ import {
   showChat,
 } from '../actions';
 
-export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showLeftChat=false, chatClosed, chatSize}) =>
+export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, showLeftChat=false, chatClosed, chatSize}) =>
 {
   let left = (
-    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)` , display: 'flex', flexDirection: 'column'}}>
-      <Routes />
+    <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)`, height: chatClosed ? '100%' :  '', display: 'flex', flexDirection: 'column'}}>
+      <CustomScrollbar style={{ width: "100%", height: "100%"}}>
+        <Routes />
+      </CustomScrollbar>
       {showFooter ? <Footer /> : null}
     </div>
   );

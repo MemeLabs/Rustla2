@@ -1,4 +1,6 @@
-/* global DONATE_PAYPAL_URL */
+// @flow
+
+declare var DISCORD_URL: string;
 
 import React from 'react';
 import Button from 'react-bootstrap/Button';
@@ -12,9 +14,13 @@ import { connect } from 'react-redux';
 import cs from 'classnames';
 import idx from 'idx';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
+
 import '../css/Header';
 
-import { toggleChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
+import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
 import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
@@ -30,6 +36,8 @@ const Header = ({
   currentStreamService,
   toggleChat,
   history,
+  showChat,
+  chatClosed,
   showDggChat,
 }) => {
   let rustlers = null;
@@ -68,8 +76,15 @@ const Header = ({
     }
   }
 
+  let openChat = !chatClosed ? null : (
+    <div title="Open Chat" className='open-chat-btn' onClick={showChat}>
+        <FontAwesomeIcon icon={faComments} />
+    </div>
+  );
+
   return (
     <Navbar expand='lg' variant='dark'>
+      {openChat}
       <Navbar.Brand>
         <Link className='navbar-brand' to='/'>Strims</Link>
       </Navbar.Brand>
@@ -77,7 +92,6 @@ const Header = ({
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse>
         <Nav className='mr-auto'>
-          {DONATE_PAYPAL_URL ? <li className='nav-item'><a className='nav-link' target='_blank' rel='noopener noreferrer' href={DONATE_PAYPAL_URL}><span className='header-donate'>Donate</span></a></li> : null}
         </Nav>
         <Nav>
           {chatButtons}
@@ -85,6 +99,9 @@ const Header = ({
         <div className='d-none d-lg-flex'>
           <HeaderForm history={history} />
           <ButtonGroup>
+          <Button title="Discord" href={`${DISCORD_URL}`} target="_blank" rel="noopener noreferrer" variant='outline-primary'>
+            <FontAwesomeIcon icon={faDiscord} />
+          </Button>
             {
               isLoggedIn ?
               <Link className='btn btn-default navbar-btn' to='/profile' title='Profile'>
@@ -127,6 +144,11 @@ const Header = ({
                   </Nav.Link>
                 </Nav.Item>
           }
+          <Nav.Item as='li'>
+            <a href={`${DISCORD_URL}`} target="_blank" rel="noopener noreferrer" title='Discord' className="nav-link p-3 pointer">
+              Discord
+            </a>
+          </Nav.Item>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
@@ -143,6 +165,8 @@ Header.propTypes = {
   history: PropTypes.object,
   rustlerCount: PropTypes.arrayOf(PropTypes.number),
   showDggChat: PropTypes.bool.isRequired,
+  showChat: PropTypes.func.isRequired,
+  chatClosed: PropTypes.bool,
 };
 
 export default compose(
@@ -155,7 +179,11 @@ export default compose(
       currentStreamService: idx(state, _ => _.streams[state.stream].service),
       rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
       showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
+      chatClosed: !state.ui.showChat,
     }),
-    { toggleChat }
+    { 
+      toggleChat, 
+      showChat, 
+    },
   ),
 )(Header);
