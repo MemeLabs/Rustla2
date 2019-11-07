@@ -77,7 +77,7 @@ const Header = ({
   }
 
   let openChat = !chatClosed ? null : (
-    <div title="Open Chat" id='open-chat-btn' onClick={showChat}>
+    <div title="Open Chat" className='open-chat-btn' onClick={showChat}>
         <FontAwesomeIcon icon={faComments} />
     </div>
   );

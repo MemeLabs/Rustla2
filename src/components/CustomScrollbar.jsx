@@ -1,43 +1,31 @@
-import React, { Component } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
+// @flow
 
-export default class ColoredScrollbars extends Component {
+import React from 'react';
+import Scrollbars from 'react-custom-scrollbars';
 
-    constructor(...rest) {
-        super( ...rest);
-        this.renderView = this.renderView.bind(this);
-        this.renderThumb = this.renderThumb.bind(this);
-    }
+type RenderProps = { style: $Shape<CSSStyleDeclaration> };
 
-    renderView({ style }) {
-        const viewStyle = {
-            padding: 1,
-        };
-        return (
-            <div
-                className="box"
-                style={{ ...style, ...viewStyle }}
-                />
-        );
-    }
+const viewStyle = {
+  padding: 1,
+};
 
-    renderThumb({ style }) {
-        const thumbStyle = {
-            backgroundColor: "rgb(55, 55, 55)"
-        };
-        return (
-            <div
-                style={{ ...style, ...thumbStyle }}
-               />
-        );
-    }
-
-    render() {
-        return (
-            <Scrollbars
-                renderView={this.renderView}
-                renderThumbVertical={this.renderThumb}
-                {...this.props}/>
-        );
-    }
+function renderView({ style }: RenderProps) {
+  return <div className="box" style={{ ...style, ...viewStyle }} />;
 }
+
+const thumbStyle: $Shape<CSSStyleDeclaration> = {
+  backgroundColor: 'rgb(55, 55, 55)'
+};
+
+function renderThumb({ style }: RenderProps) {
+  return <div style={{ ...style, ...thumbStyle }} />;
+}
+
+const ColoredScrollbars = (props: mixed) =>
+  <Scrollbars
+    renderView={renderView}
+    renderThumbVertical={renderThumb}
+    {...props}
+  />;
+
+export default ColoredScrollbars;

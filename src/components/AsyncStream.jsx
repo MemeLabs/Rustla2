@@ -4,6 +4,8 @@
 declare var API: string;
 
 import React from 'react';
+import lifecycle from 'recompose/lifecycle';
+import { compose } from 'redux';
 import type { History } from 'react-router';
 
 import Error404 from './Error404';
@@ -51,6 +53,7 @@ const AsyncStream = ({
         return fetch(`${API}/streamer/${streamer}`).then(res => res.json());
       },
     },
+    
     render(loaded) {
       // If no service was provided, and none was found from the streamer
       // lookup, then render the 404 page.
@@ -74,4 +77,11 @@ const AsyncStream = ({
   return <LoadableStream />;
 };
 
-export default AsyncStream;
+
+export default compose (
+  lifecycle({
+    shouldComponentUpdate(nextProps){
+      return nextProps == this.Props;
+   },
+  }),
+)(AsyncStream);

@@ -67,7 +67,7 @@ const Footer = () =>
             <a href='/api'>API</a>
           </li>
           <li>
-            Latest Commit <GitHubCommitLink hash={GIT_COMMIT_HASH} short={GIT_SHORT_COMMIT_HASH} />
+            Commit Hash <GitHubCommitLink hash={GIT_COMMIT_HASH} short={GIT_SHORT_COMMIT_HASH} />
           </li>
         </ul>
       </div>
