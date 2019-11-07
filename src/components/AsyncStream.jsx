@@ -53,7 +53,6 @@ const AsyncStream = ({
         return fetch(`${API}/streamer/${streamer}`).then(res => res.json());
       },
     },
-    
     render(loaded) {
       // If no service was provided, and none was found from the streamer
       // lookup, then render the 404 page.
@@ -78,7 +77,7 @@ const AsyncStream = ({
 };
 
 
-export default compose (
+export default compose(
   lifecycle({
     shouldComponentUpdate(nextProps){
       return nextProps == this.Props;
