@@ -80,7 +80,9 @@ const AsyncStream = ({
 export default compose(
   lifecycle({
     shouldComponentUpdate(nextProps){
-      return nextProps == this.Props;
+      console.log(nextProps);
+      console.log(this.props);
+      return nextProps.location.pathname != this.props.location.pathname;
    },
   }),
 )(AsyncStream);
