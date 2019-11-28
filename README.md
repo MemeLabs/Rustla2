@@ -41,13 +41,12 @@ Then, follow the instructions in `api/README.md` for how to start the backend
 Retrieving thumbnails, viewer counts, and live statuses for Twitch streams
 requires a registered Twitch client.
 
-  1. Go to <https://glass.twitch.tv/>
-  2. Register a new developer application
-  3. Name the application whatever you want. The important part is that the
+  1. Go to <https://dev.twitch.tv/console/apps/create>
+  2. Name the application whatever you want. The important part is that the
      **Redirect URI** is set to `$API/oauth`. For example:
 
-     ![](https://i.imgur.com/jNN3I4R.png)
-  4. Edit `.env` to include your **Redirect URI**, **Client ID**, and **Client
+     ![](https://i.imgur.com/hy4ii2c.png)
+  3. Edit `.env` to include your **Redirect URI**, **Client ID**, and **Client
      Secret**:
 
      ```
