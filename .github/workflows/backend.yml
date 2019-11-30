@@ -1,5 +1,19 @@
 name: Backend build
-on: [push]
+on:
+  push:
+    paths:
+      - '.github/workflows/backend.yml'
+      - 'api/**'
+      - '!api/.gitignore'
+      - '!api/README.md'
+      - '.gitmodules'
+  pull_request:
+    paths:
+      - '.github/workflows/backend.yml'
+      - 'api/**'
+      - '!api/.gitignore'
+      - '!api/README.md'
+      - '.gitmodules'
 jobs:
   build:
     runs-on: ubuntu-latest
