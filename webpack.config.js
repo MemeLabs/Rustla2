@@ -5,13 +5,14 @@ const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const gitHash = require('helper-git-hash');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const LodashWebpackPlugin = require('lodash-webpack-plugin');
 const HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const { NODE_ENV } = process.env;
 const IS_PRODUCTION = NODE_ENV === 'production';
+const IS_PRODUCTION_PROFILE = IS_PRODUCTION && process.argv.includes('--profile');
 
 // eslint-disable-next-line no-console
 console.log(`Bundling for ${(NODE_ENV || 'development').toUpperCase()}`);
@@ -36,15 +37,26 @@ module.exports = {
   },
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        uglifyOptions: {
+      new TerserPlugin({
+        terserOptions: {
+          parse: { ecma: 8 },
           compress: {
-            warnings: false,
+            comparisons: false,
+            ecma: 5,
+            inline: 2,
+            warnings: false
           },
+          mangle: { safari10: true },
+          keep_classnames: IS_PRODUCTION_PROFILE,
+          keep_fnames: IS_PRODUCTION_PROFILE,
+          output: {
+            ascii_only: true,
+            comments: false,
+            ecma: 5
+          }
         },
-      }),
+        sourceMap: true
+      })
     ],
   },
   devServer: {
