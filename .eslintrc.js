@@ -29,7 +29,10 @@ module.exports = {
     'semi': 'warn',
 
     // eslint-plugin-flowtype rules
+    'flowtype/define-flow-type': 'warn',
+    'flowtype/require-valid-file-annotation': 'warn',
     'flowtype/semi': 'warn',
+    'flowtype/use-flow-type': 'warn',
 
     // eslint-plugin-react rules
     'react/no-unescaped-entities': 'warn',
