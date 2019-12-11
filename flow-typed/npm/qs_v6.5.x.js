@@ -1,5 +1,5 @@
-// flow-typed signature: 3b10feecd428564fda5f9b58b595328d
-// flow-typed version: c6154227d1/qs_v6.5.x/flow_>=v0.104.x
+// flow-typed signature: 5e77859111a239aa8570ebf1f7415e5f
+// flow-typed version: 5a7f14d011/qs_v6.5.x/flow_>=v0.104.x
 
 declare module "qs" {
   declare type ParseOptions = {
@@ -9,7 +9,7 @@ declare module "qs" {
     delimiter?: string,
     depth?: number,
     parameterLimit?: number,
-    plainObjects?: boolean,
+    plainmixeds?: boolean,
     strictNullHandling?: boolean,
     ignoreQueryPrefix?: boolean,
     parseArrays?: boolean,
@@ -19,7 +19,7 @@ declare module "qs" {
 
   declare type ArrayFormat = "brackets" | "indices" | "repeat";
 
-  declare type FilterFunction = (prefix: string, value: any) => any;
+  declare type FilterFunction = (prefix: string, value: mixed) => mixed;
   declare type FilterArray = Array<string | number>;
   declare type Filter = FilterArray | FilterFunction;
 
@@ -40,7 +40,7 @@ declare module "qs" {
     ...
   };
 
-  declare type Formatter = (any) => string;
+  declare type Formatter = (mixed) => string;
 
   declare type Formats = {
     RFC1738: string,
@@ -55,8 +55,8 @@ declare module "qs" {
   };
 
   declare module.exports: {
-    parse(str: string, opts?: ParseOptions): Object,
-    stringify(obj: Object | Array<any>, opts?: StringifyOptions): string,
+    parse(str: string, opts?: ParseOptions): mixed,
+    stringify(obj: {[string]: mixed, ...} | Array<mixed>, opts?: StringifyOptions): string,
     formats: Formats,
     ...
   };
