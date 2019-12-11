@@ -35,8 +35,29 @@ module.exports = {
     'flowtype/use-flow-type': 'warn',
 
     // eslint-plugin-react rules
+    'react/forbid-foreign-prop-types': ['warn', { allowInPropTypes: true }],
+    'react/jsx-no-comment-textnodes': 'warn',
+    'react/jsx-no-duplicate-props': 'warn',
+    'react/jsx-no-target-blank': 'warn',
+    'react/jsx-no-undef': 'error',
+    'react/jsx-pascal-case': [
+      'warn',
+      {
+        allowAllCaps: true,
+        ignore: [],
+      }
+    ],
+    'react/jsx-uses-react': 'warn',
+    'react/jsx-uses-vars': 'warn',
+    'react/no-danger-with-children': 'warn',
+    'react/no-direct-mutation-state': 'warn',
+    'react/no-is-mounted': 'warn',
+    'react/no-typos': 'error',
     'react/no-unescaped-entities': 'warn',
     'react/prop-types': 'warn',
+    'react/react-in-jsx-scope': 'error',
+    'react/require-render-return': 'error',
+    'react/style-prop-object': 'warn'
   },
   settings: {
     react: {

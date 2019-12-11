@@ -68,7 +68,7 @@
     "eslint": "6.5.1",
     "eslint-loader": "3.0.2",
     "eslint-plugin-flowtype": "4.5.2",
-    "eslint-plugin-react": "7.16.0",
+    "eslint-plugin-react": "7.17.0",
     "file-loader": "^2.0.0",
     "flow-bin": "0.110.0",
     "helper-git-hash": "^1.0.0",
