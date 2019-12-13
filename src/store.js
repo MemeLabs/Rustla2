@@ -8,6 +8,7 @@ import { createLogger } from 'redux-logger';
 import reducer from './reducers';
 import INITIAL_STATE from './INITIAL_STATE';
 import { init as wsInit } from './actions/websocket';
+import type { State } from './redux/types';
 
 // For those using <https://github.com/zalmoxisus/redux-devtools-extension>.
 const composeEnhancers = process.env.NODE_ENV !== 'production'
@@ -18,7 +19,7 @@ const composeEnhancers = process.env.NODE_ENV !== 'production'
     })
     : compose;
 
-const store = createStore(
+const store = createStore<State, {||}, {||}>(
   reducer,
   INITIAL_STATE,
   composeEnhancers(

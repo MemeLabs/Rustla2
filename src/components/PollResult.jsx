@@ -3,11 +3,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import idx from 'idx';
+import type { BrowserHistory } from 'history';
+import type { Match } from 'react-router-dom';
 
 import { beginPollingPoll } from '../actions';
-import MainLayout from './MainLayout';
-
 import type { Poll } from '../records/polls';
+import type { State } from '../redux/types';
+import MainLayout from './MainLayout';
 
 const PollResultRow = ({
   value,
@@ -63,14 +65,17 @@ const PollResultChart = ({ poll: { subject, options } }: { poll: Poll }) => {
   );
 };
 
-
-type PollResultProps = {
-  id: string;
-  poll?: Poll;
-  history: any;
-  beginPollingPoll: () => void;
-  beginPollingPoll: (string) => () => void;
-};
+type PollResultOwnProps = {|
+  +match: Match
+|};
+type PollResultProps = {|
+  ...PollResultOwnProps,
+  +beginPollingPoll: () => void;
+  +beginPollingPoll: (string) => () => void;
+  +history: BrowserHistory;
+  +id: string;
+  +poll?: Poll;
+|};
 
 class PollResult extends React.Component<PollResultProps> {
   stopPolling: () => void;
@@ -100,6 +105,23 @@ class PollResult extends React.Component<PollResultProps> {
   }
 }
 
+function mapStateToProps(
+  state: State,
+  ownProps: PollResultOwnProps
+): $Shape<PollResultProps> {
+  const id = ownProps.match.params.poll;
+  if (!id) {
+    return {};
+  }
+
+  const poll = idx(state, _ => _.polls[id]);
+  if (!poll) {
+    return {};
+  }
+
+  return { id, poll };
+}
+
 function mapDispatchToProps(dispatch) {
   return {
     beginPollingPoll: function(id) {
@@ -108,13 +130,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(
-  (state, ownProps) => {
-    const id = ownProps.match.params.poll;
-    return {
-      id,
-      poll: idx(state, _ => _.polls[id]),
-    };
-  },
+export default connect<PollResultProps, PollResultOwnProps, _, _, _, _>(
+  mapStateToProps,
   mapDispatchToProps,
 )(PollResult);

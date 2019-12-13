@@ -5,10 +5,13 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import lifecycle from 'recompose/lifecycle';
 import idx from 'idx';
+import type { BrowserHistory } from 'history';
+import type { Match } from 'react-router-dom';
 
 import { fetchPoll, submitPollVote } from '../actions';
 import MainLayout from './MainLayout';
 import Checkbox from './Checkbox';
+import type { State } from '../redux/types';
 
 import type { Poll } from '../records/polls';
 
@@ -97,15 +100,18 @@ class PollForm extends React.Component<PollFormProps> {
   }
 }
 
-const PollVote = ({
-  poll,
-  history,
-  submitPollVote,
-}: {
-  poll: ?Poll;
-  history: any;
-  submitPollVote: SubmitPollVote;
-}) => {
+type PollVoteOwnProps = {|
+  +history: BrowserHistory,
+  +match: Match
+|};
+type PollVoteProps = {|
+  ...PollVoteOwnProps,
+  +fetchPoll: () => void,
+  +poll: ?Poll,
+  +submitPollVote: SubmitPollVote
+|};
+
+const PollVote = ({ poll, history, submitPollVote }: PollVoteProps) => {
   const pollForm = poll && poll.loaded
     ? <PollForm onSubmit={submitPollVote} poll={poll} />
     : <h4 className='poll-loading'>Loading...</h4>;
@@ -119,7 +125,27 @@ const PollVote = ({
   );
 };
 
-function mapDispatchToProps(dispatch, props) {
+function mapStateToProps(
+  state: State,
+  ownProps: PollVoteOwnProps
+): $Shape<PollVoteProps> {
+  const id = ownProps.match.params.poll;
+  if (!id) {
+    return {};
+  }
+
+  const poll = idx(state, _ => _.polls[id]);
+  if (!poll) {
+    return {};
+  }
+
+  return { poll };
+}
+
+function mapDispatchToProps(
+  dispatch,
+  props: PollVoteOwnProps
+): $Shape<PollVoteProps> {
   return {
     submitPollVote(options) {
       return dispatch(submitPollVote(
@@ -130,20 +156,14 @@ function mapDispatchToProps(dispatch, props) {
     },
     fetchPoll(id) {
       return dispatch(fetchPoll(id));
-    },
+    }
   };
 }
 
 export default compose(
-  connect(
-    (state, ownProps) => {
-      const id = ownProps.match.params.poll;
-      return {
-        id,
-        poll: idx(state, _ => _.polls[id]),
-      };
-    },
-    mapDispatchToProps,
+  connect<PollVoteProps, PollVoteOwnProps, _, _, _, _>(
+    mapStateToProps,
+    mapDispatchToProps
   ),
   lifecycle({
     componentDidMount() {

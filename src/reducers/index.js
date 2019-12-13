@@ -11,7 +11,7 @@ import afkReducer from './afk';
 import pollsReducer from './polls';
 
 
-export default combineReducers({
+export default combineReducers<_, {||}>({
   isLoading: loadingReducer,
   isAfk: afkReducer,
   polls: pollsReducer,

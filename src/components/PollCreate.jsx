@@ -3,6 +3,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import type { BrowserHistory } from 'history';
 
 import Checkbox from './Checkbox';
 import { createPoll } from '../actions';
@@ -153,13 +154,15 @@ class PollCreateForm extends React.Component<PollCreateFormProps, PollCreateForm
   }
 }
 
-const PollCreate = ({
-  history,
-  createPoll,
-}: {
-  history: any;
-  createPoll: PollCreateAction;
-}) => (
+type PollCreateOwnProps = {|
+  +history: BrowserHistory
+|};
+type PollCreateProps = {|
+  ...PollCreateOwnProps,
+  +createPoll: PollCreateAction
+|};
+
+const PollCreate = ({ createPoll, history }: PollCreateProps) => (
   <MainLayout history={history}>
     <div className='container'>
       <h1 className='poll-title'>Create Poll</h1>
@@ -168,7 +171,10 @@ const PollCreate = ({
   </MainLayout>
 );
 
-function mapDispatchToProps(dispatch, props) {
+function mapDispatchToProps(
+  dispatch,
+  props: PollCreateOwnProps
+): $Shape<PollCreateProps> {
   return {
     createPoll(poll) {
       return dispatch(createPoll(poll, props.history));
@@ -177,6 +183,6 @@ function mapDispatchToProps(dispatch, props) {
 }
 
 export default compose(
-  connect(() => ({}), mapDispatchToProps),
+  connect<PollCreateProps, PollCreateOwnProps, _, _, _, _>(null, mapDispatchToProps),
 )(PollCreate);
 

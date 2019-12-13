@@ -7,12 +7,12 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import cs from 'classnames';
 import idx from 'idx';
+import type { BrowserHistory } from 'history';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
@@ -20,29 +20,47 @@ import { faComments } from '@fortawesome/free-solid-svg-icons';
 
 import '../css/Header';
 
+import type { State } from '../redux/types';
 import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
 import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
 import NavButtonLink from './NavButtonLink';
 
+type OwnProps = {||};
+type Props = {|
+  ...OwnProps,
+  +chatClosed?: boolean,
+  +currentStreamService?: string | null,
+  +history: BrowserHistory,
+  +isDggChat: boolean,
+  +isLoggedIn: boolean,
+  +isServiceChat: boolean,
+  +isStrimsChat: boolean,
+  +rustlerCount: number[] | null,
+  +showChat: () => {},
+  +showDggChat: boolean,
+  +toggleChat: (host: mixed) => {}
+|};
 
 const Header = ({
-  rustlerCount,
-  isLoggedIn,
-  isDggChat,
-  isStrimsChat,
-  isServiceChat,
-  currentStreamService,
-  toggleChat,
-  history,
-  showChat,
   chatClosed,
+  currentStreamService,
+  history,
+  isDggChat,
+  isLoggedIn,
+  isServiceChat,
+  isStrimsChat,
+  rustlerCount,
+  showChat,
   showDggChat,
-}) => {
+  toggleChat
+}: Props) => {
   let rustlers = null;
   let viewers = null;
-  const viewerTitle = isVod(currentStreamService) ? 'Views' : 'Viewers';
+  const viewerTitle = currentStreamService && isVod(currentStreamService)
+    ? 'Views'
+    : 'Viewers';
   if (rustlerCount) {
     const [ rCount, vCount ] = rustlerCount;
     if (rCount) {
@@ -155,35 +173,25 @@ const Header = ({
   );
 };
 
-Header.propTypes = {
-  isLoggedIn: PropTypes.bool.isRequired,
-  isDggChat: PropTypes.bool.isRequired,
-  isStrimsChat: PropTypes.bool.isRequired,
-  isServiceChat: PropTypes.bool.isRequired,
-  currentStreamService: PropTypes.string,
-  toggleChat: PropTypes.func.isRequired,
-  history: PropTypes.object,
-  rustlerCount: PropTypes.arrayOf(PropTypes.number),
-  showDggChat: PropTypes.bool.isRequired,
-  showChat: PropTypes.func.isRequired,
-  chatClosed: PropTypes.bool,
-};
+function mapStateToProps(state: State): $Shape<Props> {
+  return {
+    isLoggedIn: state.self.isLoggedIn,
+    isDggChat: state.ui.chatHost === CHAT_HOST_DGG,
+    isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
+    isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
+    currentStreamService: idx(state, _ => _.streams[state.stream].service),
+    rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
+    showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
+    chatClosed: !state.ui.showChat,
+  };
+}
 
 export default compose(
-  connect(
-    state => ({
-      isLoggedIn: state.self.isLoggedIn,
-      isDggChat: state.ui.chatHost === CHAT_HOST_DGG,
-      isStrimsChat: state.ui.chatHost === CHAT_HOST_STRIMS,
-      isServiceChat: state.ui.chatHost === CHAT_HOST_SERVICE,
-      currentStreamService: idx(state, _ => _.streams[state.stream].service),
-      rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
-      showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
-      chatClosed: !state.ui.showChat,
-    }),
-    { 
-      toggleChat, 
-      showChat, 
-    },
-  ),
+  connect<Props, OwnProps, _, _, _, _>(
+    mapStateToProps,
+    {
+      toggleChat,
+      showChat
+    }
+  )
 )(Header);
