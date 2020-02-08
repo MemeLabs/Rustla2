@@ -4,8 +4,8 @@ Livestream viewing with `strims.gg` chat.
 
 ## Setup
 
-First, ensure that you have Node.js (version 6 or greater) and `npm` (preferably
-the latest stable release) installed. Then,
+First, ensure that you have Node.js (version 10 or greater) and `npm`
+(preferably the latest stable release) installed. Then,
 
 ``` bash
 $ git clone https://github.com/MemeLabs/Rustla2.git
