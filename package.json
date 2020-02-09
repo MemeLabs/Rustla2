@@ -25,7 +25,7 @@
     "browser-cookies": "^1.1.0",
     "clappr": "0.3.11",
     "classnames": "^2.2.5",
-    "dotenv": "^6.0.0",
+    "dotenv": "8.2.0",
     "glyphicons-halflings": "^1.9.1",
     "history": "^4.9.0",
     "idx": "^2.5.6",
