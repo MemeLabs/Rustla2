@@ -30,7 +30,6 @@
     "history": "^4.9.0",
     "idx": "^2.5.6",
     "isomorphic-fetch": "^2.2.1",
-    "jwt-simple": "^0.5.1",
     "level-selector": "^0.2.0",
     "lodash": "^4.17.14",
     "prop-types": "^15.7.2",
