@@ -33,7 +33,7 @@
     "level-selector": "^0.2.0",
     "lodash": "^4.17.14",
     "prop-types": "^15.7.2",
-    "qs": "^6.5.1",
+    "qs": "6.9.1",
     "react": "^16.8.4",
     "react-bootstrap": "1.0.0-beta.14",
     "react-custom-scrollbars": "^4.2.1",
