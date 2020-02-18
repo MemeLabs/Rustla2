@@ -31,16 +31,25 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
       },
       0, Config::Get().GetRustlerBroadcastInterval());
 
-  hub->onConnection([&](uWS::WebSocket<uWS::SERVER>* ws, uWS::HttpRequest req) {
-    if (RejectBannedIP(ws, req)) {
-      return;
-    }
+  hub->onConnection(
+      [&](uWS::WebSocket<uWS::SERVER>* ws, uWS::HttpRequest uws_req) {
+        HTTPRequest req(uws_req);
 
-    ws->send(last_streams_json_.data(), last_streams_json_.size(),
-             uWS::OpCode::TEXT);
+        if (RejectBannedIP(ws, req)) {
+          return;
+        }
 
-    ws->setUserData(reinterpret_cast<void*>(new WSState()));
-  });
+        ws->send(last_streams_json_.data(), last_streams_json_.size(),
+                 uWS::OpCode::TEXT);
+
+        auto state = new WSState();
+        state->id = boost::uuids::random_generator()();
+        state->user_id = req.GetSessionID();
+        LOG(INFO) << "CONN_OPEN ws_id:" << state->id
+                  << " user_id:" << state->user_id;
+
+        ws->setUserData(reinterpret_cast<void*>(state));
+      });
 
   hub->onMessage([&](uWS::WebSocket<uWS::SERVER>* ws, char* message,
                      size_t length, uWS::OpCode opCode) {
@@ -73,7 +82,11 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
   hub->onDisconnection([&](uWS::WebSocket<uWS::SERVER>* ws, int code,
                            char* message, size_t length) {
     UnsetStream(ws);
-    delete reinterpret_cast<WSState*>(ws->getUserData());
+
+    auto state = reinterpret_cast<WSState*>(ws->getUserData());
+    LOG(INFO) << "CONN_CLOSE ws_id:" << state->id
+              << " user_id:" << state->user_id;
+    delete state;
   });
 }
 
@@ -85,8 +98,7 @@ WSService::~WSService() {
 }
 
 bool WSService::RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws,
-                               uWS::HttpRequest uws_req) {
-  HTTPRequest req(uws_req);
+                               HTTPRequest& req) {
   if (db_->GetBannedIPs()->Contains(req.GetClientIPHeader())) {
     ws->terminate();
     return true;
@@ -230,7 +242,21 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
 
   writer.EndArray();
   ws->send(buf_.GetString(), buf_.GetSize(), uWS::OpCode::TEXT);
-  GetWSState(ws)->stream_id = stream_id;
+
+  auto state = GetWSState(ws);
+  state->stream_id = stream_id;
+
+  if (stream_id != 0) {
+    const auto stream = db_->GetStreams()->GetByID(stream_id);
+    const auto stream_channel = stream->GetChannel();
+    LOG(INFO) << "STREAM_OPEN ws_id:" << state->id
+              << " user_id:" << state->user_id
+              << " stream_service:" << stream_channel->GetService()
+              << " stream_channel:" << stream_channel->GetChannel();
+  } else {
+    LOG(INFO) << "STREAM_CLOSE ws_id:" << state->id
+              << " user_id:" << state->user_id;
+  }
 }
 
 /**

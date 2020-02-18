@@ -6,13 +6,19 @@
 #include <uWS/uWS.h>
 #include <memory>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 #include "Channel.h"
 #include "DB.h"
+#include "HTTPRequest.h"
 #include "Streams.h"
 
 namespace rustla2 {
 
 struct WSState {
+  boost::uuids::uuid id;
+  std::string user_id{""};
   uint64_t stream_id{0};
   bool afk{false};
 };
@@ -23,8 +29,7 @@ class WSService {
 
   ~WSService();
 
-  bool RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws,
-                      uWS::HttpRequest uws_req);
+  bool RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws, HTTPRequest& req);
 
   void SetAFK(uWS::WebSocket<uWS::SERVER>* ws,
               const rapidjson::Document& input);
