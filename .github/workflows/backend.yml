@@ -21,10 +21,24 @@ jobs:
     - uses: actions/checkout@v1
       with:
         submodules: true
-    - name: Build
-      run: |
-        cd api/
-        docker build . -f Dockerfile.base -t rustla2-api-base
-        docker build . -t rustla2-api
-      env:
-        CI: true
+    # - name: Build API base image
+    #   id: docker-base
+    #   uses: elgohr/Publish-Docker-Github-Action@master
+    #   with:
+    #     name: memelabs/rustla2/rustla2-api-base
+    #     dockerfile: Dockerfile.base
+    #     workdir: api
+    #     registry: docker.pkg.github.com
+    #     username: ${{ github.actor }}
+    #     password: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Pull API base image
+    #   run: docker pull docker.pkg.github.com/memelabs/rustla2/rustla2-api-base:{{ steps.docker-base.outputs.tag }}
+    - name: Build API image
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: memelabs/rustla2/rustla2-api
+        dockerfile: Dockerfile
+        workdir: api
+        registry: docker.pkg.github.com
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}

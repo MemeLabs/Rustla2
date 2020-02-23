@@ -5,7 +5,6 @@
   3. Build the Docker container
         ```
         $ git submodule update --init
-        $ docker build . -f Dockerfile.base -t rustla2-api-base
         $ docker build . -t rustla2-api
         ```
   4. Set permissions
