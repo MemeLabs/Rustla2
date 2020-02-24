@@ -34,16 +34,13 @@ type Props = {
   }
 };
 
-class AsyncStream extends React.Component<Props> {
-  LoadableStream: React$ComponentType<any>;
-
-  constructor({
-    history,
-    match: { params: { service, channel, streamer } },
-  }: Props) {
-    super();
-
-    this.LoadableStream = Loadable.Map<*, Modules>({
+const AsyncStream = ({
+  history,
+  match: { params: { service, channel, streamer } },
+}: Props) => {
+  const [LoadableStream, setLoadableStream] = React.useState<?React$ComponentType<any>>(null);
+  React.useEffect(() => setLoadableStream((): ?React$ComponentType<any> => {
+    return Loadable.Map<*, Modules>({
       loader: {
         Component: () => import(/* webpackChunkName: "stream" */ './Stream'),
         streamer: () => {
@@ -76,14 +73,10 @@ class AsyncStream extends React.Component<Props> {
         );
       },
     });
-  }
+  }), [service, channel]);
 
-  render(): React$Element<any> {
-    const {LoadableStream} = this;
-    return <LoadableStream />;
-  }
-}
-
+  return LoadableStream && <LoadableStream />;
+};
 
 export default compose(
   lifecycle({
