@@ -56,6 +56,8 @@ std::string User::GetProfileJSON() {
   writer.Bool(show_hidden_);
   writer.Key("show_dgg_chat");
   writer.Bool(show_dgg_chat_);
+  writer.Key("enable_public_state");
+  writer.Bool(enable_public_state_);
   writer.EndObject();
 
   return buf.GetString();
@@ -81,6 +83,8 @@ void User::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->Bool(show_hidden_);
   writer->Key("show_dgg_chat");
   writer->Bool(show_dgg_chat_);
+  writer->Key("enable_public_state");
+  writer->Bool(enable_public_state_);
   writer->EndObject();
 }
 
@@ -193,6 +197,12 @@ bool User::SetShowDggChat(bool show_dgg_chat) {
   return true;
 }
 
+bool User::SetEnablePublicState(bool enable_public_state) {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  enable_public_state_ = enable_public_state;
+  return true;
+}
+
 bool User::Save() {
   boost::shared_lock<boost::shared_mutex> read_lock(lock_);
   try {
@@ -208,12 +218,14 @@ bool User::Save() {
           `is_admin` = ?,
           `show_hidden` = ?,
           `show_dgg_chat` = ?,
+          `enable_public_state` = ?,
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
     db_ << sql << name_ << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
-        << is_admin_ << show_hidden_ << show_dgg_chat_ << GetIDString();
+        << is_admin_ << show_hidden_ << show_dgg_chat_ << enable_public_state_
+        << GetIDString();
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -242,6 +254,7 @@ bool User::SaveNew() {
           `is_admin`,
           `show_hidden`,
           `show_dgg_chat`,
+          `enable_public_state`,
           `ban_reason`,
           `created_at`,
           `updated_at`
@@ -260,6 +273,7 @@ bool User::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
           '',
           datetime(),
           datetime()
@@ -268,7 +282,7 @@ bool User::SaveNew() {
     db_ << sql << GetIDString() << twitch_id_ << channel_->GetChannel() << name_
         << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
-        << is_admin_ << show_hidden_ << show_dgg_chat_;
+        << is_admin_ << show_hidden_ << show_dgg_chat_ << enable_public_state_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -289,7 +303,8 @@ std::ostream &operator<<(std::ostream &os, const User &user) {
      << "left_chat: " << user.left_chat_ << ", "
      << "is_admin: " << user.is_admin_ << ", "
      << "show_hidden: " << user.show_hidden_ << ", "
-     << "show_dgg_chat: " << user.show_dgg_chat_;
+     << "show_dgg_chat: " << user.show_dgg_chat_ << ", "
+     << "enable_public_state: " << user.enable_public_state_;
   return os;
 }
 
@@ -311,7 +326,8 @@ Users::Users(sqlite::database db) : db_(db) {
         `left_chat`,
         `is_admin`,
         `show_hidden`,
-        `show_dgg_chat`
+        `show_dgg_chat`,
+        `enable_public_state`
       FROM `users`
     )sql";
   auto query = db_ << sql;
@@ -321,12 +337,13 @@ Users::Users(sqlite::database db) : db_(db) {
                const std::string &service, const std::string &channel,
                const std::string &last_ip, const time_t last_seen,
                const bool left_chat, const bool is_admin,
-               const bool show_hidden, const bool show_dgg_chat) {
+               const bool show_hidden, const bool show_dgg_chat,
+               const bool enable_public_state) {
     boost::uuids::string_generator to_uuid;
     auto user_channel = Channel::Create(channel, service, stream_path);
     auto user = std::make_shared<User>(
         db_, to_uuid(id), twitch_id, name, user_channel, last_ip, last_seen,
-        left_chat, is_admin, show_hidden, show_dgg_chat);
+        left_chat, is_admin, show_hidden, show_dgg_chat, enable_public_state);
 
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
@@ -359,6 +376,7 @@ void Users::InitTable() {
         `is_admin` TINYINT(1) DEFAULT 0,
         `show_hidden` TINYINT(1) DEFAULT 0,
         `show_dgg_chat` TINYINT(1) DEFAULT 0,
+        `enable_public_state` TINYINT(1) DEFAULT 1,
         UNIQUE (`id`),
         UNIQUE (`twitch_id`)
       )

@@ -1,6 +1,7 @@
 .stream-thumbnail {
   border: 1px solid #5D5D5D;
   background-color: #222;
+  display: block;
   margin-top: 1em;
   overflow: hidden;
   position: relative;
@@ -53,28 +54,42 @@
     background-size: 50%;
   }
 
-  .thumbnail-default-image:hover {
-    animation: jiggle_background 100ms infinite;
-  }
-
   .stream-caption {
+    align-items: center;
     background-color: #222;
-    color: #333;
-    padding: 9px;
-    position: relative;
+    display: flex;
 
-    a {
-      display: block;
-      text-overflow: ellipsis;
+    .thumbnail-text {
+      border-left-style: solid;
+      border-left-width: 5px;
+      flex: 1;
       overflow: hidden;
+      padding: 9px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .badge {
+      align-items: center;
+      display: flex;
+      height: 2em;
+      margin-right: 9px;
+
+      .glyphicon {
+        margin-left: 0.2em;
+      }
     }
   }
 
-  .thumbnail-text {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: calc(100% - 55px);
+  &:hover {
+    text-decoration: none;
+
+    .thumbnail-text{
+      text-decoration: underline;
+    }
+
+    .thumbnail-default-image {
+      animation: jiggle_background 100ms infinite;
+    }
   }
 }

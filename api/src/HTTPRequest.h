@@ -12,6 +12,7 @@
 namespace rustla2 {
 
 using PostDataHandler = std::function<void(const char*, const size_t)>;
+using CancelHandler = std::function<void()>;
 
 class HTTPRequest {
  public:
@@ -24,6 +25,14 @@ class HTTPRequest {
   }
 
   void WritePostData(char* data, size_t length, size_t remaining_bytes);
+
+  inline void OnCancel(CancelHandler handler) { cancel_handler_ = handler; }
+
+  void EmitCancel();
+
+  void SetKeepAlive(bool keep_alive) { keep_alive_ = keep_alive; }
+
+  bool KeepAlive() { return keep_alive_; }
 
   const std::map<std::string, std::string> GetQueryParams() const;
 
@@ -46,7 +55,9 @@ class HTTPRequest {
   std::vector<folly::StringPiece> path_;
   folly::StringPiece query_;
   std::string post_data_;
+  bool keep_alive_;
   PostDataHandler post_data_handler_;
+  CancelHandler cancel_handler_;
 };
 
 }  // namespace rustla2

@@ -67,6 +67,8 @@ class WSService {
 
   void BroadcastRustlers();
 
+  void BroadcastViewerState();
+
   std::shared_ptr<Stream> GetWSStream(uWS::WebSocket<uWS::SERVER>* ws);
 
   WSState* GetWSState(uWS::WebSocket<uWS::SERVER>* ws);

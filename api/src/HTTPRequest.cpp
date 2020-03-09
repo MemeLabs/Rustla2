@@ -1,6 +1,7 @@
 #include "HTTPRequest.h"
 
 #include <boost/regex.hpp>
+#include <iostream>
 
 #include "Config.h"
 #include "Session.h"
@@ -28,7 +29,9 @@ HTTPRequest::HTTPRequest(rustla2::HTTPRequest&& req) noexcept
       path_(std::move(req.path_)),
       query_(std::move(req.query_)),
       post_data_(std::move(req.post_data_)),
-      post_data_handler_(std::move(req.post_data_handler_)) {}
+      keep_alive_(std::move(req.keep_alive_)),
+      post_data_handler_(std::move(req.post_data_handler_)),
+      cancel_handler_(std::move(req.cancel_handler_)) {}
 
 void HTTPRequest::WritePostData(char* data, size_t length,
                                 size_t remaining_bytes) {
@@ -36,6 +39,12 @@ void HTTPRequest::WritePostData(char* data, size_t length,
 
   if (remaining_bytes == 0 && post_data_handler_) {
     post_data_handler_(post_data_.data(), post_data_.size());
+  }
+}
+
+void HTTPRequest::EmitCancel() {
+  if (cancel_handler_) {
+    cancel_handler_();
   }
 }
 

@@ -3,6 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { generateColor } from '../util/color';
 
 import '../css/StreamThumbnail';
 
@@ -37,6 +38,7 @@ const StreamThumbnail = ({
   thumbnail,
   title,
 }) => {
+  const color = generateColor(channel + service);
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
   const text = getStreamTitle(overrustle_id, channel, title, service);
 
@@ -52,21 +54,23 @@ const StreamThumbnail = ({
   }
 
   return (
-    <div className={`stream-thumbnail stream-thumbnail-${service}`} title={text}>
-      <Link to={url} {...thumbnailProps} />
+    <Link
+      className={`stream-thumbnail stream-thumbnail-${service}`}
+      title={text}
+      to={url}>
+      <div {...thumbnailProps} />
       <div className='stream-caption'>
-        <Link to={url}>
-          <span
-            title={`${afk_rustlers} afk`}
-            className={`float-right badge badge-${live ? 'success' : 'danger'}`}>
-            <span>{rustlers}</span>
-            {'\u00a0'}
-            <span className='glyphicon glyphicon-user' />
-          </span>
-          <span className='thumbnail-text'>{text}</span>
-        </Link>
+        <span className='thumbnail-text' style={{borderLeftColor: color}}>
+          {text}
+        </span>
+        <span
+          title={afk_rustlers && `${afk_rustlers} afk`}
+          className={`badge badge-${live ? 'success' : 'danger'}`}>
+          {rustlers}
+          <span className='glyphicon glyphicon-user' />
+        </span>
       </div>
-    </div>
+    </Link>
   );
 };
 

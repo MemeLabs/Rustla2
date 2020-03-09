@@ -19,7 +19,8 @@ APIHTTPService::APIHTTPService(std::shared_ptr<DB> db) : db_(db) {
           "channel": {"type": "string"},
           "left_chat": {"type": "boolean"},
           "show_hidden": {"type": "boolean"},
-          "show_dgg_chat": {"type": "boolean"}
+          "show_dgg_chat": {"type": "boolean"},
+          "enable_public_state": {"type": "boolean"}
         },
         "required": ["username", "stream_path", "service", "channel"]
       }
@@ -121,6 +122,10 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
 
     if (input.HasMember("show_dgg_chat")) {
       newUser->SetShowDggChat(input["show_dgg_chat"].GetBool());
+    }
+
+    if (input.HasMember("enable_public_state")) {
+      newUser->SetEnablePublicState(input["enable_public_state"].GetBool());
     }
 
     auto name = json::StringRef(input["username"]);

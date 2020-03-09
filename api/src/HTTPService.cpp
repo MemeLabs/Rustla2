@@ -11,7 +11,7 @@ namespace rustla2 {
 
 HTTPService::HTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
     : db_(db),
-      admin_service_(db_),
+      admin_service_(db_, hub),
       api_service_(db_),
       auth_service_(db_),
       static_service_(Config::Get().GetPublicPath()) {
@@ -34,7 +34,7 @@ HTTPService::HTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
     }
     req.WritePostData(data, length, remaining_bytes);
 
-    if (remaining_bytes != 0) {
+    if (remaining_bytes != 0 || req.KeepAlive()) {
       res->setUserData(new HTTPRequest(std::move(req)));
     }
   });
@@ -55,6 +55,7 @@ HTTPService::HTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
   hub->onCancelledHttpRequest([&](uWS::HttpResponse *res) {
     auto req = LoadHTTPRequestFromUserData(res);
     if (req != nullptr) {
+      req->EmitCancel();
       delete req;
       res->setUserData(nullptr);
     }

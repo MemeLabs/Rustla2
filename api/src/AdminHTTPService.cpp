@@ -1,6 +1,9 @@
 #include "AdminHTTPService.h"
 
 #include <rapidjson/schema.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+#include <sstream>
 
 #include "Config.h"
 #include "HTTPResponseWriter.h"
@@ -8,7 +11,8 @@
 
 namespace rustla2 {
 
-AdminHTTPService::AdminHTTPService(std::shared_ptr<DB> db) : db_(db) {
+AdminHTTPService::AdminHTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
+    : db_(db), hub_(hub) {
   username_update_schema_.Parse(R"json(
       {
         "type": "object",
@@ -39,6 +43,9 @@ void AdminHTTPService::RegisterRoutes(HTTPRouter *router) {
                &AdminHTTPService::PostUsername, this);
 
   router->Post(api + "/admin/streams/**", &AdminHTTPService::PostStream, this);
+
+  router->Get(api + "/admin/viewer-states", &AdminHTTPService::GetViewerStates,
+              this);
 }
 
 bool AdminHTTPService::RejectNonAdmin(uWS::HttpResponse *res,
@@ -193,6 +200,67 @@ void AdminHTTPService::PostStream(uWS::HttpResponse *res, HTTPRequest *req) {
     writer.JSON("{\"error\": \"error saving changes\"}");
     return;
   });
+}
+
+class ViewerStateBroadcaster {
+ public:
+  ViewerStateBroadcaster(Timer *timer, uWS::HttpResponse *res,
+                         std::shared_ptr<ViewerStates> states)
+      : timer_(timer),
+        res_(res),
+        states_(states),
+        observer_(states->CreateObserver()) {
+    std::stringstream header;
+    header << "HTTP/1.1 200 OK\r\n"
+           << "Connection: close\r\n"
+           << "\r\n";
+
+    res->write(header.str().c_str(), size_t(header.tellp()));
+  }
+
+  void Broadcast() {
+    UserState state;
+    while (states_->GetNextUserState(observer_, &state)) {
+      rapidjson::Writer<rapidjson::StringBuffer> writer(buf_);
+      state.WriteJSON(&writer);
+      buf_.Put('\n');
+      res_->write(buf_.GetString(), buf_.GetSize());
+      buf_.Clear();
+    }
+  }
+
+  void Stop() {
+    timer_->stop();
+    delete this;
+  }
+
+ private:
+  Timer *timer_;
+  uWS::HttpResponse *res_;
+  rapidjson::StringBuffer buf_;
+  std::shared_ptr<ViewerStates> states_;
+  std::shared_ptr<ViewerStateObserver> observer_;
+};
+
+void AdminHTTPService::GetViewerStates(uWS::HttpResponse *res,
+                                       HTTPRequest *req) {
+  if (RejectNonAdmin(res, req)) {
+    return;
+  }
+
+  auto timer = new Timer(hub_->getLoop());
+  auto states = db_->GetViewerStates();
+  auto broadcaster = new ViewerStateBroadcaster(timer, res, states);
+  timer->setData(broadcaster);
+  timer->start(
+      [=](Timer *timer) {
+        static_cast<ViewerStateBroadcaster *>(timer->getData())->Broadcast();
+      },
+      0, 250);
+
+  req->OnCancel([=]() { broadcaster->Stop(); });
+
+  req->SetKeepAlive(true);
 }
 
 }  // namespace rustla2

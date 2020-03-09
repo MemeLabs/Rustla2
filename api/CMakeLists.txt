@@ -87,6 +87,7 @@ set(SOURCE_FILES
         src/Strings.cpp
         src/TwitchClient.cpp
         src/Users.cpp
+        src/ViewerStates.cpp
         src/WSService.cpp
         src/YoutubeClient.cpp
         src/main.cpp)

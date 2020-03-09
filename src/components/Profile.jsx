@@ -36,6 +36,7 @@ const Profile = ({
               channel: event.target.elements.channel.value,
               stream_path: event.target.elements.stream_path.value,
               username: event.target.elements.username.value,
+              enable_public_state: event.target.elements.enable_public_state.checked,
               left_chat: event.target.elements.left_chat.checked,
               show_hidden: event.target.elements.show_hidden.checked,
               show_dgg_chat: event.target.elements.show_dgg_chat.checked,
@@ -102,11 +103,21 @@ const Profile = ({
           <div className='form-group'>
             <div className='form-check'>
               <Checkbox
+                id='profile-enablepublicstate'
+                name='enable_public_state'
+                defaultChecked={profile.data.enable_public_state}
+              />
+              <label htmlFor='profile-enablepublicstate' className='form-check-label'>Show what I&lsquo;m watching in chat</label>
+            </div>
+          </div>
+          <div className='form-group'>
+            <div className='form-check'>
+              <Checkbox
                 id='profile-leftchat'
                 name='left_chat'
                 defaultChecked={profile.data.left_chat}
               />
-              <label htmlFor='profile-leftchat' className='form-check-label'>Use Left Chat</label>
+              <label htmlFor='profile-leftchat' className='form-check-label'>Use left chat</label>
             </div>
           </div>
           <div className='form-group'>
@@ -116,7 +127,7 @@ const Profile = ({
                 name='show_hidden'
                 defaultChecked={profile.data.show_hidden}
               />
-              <label htmlFor='profile-showhidden' className='form-check-label'>Show Hidden Streams</label>
+              <label htmlFor='profile-showhidden' className='form-check-label'>Show hidden streams</label>
             </div>
           </div>
           <div className='form-group'>
@@ -126,7 +137,7 @@ const Profile = ({
                 name='show_dgg_chat'
                 defaultChecked={profile.data.show_dgg_chat}
               />
-              <label htmlFor='profile-showdgg' className='form-check-label'>Show DGG Chat With All Streams</label>
+              <label htmlFor='profile-showdgg' className='form-check-label'>Show DGG chat with all streams</label>
             </div>
           </div>
           <button type='submit' className='btn btn-primary' disabled={profile.isFetching}>Save Changes</button>
@@ -148,6 +159,7 @@ Profile.propTypes = {
       channel: PropTypes.string,
       left_chat: PropTypes.bool,
       service: PropTypes.string,
+      enable_public_state: PropTypes.bool,
       show_dgg_chat: PropTypes.bool,
       show_hidden: PropTypes.bool,
       stream_path: PropTypes.string,

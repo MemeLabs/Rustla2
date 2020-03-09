@@ -20,6 +20,7 @@
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.7",
+    "@sindresorhus/fnv1a": "^2.0.0",
     "bluebird": "3.7.2",
     "bootstrap": "^4.3.1",
     "browser-cookies": "^1.1.0",
