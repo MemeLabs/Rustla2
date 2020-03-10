@@ -34,7 +34,7 @@ HTTPService::HTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
     }
     req.WritePostData(data, length, remaining_bytes);
 
-    if (remaining_bytes != 0 || req.KeepAlive()) {
+    if (remaining_bytes != 0 || req.GetKeepAlive()) {
       res->setUserData(new HTTPRequest(std::move(req)));
     }
   });

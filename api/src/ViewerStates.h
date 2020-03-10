@@ -32,12 +32,12 @@ using ViewerMap = std::map<ViewerKey, uint32_t, ViewerKeyLess>;
 struct UserState {
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
 
-  std::string user_id = "";
-  std::string alias = "";
-  bool online = false;
-  bool enable_public_state = false;
-  std::uint64_t stream_id = 0;
-  std::shared_ptr<Channel> channel = nullptr;
+  std::string user_id{""};
+  std::string name{""};
+  bool online{false};
+  bool enable_public_state{false};
+  std::uint64_t stream_id{0};
+  std::shared_ptr<Channel> channel;
 };
 
 class ViewerStateObserver {
@@ -84,7 +84,7 @@ class ViewerStates {
   std::shared_ptr<Streams> streams_;
   boost::mutex lock_;
   ViewerMap data_;
-  std::uint64_t observer_id_;
+  std::uint64_t observer_id_{0};
   std::map<std::uint64_t, std::shared_ptr<ViewerStateObserver>> observers_;
 };
 

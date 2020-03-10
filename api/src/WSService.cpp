@@ -84,10 +84,9 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
 
   hub->onDisconnection([&](uWS::WebSocket<uWS::SERVER>* ws, int code,
                            char* message, size_t length) {
-    auto state = reinterpret_cast<WSState*>(ws->getUserData());
-    db_->GetViewerStates()->DecrViewerStream(state->user_id, state->stream_id);
     UnsetStream(ws);
 
+    auto state = reinterpret_cast<WSState*>(ws->getUserData());
     LOG(INFO) << "CONN_CLOSE ws_id:" << state->id
               << " user_id:" << state->user_id;
     delete state;
@@ -215,8 +214,6 @@ void WSService::GetStreamByID(
  */
 void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
                           const rapidjson::Document& input) {
-  auto state = GetWSState(ws);
-  db_->GetViewerStates()->DecrViewerStream(state->user_id, state->stream_id);
   UnsetStream(ws);
 
   buf_.Clear();
@@ -249,8 +246,10 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
   writer.EndArray();
   ws->send(buf_.GetString(), buf_.GetSize(), uWS::OpCode::TEXT);
 
-  db_->GetViewerStates()->IncrViewerStream(state->user_id, stream_id);
+  auto state = GetWSState(ws);
   state->stream_id = stream_id;
+
+  db_->GetViewerStates()->IncrViewerStream(state->user_id, stream_id);
 
   if (stream_id != 0) {
     const auto stream = db_->GetStreams()->GetByID(stream_id);
@@ -344,14 +343,15 @@ void WSService::SetStreamToNull(
  */
 void WSService::UnsetStream(uWS::WebSocket<uWS::SERVER>* ws) {
   auto stream = GetWSStream(ws);
-  auto ws_state = GetWSState(ws);
+  auto state = GetWSState(ws);
 
   if (stream != nullptr) {
-    stream->DecrRustlerCount(ws_state->afk);
+    stream->DecrRustlerCount(state->afk);
   }
 
-  ws_state->stream_id = 0;
-  ws_state->afk = false;
+  db_->GetViewerStates()->DecrViewerStream(state->user_id, state->stream_id);
+  state->stream_id = 0;
+  state->afk = false;
 }
 
 /**

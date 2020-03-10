@@ -6,8 +6,8 @@ void UserState::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->StartObject();
   writer->Key("user_id");
   writer->String(user_id);
-  writer->Key("alias");
-  writer->String(alias);
+  writer->Key("name");
+  writer->String(name);
   writer->Key("online");
   writer->Bool(online);
   writer->Key("enable_public_state");
@@ -99,11 +99,11 @@ bool ViewerStates::GetNextUserState(
     return false;
   }
 
-  boost::lock_guard<boost::mutex> observer_lock{lock_};
+  boost::lock_guard<boost::mutex> lock{lock_};
 
   auto user = users_->GetByID(new_state.user_id);
   if (user != nullptr) {
-    new_state.alias = user->GetName();
+    new_state.name = user->GetName();
     new_state.enable_public_state = user->GetEnablePublicState();
   }
 

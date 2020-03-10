@@ -231,6 +231,7 @@ class ViewerStateBroadcaster {
 
   void Stop() {
     timer_->stop();
+    delete timer_;
     delete this;
   }
 

@@ -32,7 +32,7 @@ class HTTPRequest {
 
   void SetKeepAlive(bool keep_alive) { keep_alive_ = keep_alive; }
 
-  bool KeepAlive() { return keep_alive_; }
+  bool GetKeepAlive() { return keep_alive_; }
 
   const std::map<std::string, std::string> GetQueryParams() const;
 

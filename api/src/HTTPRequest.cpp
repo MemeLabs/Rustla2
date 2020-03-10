@@ -1,7 +1,6 @@
 #include "HTTPRequest.h"
 
 #include <boost/regex.hpp>
-#include <iostream>
 
 #include "Config.h"
 #include "Session.h"
