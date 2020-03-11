@@ -150,6 +150,8 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
     }
 
     if (status.Ok()) {
+      db_->GetViewerStates()->MarkUserChanged(id);
+
       writer.Status(200, "OK");
       writer.JSON(newUser->GetProfileJSON());
       return;

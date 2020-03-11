@@ -77,9 +77,9 @@ class ViewerStates {
   bool GetNextUserState(std::shared_ptr<ViewerStateObserver> observer,
                         UserState *state);
 
- private:
   void MarkUserChanged(const std::string &user_id);
 
+ private:
   std::shared_ptr<Users> users_;
   std::shared_ptr<Streams> streams_;
   boost::mutex lock_;
