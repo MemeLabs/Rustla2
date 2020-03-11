@@ -1,6 +1,13 @@
 // @flow
 
-import fnv1a from '@sindresorhus/fnv1a';
+const fnv1a = (input: string) => {
+  let hash = 2166136261;
+  for (let i = 0, len = input.length; i < len; i ++) {
+    hash ^= input.charCodeAt(i);
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+  }
+  return hash >>> 0;
+};
 
 const createRng = (seed: string) => {
   let n = 0;
