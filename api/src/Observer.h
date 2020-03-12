@@ -10,7 +10,10 @@ namespace rustla2 {
 template <class T>
 class Observer {
  public:
-  Observer(std::uint64_t id) : id_(id){};
+  Observer(std::uint64_t id, std::set<T> keys = {}) : id_(id) {
+    std::copy(keys.begin(), keys.end(),
+              std::inserter(changed_keys_, changed_keys_.begin()));
+  };
 
   std::uint64_t GetID() { return id_; }
 
@@ -46,7 +49,7 @@ class Observable {
     boost::lock_guard<boost::mutex> lock{lock_};
 
     auto id = observer_id_++;
-    auto observer = std::make_shared<Observer<T>>(id);
+    auto observer = std::make_shared<Observer<T>>(id, keys);
     observers_[id] = observer;
 
     return observer;
