@@ -23,25 +23,6 @@ void UserState::WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) {
   writer->EndObject();
 }
 
-void ViewerStateObserver::MarkUserChanged(const std::string &user_id) {
-  boost::lock_guard<boost::mutex> lock{lock_};
-  changed_user_ids_.insert(user_id);
-}
-
-bool ViewerStateObserver::GetNextUserID(std::string *user_id) {
-  boost::lock_guard<boost::mutex> lock{lock_};
-
-  auto next_user_id = changed_user_ids_.begin();
-  if (next_user_id == changed_user_ids_.end()) {
-    return false;
-  }
-
-  *user_id = *next_user_id;
-  changed_user_ids_.erase(*user_id);
-
-  return true;
-}
-
 void ViewerStates::IncrViewerStream(const std::string &user_id,
                                     const std::uint64_t stream_id) {
   if (user_id.empty()) {
@@ -52,7 +33,7 @@ void ViewerStates::IncrViewerStream(const std::string &user_id,
 
   data_[{user_id, stream_id}]++;
 
-  MarkUserChanged(user_id);
+  user_change_observers_.Mark(user_id);
 }
 
 void ViewerStates::DecrViewerStream(const std::string &user_id,
@@ -68,34 +49,33 @@ void ViewerStates::DecrViewerStream(const std::string &user_id,
     data_.erase({user_id, stream_id});
   }
 
-  MarkUserChanged(user_id);
-}
-
-void ViewerStates::MarkUserChanged(const std::string &user_id) {
-  for (auto i : observers_) {
-    i.second->MarkUserChanged(user_id);
-  }
+  user_change_observers_.Mark(user_id);
 }
 
 std::shared_ptr<ViewerStateObserver> ViewerStates::CreateObserver() {
   boost::lock_guard<boost::mutex> lock{lock_};
 
-  auto id = observer_id_++;
-  auto observer = std::make_shared<ViewerStateObserver>(id);
-  observers_[id] = observer;
+  std::set<std::string> ids;
+  std::transform(data_.begin(), data_.end(), std::inserter(ids, ids.begin()),
+                 [&](auto i) { return i.first.user_id; });
 
-  for (auto i : data_) {
-    observer->changed_user_ids_.insert(i.first.user_id);
-  }
+  return user_change_observers_.CreateObserver(ids);
+}
 
-  return observer;
+void ViewerStates::StopObserving(
+    std::shared_ptr<ViewerStateObserver> observer) {
+  user_change_observers_.StopObserving(observer);
+}
+
+void ViewerStates::MarkUserChanged(const std::string &user_id) {
+  user_change_observers_.Mark(user_id);
 }
 
 bool ViewerStates::GetNextUserState(
     std::shared_ptr<ViewerStateObserver> observer, UserState *state) {
   UserState new_state;
 
-  if (!observer->GetNextUserID(&new_state.user_id)) {
+  if (!observer->Next(&new_state.user_id)) {
     return false;
   }
 
@@ -123,13 +103,6 @@ bool ViewerStates::GetNextUserState(
 
   *state = new_state;
   return true;
-}
-
-void ViewerStates::StopObserving(
-    std::shared_ptr<ViewerStateObserver> observer) {
-  boost::lock_guard<boost::mutex> lock{lock_};
-
-  observers_.erase(observer->GetID());
 }
 
 }  // namespace rustla2

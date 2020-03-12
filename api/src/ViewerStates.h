@@ -10,6 +10,7 @@
 #include <tuple>
 
 #include "Channel.h"
+#include "Observer.h"
 #include "Streams.h"
 #include "Users.h"
 
@@ -40,23 +41,7 @@ struct UserState {
   std::shared_ptr<Channel> channel;
 };
 
-class ViewerStateObserver {
- public:
-  ViewerStateObserver(std::uint64_t id) : id_(id){};
-
- private:
-  std::uint64_t GetID() { return id_; }
-
-  void MarkUserChanged(const std::string &user_id);
-
-  bool GetNextUserID(std::string *user_id);
-
-  boost::mutex lock_;
-  std::uint64_t id_;
-  std::set<std::string> changed_user_ids_;
-
-  friend class ViewerStates;
-};
+using ViewerStateObserver = Observer<std::string>;
 
 class ViewerStates {
  public:
@@ -74,18 +59,17 @@ class ViewerStates {
 
   void StopObserving(std::shared_ptr<ViewerStateObserver> observer);
 
+  void MarkUserChanged(const std::string &user_id);
+
   bool GetNextUserState(std::shared_ptr<ViewerStateObserver> observer,
                         UserState *state);
-
-  void MarkUserChanged(const std::string &user_id);
 
  private:
   std::shared_ptr<Users> users_;
   std::shared_ptr<Streams> streams_;
   boost::mutex lock_;
   ViewerMap data_;
-  std::uint64_t observer_id_{0};
-  std::map<std::uint64_t, std::shared_ptr<ViewerStateObserver>> observers_;
+  Observable<std::string> user_change_observers_;
 };
 
 }  // namespace rustla2

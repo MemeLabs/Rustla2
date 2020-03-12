@@ -12,7 +12,8 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
     : db_(db),
       hub_(hub),
       stream_broadcast_timer_(hub->getLoop()),
-      rustler_broadcast_timer_(hub->getLoop()) {
+      rustler_broadcast_timer_(hub->getLoop()),
+      stream_observer_(db_->GetStreams()->CreateObserver()) {
   // Run separate stream/rustler broadcast loops for each hub so we don't
   // need to use thread safe queues.
   stream_broadcast_timer_.setData(this);
@@ -382,14 +383,19 @@ void WSService::BroadcastStreams() {
  * syncing clients by debouncing updates and creates a knob for load shedding.
  */
 void WSService::BroadcastRustlers() {
+  auto now = std::chrono::steady_clock::now();
+  auto refresh_ivl =
+      std::chrono::milliseconds(Config::Get().GetRustlerBroadcastInterval());
   auto last_rustler_broadcast_time =
       std::chrono::duration_cast<std::chrono::nanoseconds>(
-          std::chrono::steady_clock::now().time_since_epoch())
+          (now - refresh_ivl).time_since_epoch())
           .count();
-  auto streams =
-      db_->GetStreams()->GetAllUpdatedSince(last_rustler_broadcast_time_);
 
-  for (const auto& stream : streams) {
+  auto streams = db_->GetStreams();
+  uint64_t id;
+  while (stream_observer_->Next(&id)) {
+    auto stream = streams->GetByID(id);
+
     buf_.Clear();
     rapidjson::Writer<rapidjson::StringBuffer> writer(buf_);
     writer.StartArray();
@@ -398,7 +404,7 @@ void WSService::BroadcastRustlers() {
     // a safe bet clients haven't received it via STREAMS_SET. Rather than
     // broadcasting the id and triggering a flood of `getStream` requests
     // broadcast the change as a STREAM_GET.
-    if (stream->GetResetTime() >= last_rustler_broadcast_time_) {
+    if (stream->GetResetTime() >= last_rustler_broadcast_time) {
       writer.String("STREAM_GET");
       stream->WriteJSON(&writer);
     } else {
@@ -412,8 +418,6 @@ void WSService::BroadcastRustlers() {
     hub_->getDefaultGroup<uWS::SERVER>().broadcast(
         buf_.GetString(), buf_.GetSize(), uWS::OpCode::TEXT);
   }
-
-  last_rustler_broadcast_time_ = last_rustler_broadcast_time;
 }
 
 std::shared_ptr<Stream> WSService::GetWSStream(

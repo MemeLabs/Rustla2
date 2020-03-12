@@ -75,6 +75,63 @@ void Stream::WriteJSON(
   writer->EndObject();
 }
 
+uint64_t Stream::IncrRustlerCount() {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  observers_->Mark(id_);
+
+  ResetUpdatedTime();
+  if (rustler_count_ == afk_count_) {
+    reset_time_ = update_time_;
+  }
+
+  return ++rustler_count_;
+}
+
+uint64_t Stream::DecrRustlerCount(const bool decr_afk) {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  observers_->Mark(id_);
+
+  if (rustler_count_ == 0) {
+    LOG(WARNING) << "DecrRustlerCount called on stream with 0 rustlers";
+    return 0;
+  }
+
+  ResetUpdatedTime();
+  if (decr_afk) {
+    --afk_count_;
+  }
+  return --rustler_count_;
+}
+
+uint64_t Stream::IncrAFKCount() {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  observers_->Mark(id_);
+
+  if (afk_count_ == rustler_count_) {
+    LOG(WARNING) << "IncrAFKCount called on stream with all afks";
+    return afk_count_;
+  }
+
+  ResetUpdatedTime();
+  return ++afk_count_;
+}
+
+uint64_t Stream::DecrAFKCount() {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  observers_->Mark(id_);
+
+  if (afk_count_ == 0) {
+    LOG(WARNING) << "DecrAFKCount called on stream with 0 afks";
+    return 0;
+  }
+
+  ResetUpdatedTime();
+  if (rustler_count_ == afk_count_) {
+    reset_time_ = update_time_;
+  }
+  return --afk_count_;
+}
+
 bool Stream::Save() {
   boost::shared_lock<boost::shared_mutex> read_lock(lock_);
   try {
@@ -159,7 +216,8 @@ bool Stream::SaveNew() {
   return true;
 }
 
-Streams::Streams(sqlite::database db) : db_(db) {
+Streams::Streams(sqlite::database db)
+    : db_(db), observers_(std::make_shared<Observable<uint64_t>>()) {
   InitTable();
 
   auto sql = R"sql(
@@ -186,8 +244,8 @@ Streams::Streams(sqlite::database db) : db_(db) {
                const std::string &thumbnail, const bool live,
                const uint64_t viewer_count) {
     auto stream_channel = Channel::Create(channel, service, path);
-    auto stream = std::make_shared<Stream>(db_, id, stream_channel, nsfw,
-                                           hidden, afk, promoted, title,
+    auto stream = std::make_shared<Stream>(db_, observers_, id, stream_channel,
+                                           nsfw, hidden, afk, promoted, title,
                                            thumbnail, live, viewer_count);
 
     data_by_id_[stream->GetID()] = stream;
@@ -285,7 +343,7 @@ void Streams::WriteStreamsJSON(
 }
 
 std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
-  auto stream = std::make_shared<Stream>(db_, channel);
+  auto stream = std::make_shared<Stream>(db_, observers_, channel);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);

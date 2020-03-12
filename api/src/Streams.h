@@ -14,6 +14,7 @@
 #include <boost/thread/shared_mutex.hpp>
 
 #include "Channel.h"
+#include "Observer.h"
 #include "Status.h"
 
 namespace rustla2 {
@@ -23,12 +24,13 @@ const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 
 class Stream {
  public:
-  Stream(sqlite::database db, const uint64_t id, const Channel &channel,
-         bool nsfw = false, bool hidden = false, bool afk = false,
-         bool promoted = false, const std::string &title = "",
-         const std::string &thumbnail = "", const bool live = false,
-         const uint64_t viewer_count = 0)
+  Stream(sqlite::database db, std::shared_ptr<Observable<uint64_t>> observers,
+         const uint64_t id, const Channel &channel, bool nsfw = false,
+         bool hidden = false, bool afk = false, bool promoted = false,
+         const std::string &title = "", const std::string &thumbnail = "",
+         const bool live = false, const uint64_t viewer_count = 0)
       : db_(db),
+        observers_(observers),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
         title_(title),
@@ -40,8 +42,9 @@ class Stream {
         promoted_(promoted),
         viewer_count_(viewer_count) {}
 
-  Stream(sqlite::database db, const Channel &channel)
-      : Stream(db, ChannelHash{}(channel)&kMaxStreamID, channel) {}
+  Stream(sqlite::database db, std::shared_ptr<Observable<uint64_t>> observers,
+         const Channel &channel)
+      : Stream(db, observers, ChannelHash{}(channel)&kMaxStreamID, channel) {}
 
   inline uint64_t GetID() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -122,57 +125,13 @@ class Stream {
 
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer) const;
 
-  inline uint64_t IncrRustlerCount() {
-    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  uint64_t IncrRustlerCount();
 
-    ResetUpdatedTime();
-    if (rustler_count_ == afk_count_) {
-      reset_time_ = update_time_;
-    }
-    return ++rustler_count_;
-  }
+  uint64_t DecrRustlerCount(const bool decr_afk = false);
 
-  inline uint64_t DecrRustlerCount(const bool decr_afk = false) {
-    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  uint64_t IncrAFKCount();
 
-    if (rustler_count_ == 0) {
-      LOG(WARNING) << "DecrRustlerCount called on stream with 0 rustlers";
-      return 0;
-    }
-
-    ResetUpdatedTime();
-    if (decr_afk) {
-      --afk_count_;
-    }
-    return --rustler_count_;
-  }
-
-  inline uint64_t IncrAFKCount() {
-    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-
-    if (afk_count_ == rustler_count_) {
-      LOG(WARNING) << "IncrAFKCount called on stream with all afks";
-      return afk_count_;
-    }
-
-    ResetUpdatedTime();
-    return ++afk_count_;
-  }
-
-  inline uint64_t DecrAFKCount() {
-    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-
-    if (afk_count_ == 0) {
-      LOG(WARNING) << "DecrAFKCount called on stream with 0 afks";
-      return 0;
-    }
-
-    ResetUpdatedTime();
-    if (rustler_count_ == afk_count_) {
-      reset_time_ = update_time_;
-    }
-    return --afk_count_;
-  }
+  uint64_t DecrAFKCount();
 
   inline bool SetChannel(std::shared_ptr<Channel> channel) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
@@ -250,6 +209,7 @@ class Stream {
   }
 
   sqlite::database db_;
+  std::shared_ptr<Observable<uint64_t>> observers_;
   mutable boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
@@ -282,7 +242,9 @@ class UpdatedSince {
 };
 
 struct HasRustlers {
-  bool Test(const Stream &stream) const { return stream.GetTotalRustlerCount() > 0; }
+  bool Test(const Stream &stream) const {
+    return stream.GetTotalRustlerCount() > 0;
+  }
 };
 
 struct IsLive {
@@ -295,7 +257,7 @@ struct IsVisible {
 
 class Streams {
  public:
-  explicit Streams(sqlite::database db_);
+  explicit Streams(sqlite::database db);
 
   void InitTable();
 
@@ -325,6 +287,10 @@ class Streams {
     return streams;
   }
 
+  std::shared_ptr<Observer<uint64_t>> CreateObserver() {
+    return observers_->CreateObserver();
+  }
+
   std::vector<std::shared_ptr<Stream>> GetAllUpdatedSince(uint64_t timestamp);
 
   std::vector<std::shared_ptr<Stream>> GetAllWithRustlers();
@@ -349,6 +315,7 @@ class Streams {
 
  private:
   sqlite::database db_;
+  std::shared_ptr<Observable<uint64_t>> observers_;
   boost::shared_mutex lock_;
   std::unordered_map<uint64_t, std::shared_ptr<Stream>> data_by_id_;
   std::unordered_map<Channel, std::shared_ptr<Stream>, ChannelHash,

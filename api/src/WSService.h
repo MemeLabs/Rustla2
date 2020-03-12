@@ -12,6 +12,7 @@
 #include "Channel.h"
 #include "DB.h"
 #include "HTTPRequest.h"
+#include "Observer.h"
 #include "Streams.h"
 
 namespace rustla2 {
@@ -79,7 +80,7 @@ class WSService {
   Timer stream_broadcast_timer_;
   Timer rustler_broadcast_timer_;
   rapidjson::StringBuffer buf_;
-  uint64_t last_rustler_broadcast_time_{0};
+  std::shared_ptr<Observer<uint64_t>> stream_observer_;
   std::string last_streams_json_;
 };
 
