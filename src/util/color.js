@@ -17,7 +17,7 @@ const createRng = (seed: string) => {
 export const generateColor = (seed: string) => {
   const rng = createRng(seed);
   const h = Math.round(rng() * 360);
-  const s = Math.round((rng() * 40) + 20);
-  const l = Math.round((rng() * 40) + 20);
+  const s = Math.round(rng() * 80 + 20);
+  const l = Math.round(rng() * 50 + 20);
   return `hsl(${h}, ${s}%, ${l}%)`;
 };
