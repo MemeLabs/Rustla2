@@ -8,6 +8,7 @@ import { createLogger } from 'redux-logger';
 import reducer from './reducers';
 import INITIAL_STATE from './INITIAL_STATE';
 import { init as wsInit } from './actions/websocket';
+import { init as postMessageInit } from './actions/postmessage';
 import type { State } from './redux/types';
 
 // For those using <https://github.com/zalmoxisus/redux-devtools-extension>.
@@ -38,5 +39,6 @@ const store = createStore<State, {||}, {||}>(
 );
 
 wsInit(store);
+postMessageInit(store);
 
 export default store;
