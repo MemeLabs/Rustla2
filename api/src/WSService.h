@@ -4,10 +4,10 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <uWS/uWS.h>
-#include <memory>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
+#include <memory>
 
 #include "Channel.h"
 #include "DB.h"
@@ -29,8 +29,6 @@ class WSService {
   WSService(std::shared_ptr<DB> db, uWS::Hub* hub);
 
   ~WSService();
-
-  bool RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws, HTTPRequest& req);
 
   void SetAFK(uWS::WebSocket<uWS::SERVER>* ws,
               const rapidjson::Document& input);

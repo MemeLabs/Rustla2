@@ -36,10 +36,6 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
       [&](uWS::WebSocket<uWS::SERVER>* ws, uWS::HttpRequest uws_req) {
         HTTPRequest req(uws_req);
 
-        if (RejectBannedIP(ws, req)) {
-          return;
-        }
-
         ws->send(last_streams_json_.data(), last_streams_json_.size(),
                  uWS::OpCode::TEXT);
 
@@ -53,6 +49,10 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
                   << " user_id:" << state->user_id;
 
         ws->setUserData(reinterpret_cast<void*>(state));
+
+        if (db_->GetBannedIPs()->Contains(req.GetClientIPHeader())) {
+          ws->terminate();
+        }
       });
 
   hub->onMessage([&](uWS::WebSocket<uWS::SERVER>* ws, char* message,
@@ -99,16 +99,6 @@ WSService::~WSService() {
   stream_broadcast_timer_.close();
   rustler_broadcast_timer_.stop();
   rustler_broadcast_timer_.close();
-}
-
-bool WSService::RejectBannedIP(uWS::WebSocket<uWS::SERVER>* ws,
-                               HTTPRequest& req) {
-  if (db_->GetBannedIPs()->Contains(req.GetClientIPHeader())) {
-    ws->terminate();
-    return true;
-  }
-
-  return false;
 }
 
 /**
