@@ -12,7 +12,7 @@ void Stream::WriteAPIJSON(
   writer->Key("live");
   writer->Bool(live_);
   writer->Key("nsfw");
-  writer->Bool(service_nsfw_);
+  writer->Bool(nsfw_ || service_nsfw_);
   writer->Key("hidden");
   writer->Bool(hidden_);
   writer->Key("afk");
@@ -58,7 +58,7 @@ void Stream::WriteJSON(
   writer->Key("live");
   writer->Bool(live_);
   writer->Key("nsfw");
-  writer->Bool(service_nsfw_);
+  writer->Bool(nsfw_ || service_nsfw_);
   writer->Key("hidden");
   writer->Bool(hidden_);
   writer->Key("afk");
