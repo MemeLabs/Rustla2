@@ -103,22 +103,21 @@ rapidjson::Document VideosResult::GetSchema() {
                   },
                   "required": ["viewCount"]
                 },
-                "contentDetails: {
+                "contentDetails": {
                   "type": "object",
                   "properties": {
                     "contentRating": {
                       "type": "object",
-                      "properties: {
+                      "properties": {
                         "ytRating": {
                           "type": "string"
                         }
                       }
                     }
-                  },
-                },
-                "required": ["contentDetails"]
+                  }
+                }
               },
-              "required": ["snippet"]
+              "required": ["snippet", "contentDetails"]
             }
           }
         }
