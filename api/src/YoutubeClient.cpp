@@ -31,9 +31,14 @@ std::string VideosResult::Video::GetMediumThumbnail() const {
 }
 
 bool VideosResult::Video::IsNSFW() const {
-  return json::StringRef(
-             data_["contentDetails"]["contentRating"]["ytRating"]) ==
-         "ytAgeRestricted";
+  if (data_["contentDetails"].HasMember("contentRating")) {
+    if (data_["contentDetails"]["contentRating"].HasMember("ytRating")) {
+      return json::StringRef(
+                 data_["contentDetails"]["contentRating"]["ytRating"]) ==
+             "ytAgeRestricted";
+    }
+  } 
+  return false;
 }
 
 rapidjson::Document VideosResult::GetSchema() {

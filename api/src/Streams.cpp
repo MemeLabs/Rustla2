@@ -201,6 +201,7 @@ bool Stream::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
           datetime(),
           datetime()
         )
