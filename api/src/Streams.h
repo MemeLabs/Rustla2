@@ -224,6 +224,7 @@ class Stream {
   std::string thumbnail_;
   bool live_;
   bool nsfw_;
+  bool service_nsfw_;
   bool hidden_;
   bool afk_;
   bool promoted_;
