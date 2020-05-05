@@ -20,6 +20,8 @@ class VideosResult : public APIResult {
 
     uint64_t GetViewers() const;
 
+    bool IsAgeRestricted() const;
+
     std::string GetMediumThumbnail() const;
 
    private:

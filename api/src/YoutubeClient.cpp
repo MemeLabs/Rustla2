@@ -29,6 +29,10 @@ std::string VideosResult::Video::GetMediumThumbnail() const {
   return json::StringRef(data_["snippet"]["thumbnails"]["medium"]["url"]);
 }
 
+bool VideosResult::Video::IsAgeRestricted() const { 
+  return data_["contentDetails"]["contentRating"]["ytRating"] == "ytAgeRestricted";
+}
+
 rapidjson::Document VideosResult::GetSchema() {
   rapidjson::Document schema;
   schema.Parse(R"json(
@@ -90,6 +94,21 @@ rapidjson::Document VideosResult::GetSchema() {
                     }
                   },
                   "required": ["viewCount"]
+                },
+                "contentDetails: {
+                  "type": "object",
+                  "properties": {
+                    "contentRating": {
+                      "type": "object",
+                      "properties: {
+                        "ytRating": {
+                          "type": "string",
+                          "pattern": "^[0-9]+$"
+                        }
+                      }
+                    },
+                    "required": ["contentRating"]
+                  },
                 }
               },
               "required": ["snippet"]
