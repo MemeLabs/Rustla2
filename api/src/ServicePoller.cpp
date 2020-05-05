@@ -154,7 +154,7 @@ const Status ServicePoller::CheckYouTube(const std::string& name,
     state->live = true;
     state->thumbnail = video.GetMediumThumbnail();
     state->viewers = video.GetViewers();
-    state->nsfw = video.IsAgeRestricted();
+    state->service_nsfw = video.IsNSFW();
   }
 
   return status;

@@ -2,6 +2,7 @@
 
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
+
 #include <sstream>
 
 #include "Curl.h"
@@ -29,8 +30,10 @@ std::string VideosResult::Video::GetMediumThumbnail() const {
   return json::StringRef(data_["snippet"]["thumbnails"]["medium"]["url"]);
 }
 
-bool VideosResult::Video::IsAgeRestricted() const { 
-  return data_["contentDetails"]["contentRating"]["ytRating"] == "ytAgeRestricted";
+bool VideosResult::Video::IsNSFW() const {
+  return json::StringRef(
+             data_["contentDetails"]["contentRating"]["ytRating"]) ==
+         "ytAgeRestricted";
 }
 
 rapidjson::Document VideosResult::GetSchema() {
@@ -102,14 +105,15 @@ rapidjson::Document VideosResult::GetSchema() {
                       "type": "object",
                       "properties: {
                         "ytRating": {
-                          "type": "string",
-                          "pattern": "^[0-9]+$"
-                        }
+                          "type": "string"
+                        },
+                        "required": ["ytRating"]
                       }
                     },
                     "required": ["contentRating"]
                   },
-                }
+                },
+                "required": ["contentDetails"]
               },
               "required": ["snippet"]
             }
@@ -164,7 +168,7 @@ Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
   std::stringstream url;
   url << "https://www.googleapis.com/youtube/v3/videos"
       << "?key=" << config_.public_api_key
-      << "&part=liveStreamingDetails,snippet,statistics"
+      << "&part=liveStreamingDetails,snippet,statistics,contentDetails"
       << "&id=" << id;
 
   CurlRequest req(url.str());

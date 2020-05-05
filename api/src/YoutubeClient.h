@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rapidjson/document.h>
+
 #include <string>
 
 #include "APIClient.h"
@@ -20,7 +21,7 @@ class VideosResult : public APIResult {
 
     uint64_t GetViewers() const;
 
-    bool IsAgeRestricted() const;
+    bool IsNSFW() const;
 
     std::string GetMediumThumbnail() const;
 
