@@ -41,7 +41,7 @@ class Stream {
         hidden_(hidden),
         afk_(afk),
         promoted_(promoted),
-        viewer_count_(viewer_count), 
+        viewer_count_(viewer_count),
         service_nsfw_(service_nsfw) {}
 
   Stream(sqlite::database db, std::shared_ptr<Observable<uint64_t>> observers,
@@ -75,12 +75,12 @@ class Stream {
 
   inline bool GetNSFW() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return service_nsfw_ ? service_nsfw_ : nsfw_;
+    return service_nsfw_ || nsfw_;
   }
 
   inline bool GetServiceNSFW() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return service_nsfw_ ? service_nsfw_ : false;
+    return service_nsfw_;
   }
 
   inline bool GetHidden() const {
@@ -173,6 +173,12 @@ class Stream {
   inline bool SetNSFW(const bool nsfw) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
     nsfw_ = nsfw;
+    return true;
+  }
+
+  inline bool SetServiceNSFW(const bool nsfw) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    service_nsfw_ = nsfw;
     return true;
   }
 

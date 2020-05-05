@@ -45,6 +45,7 @@ void ServicePoller::Run() {
       stream->SetLive(state.live);
       stream->SetThumbnail(state.thumbnail);
       stream->SetViewerCount(state.viewers);
+      stream->SetServiceNSFW(state.nsfw);
       stream->Save();
     } else {
       LOG(INFO) << status.GetErrorMessage() << ", " << status.GetErrorDetails();
@@ -154,7 +155,6 @@ const Status ServicePoller::CheckYouTube(const std::string& name,
     state->live = true;
     state->thumbnail = video.GetMediumThumbnail();
     state->viewers = video.GetViewers();
-    state->service_nsfw = video.IsNSFW();
   }
 
   return status;

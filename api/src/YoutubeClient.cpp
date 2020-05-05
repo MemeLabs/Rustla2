@@ -106,11 +106,9 @@ rapidjson::Document VideosResult::GetSchema() {
                       "properties: {
                         "ytRating": {
                           "type": "string"
-                        },
-                        "required": ["ytRating"]
+                        }
                       }
-                    },
-                    "required": ["contentRating"]
+                    }
                   },
                 },
                 "required": ["contentDetails"]
