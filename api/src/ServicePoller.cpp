@@ -19,7 +19,7 @@ ServicePoller::ServicePoller(std::shared_ptr<DB> db) : db_(db) {
 
 void ServicePoller::Run() {
   auto streams = db_->GetStreams()->GetAllWithRustlers();
-  for (const auto& stream : streams) {
+  for (const auto &stream : streams) {
     ChannelState state;
     Status status;
 
@@ -58,8 +58,8 @@ void ServicePoller::Run() {
   }
 }
 
-const Status ServicePoller::CheckAngelThump(const std::string& name,
-                                            ChannelState* state) {
+const Status ServicePoller::CheckAngelThump(const std::string &name,
+                                            ChannelState *state) {
   angelthump::Client client;
   angelthump::ChannelResult channel;
   auto status = client.GetChannelByName(name, &channel);
@@ -72,10 +72,11 @@ const Status ServicePoller::CheckAngelThump(const std::string& name,
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
+  return status;
 }
 
-const Status ServicePoller::CheckM3u8(const std::string& name,
-                                      ChannelState* state) {
+const Status ServicePoller::CheckM3u8(const std::string &name,
+                                      ChannelState *state) {
   CurlRequest req(name);
   req.Submit();
 
@@ -88,8 +89,8 @@ const Status ServicePoller::CheckM3u8(const std::string& name,
   return Status::OK;
 }
 
-const Status ServicePoller::CheckTwitchStream(const std::string& name,
-                                              ChannelState* state) {
+const Status ServicePoller::CheckTwitchStream(const std::string &name,
+                                              ChannelState *state) {
   twitch::UsersResult users;
   auto user_status = twitch_->GetUsersByName(name, &users);
   if (!user_status.Ok()) {
@@ -129,8 +130,8 @@ const Status ServicePoller::CheckTwitchStream(const std::string& name,
   return Status::OK;
 }
 
-const Status ServicePoller::CheckTwitchVOD(const std::string& name,
-                                           ChannelState* state) {
+const Status ServicePoller::CheckTwitchVOD(const std::string &name,
+                                           ChannelState *state) {
   twitch::VideosResult videos;
   auto status = twitch_->GetVideosByID("v" + name, &videos);
 
@@ -144,8 +145,8 @@ const Status ServicePoller::CheckTwitchVOD(const std::string& name,
   return status;
 }
 
-const Status ServicePoller::CheckYouTube(const std::string& name,
-                                         ChannelState* state) {
+const Status ServicePoller::CheckYouTube(const std::string &name,
+                                         ChannelState *state) {
   youtube::VideosResult videos;
   auto status = youtube_->GetVideosByID(name, &videos);
 
@@ -155,13 +156,14 @@ const Status ServicePoller::CheckYouTube(const std::string& name,
     state->live = true;
     state->thumbnail = video.GetMediumThumbnail();
     state->viewers = video.GetViewers();
+    state->nsfw = video.IsNSFW();
   }
 
   return status;
 }
 
-const Status ServicePoller::CheckMixer(const std::string& name,
-                                       ChannelState* state) {
+const Status ServicePoller::CheckMixer(const std::string &name,
+                                       ChannelState *state) {
   mixer::Client client;
   mixer::ChannelResult channel;
   auto status = client.GetChannelByName(name, &channel);
@@ -174,10 +176,11 @@ const Status ServicePoller::CheckMixer(const std::string& name,
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
+  return status;
 }
 
-const Status ServicePoller::CheckSmashcast(const std::string& name,
-                                           ChannelState* state) {
+const Status ServicePoller::CheckSmashcast(const std::string &name,
+                                           ChannelState *state) {
   smashcast::Client client;
   smashcast::ChannelResult channel;
   auto status = client.GetChannelByName(name, &channel);
@@ -190,6 +193,7 @@ const Status ServicePoller::CheckSmashcast(const std::string& name,
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
+  return status;
 }
 
 }  // namespace rustla2
