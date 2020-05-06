@@ -72,6 +72,7 @@ const Status ServicePoller::CheckAngelThump(const std::string &name,
   state->live = channel.GetLive();
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
+  state->nsfw = channel.IsNSFW();
   return status;
 }
 
