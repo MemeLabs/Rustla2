@@ -20,7 +20,7 @@ struct ChannelState {
   std::string thumbnail;
   uint64_t viewers;
   bool live;
-  bool nsfw;
+  bool nsfw{false};
 };
 
 class ServicePoller {
