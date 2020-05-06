@@ -25,9 +25,10 @@ rapidjson::Document ChannelResult::GetSchema() {
               "offline_banner_url": {
                 "type": "string",
                 "format": "uri"
-              }
+              },
+              "nsfw": {"type": "boolean"}
             },
-            "required": ["offline_banner_url"]
+            "required": ["offline_banner_url", "nsfw"]
           }
         },
         "required": ["user"]
@@ -52,6 +53,10 @@ std::string ChannelResult::GetThumbnail() const {
   return GetData().HasMember("thumbnail_url")
              ? json::StringRef(GetData()["thumbnail_url"])
              : json::StringRef(GetData()["user"]["offline_banner_url"]);
+}
+
+bool ChannelResult::IsNSFW() const {
+  return GetData()["user"]["nsfw"].GetBool();
 }
 
 uint64_t ChannelResult::GetViewers() const {
