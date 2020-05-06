@@ -228,12 +228,12 @@ class Stream {
   std::shared_ptr<Channel> channel_;
   std::string title_;
   std::string thumbnail_;
-  bool live_;
-  bool nsfw_;
-  bool service_nsfw_;
-  bool hidden_;
-  bool afk_;
-  bool promoted_;
+  bool live_{false};
+  bool nsfw_{false};
+  bool service_nsfw_{false};
+  bool hidden_{false};
+  bool afk_{false};
+  bool promoted_{false};
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
   uint64_t afk_count_{0};
