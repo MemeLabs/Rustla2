@@ -16,8 +16,9 @@ std::string VideosResult::Video::GetTitle() const {
 }
 
 uint64_t VideosResult::Video::GetViewers() const {
-  std::string count;
-  if (data_.HasMember("liveStreamingDetails")) {
+  std::string count = "0";
+  if (data_.HasMember("liveStreamingDetails") &&
+      data_["liveStreamingDetails"].HasMember("concurrentViewers")) {
     count = json::StringRef(data_["liveStreamingDetails"]["concurrentViewers"]);
   } else if (data_.HasMember("statistics")) {
     count = json::StringRef(data_["statistics"]["viewCount"]);
@@ -87,8 +88,7 @@ rapidjson::Document VideosResult::GetSchema() {
                       "type": "string",
                       "pattern": "^[0-9]+$"
                     }
-                  },
-                  "required": ["concurrentViewers"]
+                  }
                 },
                 "statistics": {
                   "type": "object",
@@ -182,10 +182,10 @@ Status Client::GetVideosByID(const std::string &id, VideosResult *result) {
   if (req.GetResponseCode() != 200) {
     ErrorResult error;
     if (error.SetData(response.c_str(), response.size()).Ok()) {
-      return Status(StatusCode::API_ERROR,
-                    "received error code " +
-                        std::to_string(error.GetErrorCode()),
-                    error.GetMessage());
+      return Status(
+          StatusCode::API_ERROR,
+          "received error code " + std::to_string(error.GetErrorCode()),
+          error.GetMessage());
     }
     return Status::ERROR;
   }
@@ -193,5 +193,5 @@ Status Client::GetVideosByID(const std::string &id, VideosResult *result) {
   return result->SetData(response.c_str(), response.size());
 }
 
-} // namespace youtube
-} // namespace rustla2
+}  // namespace youtube
+}  // namespace rustla2
