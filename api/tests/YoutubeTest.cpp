@@ -70,9 +70,9 @@ TEST(YoutubeTest, TestNSFW) {
   if (status.Ok()) {
     auto first = test_results.GetVideo(0);
     EXPECT_EQ(test_results.GetTotalResults(), 1);
-    EXPECT_EQ(first.GetMediumThumbnail(),
-              "https://i.ytimg.com/vi/8pep1jwyiq/mqdefault.jpg");
-    EXPECT_EQ(first.GetTitle(), "Testing");
+    EXPECT_STREQ(first.GetMediumThumbnail().c_str(),
+                 "https://i.ytimg.com/vi/8pep1jwyiq/mqdefault.jpg");
+    EXPECT_STREQ(first.GetTitle().c_str(), "Testing");
     EXPECT_TRUE(first.IsNSFW());
   } else {
     LOG(INFO) << status.GetErrorMessage();

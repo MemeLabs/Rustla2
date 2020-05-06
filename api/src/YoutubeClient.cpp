@@ -37,7 +37,7 @@ bool VideosResult::Video::IsNSFW() const {
                  data_["contentDetails"]["contentRating"]["ytRating"]) ==
              "ytAgeRestricted";
     }
-  } 
+  }
   return false;
 }
 
@@ -133,7 +133,7 @@ uint64_t VideosResult::GetTotalResults() const {
 }
 
 const VideosResult::Video VideosResult::GetVideo(const size_t index) const {
-  const auto& items = GetData()["items"].GetArray();
+  const auto &items = GetData()["items"].GetArray();
   return Video(items[index]);
 }
 
@@ -166,7 +166,7 @@ std::string ErrorResult::GetMessage() const {
   return json::StringRef(GetData()["error"]["message"]);
 }
 
-Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
+Status Client::GetVideosByID(const std::string &id, VideosResult *result) {
   std::stringstream url;
   url << "https://www.googleapis.com/youtube/v3/videos"
       << "?key=" << config_.public_api_key
@@ -180,15 +180,15 @@ Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
     return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
   }
 
-  const auto& response = req.GetResponse();
+  const auto &response = req.GetResponse();
 
   if (req.GetResponseCode() != 200) {
     ErrorResult error;
     if (error.SetData(response.c_str(), response.size()).Ok()) {
-      return Status(
-          StatusCode::API_ERROR,
-          "received error code " + std::to_string(error.GetErrorCode()),
-          error.GetMessage());
+      return Status(StatusCode::API_ERROR,
+                    "received error code " +
+                        std::to_string(error.GetErrorCode()),
+                    error.GetMessage());
     }
     return Status::ERROR;
   }
@@ -196,5 +196,5 @@ Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
   return result->SetData(response.c_str(), response.size());
 }
 
-}  // namespace youtube
-}  // namespace rustla2
+} // namespace youtube
+} // namespace rustla2
