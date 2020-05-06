@@ -3,15 +3,15 @@
 #include <glog/logging.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include <sqlite_modern_cpp.h>
+
+#include <algorithm>
+#include <boost/thread/shared_mutex.hpp>
 #include <chrono>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-
-#include <sqlite_modern_cpp.h>
-#include <algorithm>
-#include <boost/thread/shared_mutex.hpp>
 
 #include "Channel.h"
 #include "Observer.h"
@@ -28,7 +28,8 @@ class Stream {
          const uint64_t id, const Channel &channel, bool nsfw = false,
          bool hidden = false, bool afk = false, bool promoted = false,
          const std::string &title = "", const std::string &thumbnail = "",
-         const bool live = false, const uint64_t viewer_count = 0)
+         const bool live = false, const uint64_t viewer_count = 0,
+         const bool service_nsfw = false)
       : db_(db),
         observers_(observers),
         id_(id),
@@ -40,7 +41,8 @@ class Stream {
         hidden_(hidden),
         afk_(afk),
         promoted_(promoted),
-        viewer_count_(viewer_count) {}
+        viewer_count_(viewer_count),
+        service_nsfw_(service_nsfw) {}
 
   Stream(sqlite::database db, std::shared_ptr<Observable<uint64_t>> observers,
          const Channel &channel)
@@ -73,7 +75,12 @@ class Stream {
 
   inline bool GetNSFW() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
-    return nsfw_;
+    return service_nsfw_ || nsfw_;
+  }
+
+  inline bool GetServiceNSFW() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return service_nsfw_;
   }
 
   inline bool GetHidden() const {
@@ -169,6 +176,12 @@ class Stream {
     return true;
   }
 
+  inline bool SetServiceNSFW(const bool nsfw) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    service_nsfw_ = nsfw;
+    return true;
+  }
+
   inline bool SetHidden(const bool hidden) {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);
     hidden_ = hidden;
@@ -215,11 +228,12 @@ class Stream {
   std::shared_ptr<Channel> channel_;
   std::string title_;
   std::string thumbnail_;
-  bool live_;
-  bool nsfw_;
-  bool hidden_;
-  bool afk_;
-  bool promoted_;
+  bool live_{false};
+  bool nsfw_{false};
+  bool service_nsfw_{false};
+  bool hidden_{false};
+  bool afk_{false};
+  bool promoted_{false};
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
   uint64_t afk_count_{0};

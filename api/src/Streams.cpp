@@ -12,7 +12,7 @@ void Stream::WriteAPIJSON(
   writer->Key("live");
   writer->Bool(live_);
   writer->Key("nsfw");
-  writer->Bool(nsfw_);
+  writer->Bool(nsfw_ || service_nsfw_);
   writer->Key("hidden");
   writer->Bool(hidden_);
   writer->Key("afk");
@@ -58,7 +58,7 @@ void Stream::WriteJSON(
   writer->Key("live");
   writer->Bool(live_);
   writer->Key("nsfw");
-  writer->Bool(nsfw_);
+  writer->Bool(nsfw_ || service_nsfw_);
   writer->Key("hidden");
   writer->Bool(hidden_);
   writer->Key("afk");
@@ -148,12 +148,14 @@ bool Stream::Save() {
           `thumbnail` = ?,
           `live` = ?,
           `viewers` = ?,
+          `service_nsfw` = ?,
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
     db_ << sql << channel_->GetChannel() << channel_->GetService()
         << channel_->GetStreamPath() << nsfw_ << hidden_ << afk_ << promoted_
-        << title_ << thumbnail_ << live_ << viewer_count_ << id_;
+        << title_ << thumbnail_ << live_ << viewer_count_ << service_nsfw_
+        << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating stream " << this << ", "
                << "error: " << e.what() << ", "
@@ -182,10 +184,12 @@ bool Stream::SaveNew() {
           `thumbnail`,
           `live`,
           `viewers`,
+          `service_nsfw`,
           `created_at`,
           `updated_at`
         )
         VALUES (
+          ?,
           ?,
           ?,
           ?,
@@ -204,7 +208,7 @@ bool Stream::SaveNew() {
       )sql";
     db_ << sql << id_ << channel_->GetChannel() << channel_->GetService()
         << channel_->GetStreamPath() << nsfw_ << hidden_ << afk_ << promoted_
-        << title_ << thumbnail_ << live_ << viewer_count_;
+        << title_ << thumbnail_ << live_ << viewer_count_ << service_nsfw_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating stream " << this << ", "
                << "error: " << e.what() << ", "
@@ -233,7 +237,8 @@ Streams::Streams(sqlite::database db)
         `title`,
         `thumbnail`,
         `live`,
-        `viewers`
+        `viewers`,
+        `service_nsfw`
       FROM `streams`
     )sql";
   auto query = db_ << sql;
@@ -242,11 +247,11 @@ Streams::Streams(sqlite::database db)
                const std::string &service, const std::string &path, bool nsfw,
                bool hidden, bool afk, bool promoted, const std::string &title,
                const std::string &thumbnail, const bool live,
-               const uint64_t viewer_count) {
+               const uint64_t viewer_count, const bool service_nsfw) {
     auto stream_channel = Channel::Create(channel, service, path);
-    auto stream = std::make_shared<Stream>(db_, observers_, id, stream_channel,
-                                           nsfw, hidden, afk, promoted, title,
-                                           thumbnail, live, viewer_count);
+    auto stream = std::make_shared<Stream>(
+        db_, observers_, id, stream_channel, nsfw, hidden, afk, promoted, title,
+        thumbnail, live, viewer_count, service_nsfw);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -270,6 +275,7 @@ void Streams::InitTable() {
         `thumbnail` VARCHAR(255),
         `live` TINYINT(1) DEFAULT 0,
         `viewers` INTEGER DEFAULT 0,
+        `service_nsfw` TINYINT(1) DEFAULT 0,
         `created_at` DATETIME NOT NULL,
         `updated_at` DATETIME NOT NULL,
         UNIQUE (`id`),
@@ -295,8 +301,8 @@ std::ostream &operator<<(std::ostream &os, const Stream &stream) {
   return os;
 }
 
-std::vector<std::shared_ptr<Stream>> Streams::GetAllUpdatedSince(
-    uint64_t timestamp) {
+std::vector<std::shared_ptr<Stream>>
+Streams::GetAllUpdatedSince(uint64_t timestamp) {
   return GetAllFiltered(UpdatedSince(timestamp));
 }
 
@@ -361,4 +367,4 @@ std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
   return stream;
 }
 
-}  // namespace rustla2
+} // namespace rustla2

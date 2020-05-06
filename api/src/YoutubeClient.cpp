@@ -2,6 +2,7 @@
 
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
+
 #include <sstream>
 
 #include "Curl.h"
@@ -27,6 +28,14 @@ uint64_t VideosResult::Video::GetViewers() const {
 
 std::string VideosResult::Video::GetMediumThumbnail() const {
   return json::StringRef(data_["snippet"]["thumbnails"]["medium"]["url"]);
+}
+
+bool VideosResult::Video::IsNSFW() const {
+  return data_["contentDetails"].HasMember("contentRating") &&
+         data_["contentDetails"]["contentRating"].HasMember("ytRating") &&
+         json::StringRef(
+             data_["contentDetails"]["contentRating"]["ytRating"]) ==
+             "ytAgeRestricted";
 }
 
 rapidjson::Document VideosResult::GetSchema() {
@@ -90,9 +99,22 @@ rapidjson::Document VideosResult::GetSchema() {
                     }
                   },
                   "required": ["viewCount"]
+                },
+                "contentDetails": {
+                  "type": "object",
+                  "properties": {
+                    "contentRating": {
+                      "type": "object",
+                      "properties": {
+                        "ytRating": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               },
-              "required": ["snippet"]
+              "required": ["snippet", "contentDetails"]
             }
           }
         }
@@ -108,7 +130,7 @@ uint64_t VideosResult::GetTotalResults() const {
 }
 
 const VideosResult::Video VideosResult::GetVideo(const size_t index) const {
-  const auto& items = GetData()["items"].GetArray();
+  const auto &items = GetData()["items"].GetArray();
   return Video(items[index]);
 }
 
@@ -141,11 +163,11 @@ std::string ErrorResult::GetMessage() const {
   return json::StringRef(GetData()["error"]["message"]);
 }
 
-Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
+Status Client::GetVideosByID(const std::string &id, VideosResult *result) {
   std::stringstream url;
   url << "https://www.googleapis.com/youtube/v3/videos"
       << "?key=" << config_.public_api_key
-      << "&part=liveStreamingDetails,snippet,statistics"
+      << "&part=liveStreamingDetails,snippet,statistics,contentDetails"
       << "&id=" << id;
 
   CurlRequest req(url.str());
@@ -155,15 +177,15 @@ Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
     return Status(StatusCode::HTTP_ERROR, req.GetErrorMessage());
   }
 
-  const auto& response = req.GetResponse();
+  const auto &response = req.GetResponse();
 
   if (req.GetResponseCode() != 200) {
     ErrorResult error;
     if (error.SetData(response.c_str(), response.size()).Ok()) {
-      return Status(
-          StatusCode::API_ERROR,
-          "received error code " + std::to_string(error.GetErrorCode()),
-          error.GetMessage());
+      return Status(StatusCode::API_ERROR,
+                    "received error code " +
+                        std::to_string(error.GetErrorCode()),
+                    error.GetMessage());
     }
     return Status::ERROR;
   }
@@ -171,5 +193,5 @@ Status Client::GetVideosByID(const std::string& id, VideosResult* result) {
   return result->SetData(response.c_str(), response.size());
 }
 
-}  // namespace youtube
-}  // namespace rustla2
+} // namespace youtube
+} // namespace rustla2
