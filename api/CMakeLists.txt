@@ -146,6 +146,8 @@ target_link_libraries(youtube_test PRIVATE ${TEST_LIB})
 add_executable(streams_test
         tests/StreamsTest.cpp
         src/Streams.cpp
+        src/Channel.cpp
+        src/Status.cpp
         src/APIClient.cpp)
 target_include_directories(streams_test PRIVATE ${TEST_LIB_HEADER})
 target_link_libraries(streams_test PRIVATE ${TEST_LIB})
