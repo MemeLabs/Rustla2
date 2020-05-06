@@ -14,13 +14,13 @@
 namespace rustla2 {
 
 struct ChannelState {
-  ChannelState() : thumbnail(""), viewers(0), live(false) {}
+  ChannelState() : thumbnail(""), viewers(0), live(false), nsfw(false) {}
 
   std::string title;
   std::string thumbnail;
   uint64_t viewers;
   bool live;
-  bool nsfw{false};
+  bool nsfw;
 };
 
 class ServicePoller {
