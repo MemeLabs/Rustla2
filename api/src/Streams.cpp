@@ -301,8 +301,8 @@ std::ostream &operator<<(std::ostream &os, const Stream &stream) {
   return os;
 }
 
-std::vector<std::shared_ptr<Stream>> Streams::GetAllUpdatedSince(
-    uint64_t timestamp) {
+std::vector<std::shared_ptr<Stream>>
+Streams::GetAllUpdatedSince(uint64_t timestamp) {
   return GetAllFiltered(UpdatedSince(timestamp));
 }
 
@@ -367,4 +367,4 @@ std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
   return stream;
 }
 
-}  // namespace rustla2
+} // namespace rustla2

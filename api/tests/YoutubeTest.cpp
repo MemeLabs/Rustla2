@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <gtest/gtest.h>
 
 #include <cstdlib>
@@ -73,7 +74,7 @@ TEST(YoutubeTest, TestNSFW) {
     EXPECT_EQ(first.GetTitle(), "Testing");
     EXPECT_TRUE(first.IsNSFW());
   } else {
-    std::cout << status.GetErrorMessage();
+    LOG(INFO) << status.GetErrorMessage();
     FAIL();
   }
 }
