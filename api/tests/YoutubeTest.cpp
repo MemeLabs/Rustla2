@@ -1,3 +1,4 @@
+#include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <gtest/gtest.h>
 
@@ -149,6 +150,8 @@ TEST(YoutubeTest, TestNotNSFW) {
 } // namespace rustla2
 
 int main(int argc, char **argv) {
+  google::InitGoogleLogging(argv[0]);
+  google::ParseCommandLineFlags(&argc, &argv, false);
   testing::InitGoogleTest(&argc, argv);
 
   return RUN_ALL_TESTS();
