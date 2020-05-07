@@ -152,6 +152,15 @@ add_executable(angelthump_test
 target_include_directories(angelthump_test PRIVATE ${TEST_LIB_HEADER})
 target_link_libraries(angelthump_test PRIVATE ${TEST_LIB})
 
+add_executable(mixer_test
+        tests/MixerTest.cpp
+        src/MixerClient.cpp
+        src/Curl.cpp
+        src/APIClient.cpp
+        src/Status.cpp)
+target_include_directories(mixer_test PRIVATE ${TEST_LIB_HEADER})
+target_link_libraries(mixer_test PRIVATE ${TEST_LIB})
+
 add_executable(streams_test
         tests/StreamsTest.cpp
         src/Streams.cpp
@@ -167,4 +176,5 @@ add_test(ip_ranges ip_ranges_test)
 add_test(curl curl_test)
 add_test(youtube youtube_test)
 add_test(angelthump angelthump_test)
+add_test(mixer mixer_test)
 add_test(streams streams_test)
