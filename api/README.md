@@ -2,14 +2,26 @@
 
   1. Build the static assets and create a config (<https://github.com/MemeLabs/Rustla2#setup>)
   2. Install Docker (<https://docs.docker.com/engine/installation/>)
-  3. Build and run the Docker container
+  3. Build the Docker container
         ```
         $ git submodule update --init
         $ docker build . -f Dockerfile.base -t rustla2-api-base
         $ docker build . -t rustla2-api
         $ docker run -d --name rustla2 -p 8076:8076 -v ~/Rustla2:/Rustla2:rw -w /Rustla2 rustla2-api:latest
         ```
-     If the first build fails, check your CPU and RAM usage. The process requires a fair amount of resources. Try setting the environment variable ``JOBS=1`` as explained in ``deps.sh`` and restart the process.
+  4. Set permissions
+        ```
+        $ sudo chown 1000:1000 ~/Rustla2
+        ```
+The user inside the container is mapped to 1000:1000, when mounting ~/Rustla2 onto the container it needs the same permissions to be able to write to the directory.
+From the host run:
+       
+        
+  5. Start the container
+        ```
+        $ docker run -d --name rustla2 -p 8076:8076 -v ~/Rustla2:/Rustla2:rw -w /Rustla2 rustla2-api:latest
+        ```
+If the first build fails, check your CPU and RAM usage. The process requires a fair amount of resources. Try setting the environment variable ``JOBS=1`` as explained in ``deps.sh`` and restart the process.
 
   4. Test if everything worked by running
         ```
