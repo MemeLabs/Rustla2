@@ -7,7 +7,6 @@
         $ git submodule update --init
         $ docker build . -f Dockerfile.base -t rustla2-api-base
         $ docker build . -t rustla2-api
-        $ docker run -d --name rustla2 -p 8076:8076 -v ~/Rustla2:/Rustla2:rw -w /Rustla2 rustla2-api:latest
         ```
   4. Set permissions
         ```
