@@ -14,8 +14,7 @@
         $ sudo chown 1000:1000 ~/Rustla2
         ```
 The user inside the container is mapped to 1000:1000, when mounting ~/Rustla2 onto the container it needs the same permissions to be able to write to the directory.
-From the host run:
-       
+
         
   5. Start the container
         ```
