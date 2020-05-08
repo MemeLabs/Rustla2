@@ -16,7 +16,7 @@ rapidjson::Document ChannelResult::GetSchema() {
             "items": {
               "type": "object",
               "properties": {
-                "media_title": {"type": "string"},
+                "media_status": {"type": "string"},
                 "media_is_live": {"type": "string"},
                 "media_thumbnail": {"type": "string"},
                 "media_views": {
@@ -25,7 +25,7 @@ rapidjson::Document ChannelResult::GetSchema() {
                 }
               },
               "required": [
-                "media_title",
+                "media_status",
                 "media_is_live",
                 "media_thumbnail",
                 "media_views"
@@ -41,7 +41,7 @@ rapidjson::Document ChannelResult::GetSchema() {
 }
 
 std::string ChannelResult::GetTitle() const {
-  return json::StringRef(GetLivestream()["media_title"]);
+  return json::StringRef(GetLivestream()["media_status"]);
 }
 
 bool ChannelResult::GetLive() const {
