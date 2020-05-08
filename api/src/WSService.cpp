@@ -46,7 +46,8 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
         db_->GetViewerStates()->IncrViewerStream(state->user_id, 0);
 
         LOG(INFO) << "CONN_OPEN ws_id:" << state->id
-                  << " user_id:" << state->user_id;
+                  << " user_id:" << state->user_id
+                  << " ip:" << req.GetClientIPHeader();
 
         ws->setUserData(reinterpret_cast<void*>(state));
 
