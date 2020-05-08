@@ -83,6 +83,7 @@ TEST(StreamsTest, TestGetAPIJSON) {
 
   valid->SetLive(true);
   valid->IncrRustlerCount();
+  removed->IncrRustlerCount();
   removed->SetLive(true);
   removed->SetRemoved(true);
 
