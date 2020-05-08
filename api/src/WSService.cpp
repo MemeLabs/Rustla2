@@ -386,7 +386,7 @@ void WSService::BroadcastRustlers() {
   uint64_t id;
   while (stream_observer_->Next(&id)) {
     auto stream = streams->GetByID(id);
-    if (!stream.IsNotRemoved()) {
+    if (stream->GetRemoved()) {
       continue;
     }
 
