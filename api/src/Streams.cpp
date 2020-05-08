@@ -149,13 +149,14 @@ bool Stream::Save() {
           `live` = ?,
           `viewers` = ?,
           `service_nsfw` = ?,
+          `removed` = ?,
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
     db_ << sql << channel_->GetChannel() << channel_->GetService()
         << channel_->GetStreamPath() << nsfw_ << hidden_ << afk_ << promoted_
         << title_ << thumbnail_ << live_ << viewer_count_ << service_nsfw_
-        << id_;
+        << removed_ << id_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating stream " << this << ", "
                << "error: " << e.what() << ", "
@@ -185,6 +186,7 @@ bool Stream::SaveNew() {
           `live`,
           `viewers`,
           `service_nsfw`,
+          `removed`,
           `created_at`,
           `updated_at`
         )
@@ -208,7 +210,8 @@ bool Stream::SaveNew() {
       )sql";
     db_ << sql << id_ << channel_->GetChannel() << channel_->GetService()
         << channel_->GetStreamPath() << nsfw_ << hidden_ << afk_ << promoted_
-        << title_ << thumbnail_ << live_ << viewer_count_ << service_nsfw_;
+        << title_ << thumbnail_ << live_ << viewer_count_ << service_nsfw_
+        << removed_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating stream " << this << ", "
                << "error: " << e.what() << ", "
@@ -238,7 +241,8 @@ Streams::Streams(sqlite::database db)
         `thumbnail`,
         `live`,
         `viewers`,
-        `service_nsfw`
+        `service_nsfw`,
+        `removed`
       FROM `streams`
     )sql";
   auto query = db_ << sql;
@@ -247,11 +251,11 @@ Streams::Streams(sqlite::database db)
                const std::string &service, const std::string &path, bool nsfw,
                bool hidden, bool afk, bool promoted, const std::string &title,
                const std::string &thumbnail, const bool live,
-               const uint64_t viewer_count, const bool service_nsfw) {
+               const uint64_t viewer_count, const bool service_nsfw, const bool removed) {
     auto stream_channel = Channel::Create(channel, service, path);
     auto stream = std::make_shared<Stream>(
         db_, observers_, id, stream_channel, nsfw, hidden, afk, promoted, title,
-        thumbnail, live, viewer_count, service_nsfw);
+        thumbnail, live, viewer_count, service_nsfw, removed);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -276,6 +280,7 @@ void Streams::InitTable() {
         `live` TINYINT(1) DEFAULT 0,
         `viewers` INTEGER DEFAULT 0,
         `service_nsfw` TINYINT(1) DEFAULT 0,
+        `removed` TINYINT(1) DEFAULT 0,
         `created_at` DATETIME NOT NULL,
         `updated_at` DATETIME NOT NULL,
         UNIQUE (`id`),
