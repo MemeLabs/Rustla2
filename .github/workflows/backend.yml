@@ -29,6 +29,8 @@ jobs:
       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
       
     - name: Build API image
+      env:
+        DOCKER_BUILDKIT: 1  
       run: cd ./api && docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
       
     - name: Test image
