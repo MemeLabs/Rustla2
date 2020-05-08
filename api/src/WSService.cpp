@@ -386,6 +386,9 @@ void WSService::BroadcastRustlers() {
   uint64_t id;
   while (stream_observer_->Next(&id)) {
     auto stream = streams->GetByID(id);
+    if (!stream.IsNotRemoved()) {
+      continue;
+    }
 
     buf_.Clear();
     rapidjson::Writer<rapidjson::StringBuffer> writer(buf_);
