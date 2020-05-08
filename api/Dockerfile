@@ -3,7 +3,7 @@ FROM ubuntu:16.04 AS base
 RUN apt-get update && apt-get install -y \
     automake \
     autoconf \
-    autoconf-archive \
+     autoconf-archive \
     binutils-dev \
     build-essential \
     cmake \
@@ -111,4 +111,5 @@ RUN apt-get update && apt-get install -y \
 RUN useradd -m rustla
 USER rustla
 
-ENTRYPOINT ["/api/rustla2_api"]
+ENV extraArgs ""
+ENTRYPOINT ["/bin/bash", "-c", "/api/rustla2_api ${extraArgs} && sleep infinity"]
