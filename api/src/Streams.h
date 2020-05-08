@@ -29,7 +29,7 @@ class Stream {
          bool hidden = false, bool afk = false, bool promoted = false,
          const std::string &title = "", const std::string &thumbnail = "",
          const bool live = false, const uint64_t viewer_count = 0,
-         const bool service_nsfw = false)
+         const bool service_nsfw = false, const bool removed = false)
       : db_(db),
         observers_(observers),
         id_(id),
@@ -38,6 +38,7 @@ class Stream {
         thumbnail_(thumbnail),
         live_(live),
         nsfw_(nsfw),
+        removed_(removed),
         hidden_(hidden),
         afk_(afk),
         promoted_(promoted),
@@ -96,6 +97,11 @@ class Stream {
   inline bool GetPromoted() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
     return promoted_;
+  }
+
+  inline bool GetRemoved() const {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return removed_;
   }
 
   inline uint64_t GetViewerCount() const {
@@ -200,6 +206,12 @@ class Stream {
     return true;
   }
 
+  inline bool SetRemoved(const bool removed) {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    removed_ = removed;
+    return true;
+  }
+
   bool Save();
 
   bool SaveNew();
@@ -234,6 +246,7 @@ class Stream {
   bool hidden_{false};
   bool afk_{false};
   bool promoted_{false};
+  bool removed_{false};
   uint64_t viewer_count_{0};
   uint64_t rustler_count_{0};
   uint64_t afk_count_{0};
@@ -267,6 +280,10 @@ struct IsLive {
 
 struct IsVisible {
   bool Test(const Stream &stream) const { return !stream.GetHidden(); }
+};
+
+struct IsNotRemoved {
+  bool Test(const Stream &stream) const { return !stream.GetRemoved(); }
 };
 
 class Streams {

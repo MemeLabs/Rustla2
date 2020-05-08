@@ -3,6 +3,7 @@
 #include <rapidjson/schema.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+
 #include <sstream>
 
 #include "Config.h"
@@ -30,7 +31,8 @@ AdminHTTPService::AdminHTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
           "nsfw": {"type": "boolean"},
           "hidden": {"type": "boolean"},
           "afk": {"type": "boolean"},
-          "promoted": {"type": "boolean"}
+          "promoted": {"type": "boolean"},
+          "removed": {"type": "boolean"}
         }
       }
     )json");
@@ -188,6 +190,9 @@ void AdminHTTPService::PostStream(uWS::HttpResponse *res, HTTPRequest *req) {
     }
     if (input.HasMember("promoted")) {
       stream->SetPromoted(input["promoted"].GetBool());
+    }
+    if (input.HasMember("removed")) {
+      stream->SetRemoved(input["removed"].GetBool());
     }
 
     if (stream->Save()) {
