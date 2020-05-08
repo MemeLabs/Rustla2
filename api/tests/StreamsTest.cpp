@@ -71,6 +71,28 @@ TEST(StreamsTest, TestWriteAPIJSONToggleBooleans) {
   EXPECT_STREQ(doc["thumbnail"].GetString(), "");
   EXPECT_STREQ(doc["url"].GetString(), "/twitch/test");
 }
+
+TEST(StreamsTest, TestGetAPIJSON) {
+  sqlite::database db(":memory:");
+
+  auto streams = new Streams(db);
+  auto status = Status(StatusCode::OK, "");
+  auto valid = streams->Emplace(Channel::Create("test", "youtube", &status));
+  auto removed = streams->Emplace(Channel::Create("jbpratt", "mixer", &status));
+  auto notlive = streams->Emplace(Channel::Create("jbpratt", "twitch", &status));
+
+  valid->SetLive(true);
+  valid->IncrRustlerCount();
+  removed->SetLive(true);
+  removed->SetRemoved(true);
+
+  auto json = streams->GetAPIJSON();
+  rapidjson::Document doc;
+  doc.Parse(json);
+
+  EXPECT_EQ(doc["stream_list"].GetArray().Size(), 1);
+  EXPECT_EQ(doc["streams"].GetObject()["/youtube/test"].GetUint64(), 1);
+}
 } // namespace rustla2
 
 int main(int argc, char **argv) {

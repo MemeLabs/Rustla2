@@ -311,7 +311,7 @@ std::vector<std::shared_ptr<Stream>> Streams::GetAllWithRustlers() {
 }
 
 std::string Streams::GetAPIJSON() {
-  auto streams = GetAllFilteredSorted(HasRustlers(), IsLive());
+  auto streams = GetAllFilteredSorted(HasRustlers(), IsLive(), IsNotRemoved());
 
   rapidjson::StringBuffer buf;
   rapidjson::Writer<rapidjson::StringBuffer> writer(buf);
