@@ -18,6 +18,8 @@ class ChannelResult : public APIResult {
 
   bool GetLive() const;
 
+  bool IsNSFW() const;
+
   std::string GetThumbnail() const;
 
   uint64_t GetViewers() const;
