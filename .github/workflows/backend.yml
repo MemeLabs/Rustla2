@@ -1,19 +1,19 @@
 name: Backend build
-on: [pull_request, push]
-#   push:
-#     paths:
-#       - '.github/workflows/backend.yml'
-#       - 'api/**'
-#       - '!api/.gitignore'
-#       - '!api/README.md'
-#       - '.gitmodules'
-#   pull_request:
-#     paths:
-#       - '.github/workflows/backend.yml'
-#       - 'api/**'
-#       - '!api/.gitignore'
-#       - '!api/README.md'
-#       - '.gitmodules'
+on:
+  push:
+    paths:
+      - '.github/workflows/backend.yml'
+      - 'api/**'
+      - '!api/.gitignore'
+      - '!api/README.md'
+      - '.gitmodules'
+  pull_request:
+    paths:
+      - '.github/workflows/backend.yml'
+      - 'api/**'
+      - '!api/.gitignore'
+      - '!api/README.md'
+      - '.gitmodules'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +25,7 @@ jobs:
     - name: Build API image
       env:
         DOCKER_BUILDKIT: 1  
-      run: cd ./api && docker build . -t docker.pkg.github.com/x-xymos/rustla2/rustla2-api:latest
+      run: cd ./api && docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
     - name: Download container structure test binary
       uses: fnkr/github-action-git-bash@v1
       with:
@@ -39,7 +39,8 @@ jobs:
     - name: Test image
       uses: fnkr/github-action-git-bash@v1
       with:
-        args: "./api/container-structure-test test --image docker.pkg.github.com/x-xymos/rustla2/rustla2-api:latest --config ./api/container_test.yaml"
+        args: "./api/container-structure-test test --image docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest --config ./api/container_test.yaml"
+   
     - name: Docker login
       env:
         username: ${{ github.actor }}
@@ -47,6 +48,6 @@ jobs:
       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
       
     - name: Docker push
-      run: docker push docker.pkg.github.com/x-xymos/rustla2/rustla2-api:latest
+      run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
 
 
