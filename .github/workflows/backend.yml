@@ -34,7 +34,8 @@ jobs:
 #       run: cd ./api && docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
     - name: test
       uses: fnkr/github-action-git-bash@v1
-      args: ["echo hello"]
+      with:
+        args: "echo hello"
 #       with:
 #         args: -O /tmp/container-structure-test-linux-amd64 https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
 
