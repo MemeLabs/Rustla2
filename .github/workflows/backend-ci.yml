@@ -28,10 +28,24 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
       
-    - name: Build API image
+    - name: Build Third Party Image
       env:
         DOCKER_BUILDKIT: 1  
-      run: cd ./api && docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:stable
+      run: |
+        cd ./api
+        if git diff --exit-code .gitmodules || git diff --exit-code ./api/third-party || git diff --exit-code ./api/Dockerfile
+        then
+            docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase --build-arg APP_ENV=full --target full-build 
+        else
+          return 0
+        fi
+        
+    - name: Build API Image
+      env:
+        DOCKER_BUILDKIT: 1  
+      run: cd ./api && \
+        docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:stable --build-arg APP_ENV=partial
+
     - name: Download container structure test binary
       uses: fnkr/github-action-git-bash@v1
       with:
