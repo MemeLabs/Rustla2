@@ -1,0 +1,8 @@
+schemaVersion: "2.0.0"
+
+commandTests:
+  - name: "Startup test"
+    command: "/api/rustla2_api"
+    args: ["--alsologtostderr"]
+    expectedError: ["loading config from .env"]
+    exitCode: 139
