@@ -1,19 +1,14 @@
-name: Backend build
+name: Backend Continuous Deployment
 on:
   push:
     paths:
-      - '.github/workflows/backend.yml'
+      - '.github/workflows/backend-cd.yml'
       - 'api/**'
       - '!api/.gitignore'
       - '!api/README.md'
       - '.gitmodules'
-  pull_request:
-    paths:
-      - '.github/workflows/backend.yml'
-      - 'api/**'
-      - '!api/.gitignore'
-      - '!api/README.md'
-      - '.gitmodules'
+    branches:
+      - 'master'
 jobs:
   build:
     runs-on: ubuntu-latest
