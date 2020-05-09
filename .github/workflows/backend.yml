@@ -47,7 +47,7 @@ jobs:
       with:
         args: "./api/container-structure-test test --image docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest --config ./api/container_test.yaml"
 
-   - name: Push image
+    - name: Push image
       uses: fnkr/github-action-git-bash@v1
       with:
         args: "./api/container-structure-test test --image docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest --config ./api/container_test.yaml"
@@ -61,13 +61,4 @@ jobs:
     - name: Docker push
       run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
 
-#     - name: Docker Toolkit
-#       uses: PipeFlow/Dockerflow@0.0.1
-#       with:
-#         action: push
-#         name: memelabs/rustla2/rustla2-api
-#         username:  ${{ github.actor }}
-#         password: ${{ secrets.GITHUB_TOKEN }}
-#         registry: docker.pkg.github.com
-#         tag_names: latest
-        
+
