@@ -21,7 +21,13 @@ jobs:
     - uses: actions/checkout@v1
       with:
         submodules: true
-        
+
+    - name: Docker login
+      env:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
+      
     - name: Build API image
       env:
         DOCKER_BUILDKIT: 1  
