@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-      with:
-        submodules: true
+#       with:
+#         submodules: true
         
     - name: Docker login
       env:
@@ -35,11 +35,11 @@ jobs:
     - name: wget
       uses: wei/wget@v1
       with:
-        args: -O ./api/container-structure-test-linux-amd64 https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
+        args: -O /tmp/container-structure-test-linux-amd64 https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
 
     - name: Test image
       run: cd ./api && \
-        ./container-structure-test-linux-amd64 test \
+        ./tmp/container-structure-test-linux-amd64 test \
         --image docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest \
         --config container_test.yaml
 
