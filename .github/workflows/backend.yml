@@ -22,11 +22,11 @@ jobs:
       with:
         submodules: true
         
-    - name: Docker login
-      env:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-      run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
+#     - name: Docker login
+#       env:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.GITHUB_TOKEN }}
+#       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
       
     - name: Build API image
       env:
@@ -48,4 +48,10 @@ jobs:
         args: "./api/container-structure-test test --image docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest --config ./api/container_test.yaml"
 
     - name: Push API image
-      run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
+      uses: zenato/docker-action@master
+      with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          repository: memelabs/rustla2/rustla2-api
+          registry: docker.pkg.github.com
+          tag: latest
