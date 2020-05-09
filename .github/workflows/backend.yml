@@ -28,17 +28,20 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
       
-    - name: Build API image
-      env:
-        DOCKER_BUILDKIT: 1  
-      run: cd ./api && docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
-      
+#     - name: Build API image
+#       env:
+#         DOCKER_BUILDKIT: 1  
+#       run: cd ./api && docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
+    - name: wget
+      uses: wei/wget@v1
+      with:
+        args: -O ./api/container-structure-test-linux-amd64 https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64
+
     - name: Test image
       run: cd ./api && \
-        curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && \ 
         ./container-structure-test-linux-amd64 test \
         --image docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest \
         --config container_test.yaml
 
-    - name: Push API image
-      run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
+#     - name: Push API image
+#       run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:latest
