@@ -47,4 +47,7 @@ jobs:
       run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
       
     - name: Docker push
-      run: docker push docker.pkg.github.com/x-xymos/rustla2/rustla2-api:latest
+      run: docker push docker.pkg.github.com/x-xymos/rustla2/rustla2-api:latest\
+
+
+     
