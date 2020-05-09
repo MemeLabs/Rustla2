@@ -36,6 +36,11 @@ jobs:
       uses: fnkr/github-action-git-bash@v1
       with:
         args: "wget -O ./api/container-structure-test https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64"
+     
+    - name: Chmod
+      uses: fnkr/github-action-git-bash@v1
+      with:
+        args: "chmod +x ./api/container-structure-test"
     
     - name: Test image
       uses: fnkr/github-action-git-bash@v1
