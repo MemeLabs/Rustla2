@@ -3,7 +3,7 @@ FROM ubuntu:16.04 AS base
 RUN apt-get update && apt-get install -y \
     automake \
     autoconf \
-     autoconf-archive \
+    autoconf-archive \
     binutils-dev \
     build-essential \
     cmake \
