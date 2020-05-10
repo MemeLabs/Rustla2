@@ -31,6 +31,7 @@ jobs:
         if git diff --exit-code ../.gitmodules || git diff --exit-code ./third-party || git diff --exit-code ./Dockerfile
         then
             docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase --build-arg APP_ENV=full --target full-build 
+            docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase
         else
           return 0
         fi
