@@ -1,4 +1,9 @@
-FROM ubuntu:16.04 AS base
+#https://github.com/docker/cli/issues/1134
+ARG APP_ENV=partial
+
+FROM docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase as partial-build
+
+FROM ubuntu:16.04 as full-build
 
 RUN apt-get update && apt-get install -y \
     automake \
@@ -38,6 +43,8 @@ COPY deps.sh .
 
 RUN bash deps.sh
 
+FROM ${APP_ENV}-build as base
+
 COPY cmake ./cmake
 COPY src ./src
 COPY tests ./tests
@@ -46,7 +53,6 @@ COPY CMakeLists.txt .
 WORKDIR /api/build
 RUN cmake .. \
   && make rustla2_api
-
 
 FROM ubuntu:16.04
 
