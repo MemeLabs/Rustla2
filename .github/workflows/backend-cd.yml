@@ -28,7 +28,7 @@ jobs:
         DOCKER_BUILDKIT: 1  
       run: |
         cd ./api
-        if git diff --exit-code ../.gitmodules || git diff --exit-code ./third-party || git diff --exit-code ./Dockerfile
+        if git diff --exit-code master ../.gitmodules || git diff --exit-code master ./third-party || git diff --exit-code master ./Dockerfile
         then
             docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase --build-arg APP_ENV=full --target full-build 
             docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase
