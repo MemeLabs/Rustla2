@@ -1,6 +1,5 @@
 schemaVersion: "2.0.0"
 
-#this tests whether the image has all the libraries the program needs by testing if the binary launches
 commandTests:
   - name: "Startup test"
     command: "/api/rustla2_api"
