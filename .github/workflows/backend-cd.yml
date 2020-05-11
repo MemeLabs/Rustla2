@@ -29,21 +29,21 @@ jobs:
       run: |
         cd ./api
         
-        git diff --exit-code master ../.gitmodules
+        git diff --exit-code master -- ../.gitmodules
         if if [ $? = 1 ]
         then
             docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdpartybase --build-arg APP_ENV=full --target full-build 
             exit 0
         fi
         
-        git diff --exit-code master ./third-party
+        git diff --exit-code master -- ./third-party
         if if [ $? = 1 ]
         then
             docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdpartybase --build-arg APP_ENV=full --target full-build 
             exit 0
         fi
         
-        git diff --exit-code master ./Dockerfile
+        git diff --exit-code master -- ./Dockerfile
         if if [ $? = 1 ]
         then
             docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdpartybase --build-arg APP_ENV=full --target full-build 
