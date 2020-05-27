@@ -2,7 +2,17 @@ schemaVersion: "2.0.0"
 
 commandTests:
   - name: "Startup test"
-    command: "/api/rustla2_api"
-    args: ["--alsologtostderr"]
-    expectedError: ["loading config from .env"]
-    exitCode: 139
+    command: "/bin/bash"
+    args: ["-c", "cd ~ && touch .env && mkdir public && \
+    printf 'API=/api\nSCALA_API=/scala-api\nAPI_WS=\nAFK_TIMEOUT=7200000\nDB_DB=overrustle\nDB_PATH=./overrustle.sqlite\nDONATE_DO_URL=\nDONATE_LINODE_URL=\nDONATE_PAYPAL_URL=\nGITHUB_URL=https://github.com/MemeLabs/Rustla2\nCHAT_URL=https://chat.strims.gg\nCHAT2_DOMAIN=\nCHAT2_URL=\nTHUMBNAIL_REFRESH_INTERVAL=60000\nJWT_SECRET=\nJWT_NAME=jwt\nJWT_DOMAIN=strims.gg\nJWT_TTL=2592000\nPORT=8076\nLIVECHECK_INTERVAL=60000\nTWITCH_CLIENT_ID=\nTWITCH_CLIENT_SECRET=\nTWITCH_REDIRECT_URI=https://example.com/\nEMOTE_SIMILARITY_MIN_LENGTH=4\nEMOTE_SUBSTRING_MIN_LENGTH=2\nEMOTE_SIMILARITY_PREFIX_CHECK_SIZE=2\nEMOTE_SIMILARITY_MIN_EDIT_DISTANCE=4\nEMOTES=ComfyDog,ApeHands,DumpsterFire\nIP_ADDRESS_HEADER=\"x-client-ip\"\nSTREAM_BROADCAST_INTERVAL=60000\nRUSTLER_BROADCAST_INTERVAL=100\nPUBLIC_PATH=./public\n' > .env && \
+    nohup /api/rustla2_api --alsologtostderr & sleep 5"]
+    expectedError: ["server thread"]
+    exitCode: 0
+
+  - name: "Connection test"
+    command: "/bin/bash"
+    args: ["-c", "cd ~ && touch .env && mkdir public && \
+    printf 'API=/api\nSCALA_API=/scala-api\nAPI_WS=\nAFK_TIMEOUT=7200000\nDB_DB=overrustle\nDB_PATH=./overrustle.sqlite\nDONATE_DO_URL=\nDONATE_LINODE_URL=\nDONATE_PAYPAL_URL=\nGITHUB_URL=https://github.com/MemeLabs/Rustla2\nCHAT_URL=https://chat.strims.gg\nCHAT2_DOMAIN=\nCHAT2_URL=\nTHUMBNAIL_REFRESH_INTERVAL=60000\nJWT_SECRET=\nJWT_NAME=jwt\nJWT_DOMAIN=strims.gg\nJWT_TTL=2592000\nPORT=8076\nLIVECHECK_INTERVAL=60000\nTWITCH_CLIENT_ID=\nTWITCH_CLIENT_SECRET=\nTWITCH_REDIRECT_URI=https://example.com/\nEMOTE_SIMILARITY_MIN_LENGTH=4\nEMOTE_SUBSTRING_MIN_LENGTH=2\nEMOTE_SIMILARITY_PREFIX_CHECK_SIZE=2\nEMOTE_SIMILARITY_MIN_EDIT_DISTANCE=4\nEMOTES=ComfyDog,ApeHands,DumpsterFire\nIP_ADDRESS_HEADER=\"x-client-ip\"\nSTREAM_BROADCAST_INTERVAL=60000\nRUSTLER_BROADCAST_INTERVAL=100\nPUBLIC_PATH=./public\n' > .env && \
+    /api/rustla2_api & sleep 5 && curl -s 0.0.0.0:8076/api"]
+    expectedOutput: ['{"stream_list":\[\],"streams":{}}']
+    exitCode: 0
