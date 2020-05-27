@@ -178,7 +178,7 @@ Profile.propTypes = {
 function mapDispatchToProps(dispatch) {
   return {
     fetchProfile(history) {
-      return dispatch(fetchProfile(history));
+      return dispatch(fetchProfile(history, true));
     },
     updateProfile(data) {
       return dispatch(updateProfile(data));

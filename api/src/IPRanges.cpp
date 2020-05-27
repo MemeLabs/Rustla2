@@ -4,6 +4,7 @@
 #include <folly/Format.h>
 #include <glog/logging.h>
 #include <rapidjson/document.h>
+
 #include <boost/asio/ip/address.hpp>
 #include <limits>
 #include <vector>
@@ -18,7 +19,8 @@ IPRanges::IPRanges(sqlite::database db, const std::string& table_name)
   auto query = db_ << sql;
 
   query >> [&](const std::string start, const std::string end) {
-    data_.insert(Value::closed(GetAddressValue(start), GetAddressValue(end)));
+    data_.insert(Value::closed(internal::GetAddressValue(start),
+                               internal::GetAddressValue(end)));
   };
 
   LOG(INFO) << "read " << data_.size() << " ip ranges from " << table_name;
@@ -39,7 +41,7 @@ void IPRanges::InitTable() {
 }
 
 bool IPRanges::Contains(const folly::StringPiece address_str) {
-  const auto value = GetAddressValue(address_str);
+  const auto value = internal::GetAddressValue(address_str);
   if (value == 0) {
     return false;
   }
@@ -51,8 +53,8 @@ bool IPRanges::Contains(const folly::StringPiece address_str) {
 bool IPRanges::Insert(const std::string& range_start_str,
                       const std::string& range_end_str,
                       const std::string& note) {
-  const auto range_start = GetAddressValue(range_start_str);
-  const auto range_end = GetAddressValue(range_end_str);
+  const auto range_start = internal::GetAddressValue(range_start_str);
+  const auto range_end = internal::GetAddressValue(range_end_str);
   if (range_start == 0 || range_end == 0) {
     return false;
   }
@@ -80,8 +82,21 @@ bool IPRanges::Insert(const std::string& range_start_str,
   return true;
 }
 
-unsigned __int128 IPRanges::GetAddressValue(
-    const folly::StringPiece address_str) {
+void IPSet::Insert(const std::string& address_str) {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  counts_[address_str]++;
+}
+
+void IPSet::Remove(const std::string& address_str) {
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  if (--counts_[address_str] == 0) {
+    counts_.erase(address_str);
+  }
+}
+
+namespace internal {
+
+unsigned __int128 GetAddressValue(const folly::StringPiece address_str) {
   if (address_str.size() == 0) {
     return 0;
   }
@@ -102,4 +117,5 @@ unsigned __int128 IPRanges::GetAddressValue(
   return 0;
 }
 
+}  // namespace internal
 }  // namespace rustla2

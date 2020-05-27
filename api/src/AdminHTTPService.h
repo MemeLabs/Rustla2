@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rapidjson/document.h>
+
 #include <memory>
 
 #include "DB.h"
@@ -23,11 +24,14 @@ class AdminHTTPService {
 
   void GetViewerStates(uWS::HttpResponse *res, HTTPRequest *req);
 
+  void BanViewers(uWS::HttpResponse *res, HTTPRequest *req);
+
  private:
   std::shared_ptr<DB> db_;
   uWS::Hub *hub_;
   rapidjson::Document username_update_schema_;
   rapidjson::Document stream_update_schema_;
+  rapidjson::Document ban_viewer_ips_schema_;
 };
 
 }  // namespace rustla2

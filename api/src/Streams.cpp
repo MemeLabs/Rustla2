@@ -204,6 +204,7 @@ bool Stream::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
           datetime(),
           datetime()
         )
@@ -251,7 +252,8 @@ Streams::Streams(sqlite::database db)
                const std::string &service, const std::string &path, bool nsfw,
                bool hidden, bool afk, bool promoted, const std::string &title,
                const std::string &thumbnail, const bool live,
-               const uint64_t viewer_count, const bool service_nsfw, const bool removed) {
+               const uint64_t viewer_count, const bool service_nsfw,
+               const bool removed) {
     auto stream_channel = Channel::Create(channel, service, path);
     auto stream = std::make_shared<Stream>(
         db_, observers_, id, stream_channel, nsfw, hidden, afk, promoted, title,
@@ -306,8 +308,8 @@ std::ostream &operator<<(std::ostream &os, const Stream &stream) {
   return os;
 }
 
-std::vector<std::shared_ptr<Stream>>
-Streams::GetAllUpdatedSince(uint64_t timestamp) {
+std::vector<std::shared_ptr<Stream>> Streams::GetAllUpdatedSince(
+    uint64_t timestamp) {
   return GetAllFiltered(UpdatedSince(timestamp));
 }
 
@@ -344,7 +346,7 @@ std::string Streams::GetAPIJSON() {
 
 void Streams::WriteStreamsJSON(
     rapidjson::Writer<rapidjson::StringBuffer> *writer) {
-  auto streams = GetAllFilteredSorted(HasRustlers());
+  auto streams = GetAllFilteredSorted(HasRustlers(), IsNotRemoved());
 
   writer->StartArray();
   for (const auto &stream : streams) {
@@ -372,4 +374,4 @@ std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
   return stream;
 }
 
-} // namespace rustla2
+}  // namespace rustla2

@@ -1,6 +1,6 @@
 /* global API JWT_NAME SCALA_API */
 import cookies from 'browser-cookies';
-import { emit } from './websocket';
+import { emit, actions as websocketActions } from './websocket';
 
 
 export const setStream = (...args) => () => {
@@ -63,7 +63,12 @@ export const setProfile = profile => {
 
 export const PROFILE_FETCH_START = Symbol('PROFILE_FETCH_START');
 export const PROFILE_FETCH_FAILURE = Symbol('PROFILE_FETCH_FAILURE');
-export const fetchProfile = (history) => async dispatch => {
+export const fetchProfile = (history, reload) => async (dispatch, getState) => {
+  const { profile } = getState().self;
+  if (!reload && (profile.data || profile.isFetching)) {
+    return;
+  }
+
   dispatch({
     type: PROFILE_FETCH_START,
     payload: undefined,
@@ -81,8 +86,8 @@ export const fetchProfile = (history) => async dispatch => {
       error,
     });
   }
-  const profile = await res.json();
-  return dispatch(setProfile(profile));
+  const data = await res.json();
+  return dispatch(setProfile(data));
 };
 
 
@@ -139,6 +144,32 @@ export const logout = () => dispatch => {
     type: LOGOUT,
     payload: undefined,
   });
+};
+
+export const modifyStream = ({overrustle_id, service, channel}, updates) => async dispatch => {
+  console.log({overrustle_id, service, channel}, updates);
+  const path = overrustle_id ? overrustle_id : `${service}/${channel}`;
+  const res = await fetch(`${API}/admin/streams/${path}`, {
+    method: 'POST',
+    body: JSON.stringify(updates),
+  });
+  const stream = await res.json();
+  dispatch({
+    type: websocketActions.STREAM_SET,
+    payload: [stream],
+  });
+};
+
+export const banViewers = (stream_id) => async () => {
+  const res = await fetch(`${API}/admin/ban-viewers`, {
+    method: 'POST',
+    body: JSON.stringify({stream_id}),
+  });
+  // const stream = await res.json();
+  // dispatch({
+  //   type: websocketActions.STREAM_SET,
+  //   payload: [stream],
+  // });
 };
 
 export const SHOW_HEADER = Symbol('SHOW_HEADER');

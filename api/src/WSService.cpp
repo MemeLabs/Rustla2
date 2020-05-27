@@ -42,12 +42,13 @@ WSService::WSService(std::shared_ptr<DB> db, uWS::Hub* hub)
         auto state = new WSState();
         state->id = boost::uuids::random_generator()();
         state->user_id = req.GetSessionID();
+        state->ip = req.GetClientIPHeader().str();
 
         db_->GetViewerStates()->IncrViewerStream(state->user_id, 0);
 
-        LOG(INFO) << "CONN_OPEN ws_id:" << state->id
-                  << " user_id:" << state->user_id
-                  << " ip:" << req.GetClientIPHeader();
+        LOG(INFO) << "CONN_OPEN ws_id:" << state->id << " "
+                  << "user_id:" << state->user_id << " "
+                  << "ip : " << state->ip;
 
         ws->setUserData(reinterpret_cast<void*>(state));
 
@@ -243,17 +244,21 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
 
   db_->GetViewerStates()->IncrViewerStream(state->user_id, stream_id);
 
-  if (stream_id != 0) {
-    const auto stream = db_->GetStreams()->GetByID(stream_id);
-    const auto stream_channel = stream->GetChannel();
-    LOG(INFO) << "STREAM_OPEN ws_id:" << state->id
-              << " user_id:" << state->user_id
-              << " stream_service:" << stream_channel->GetService()
-              << " stream_channel:" << stream_channel->GetChannel();
-  } else {
-    LOG(INFO) << "STREAM_CLOSE ws_id:" << state->id
-              << " user_id:" << state->user_id;
+  if (stream_id == 0) {
+    LOG(INFO) << "STREAM_CLOSE ws_id:" << state->id << " "
+              << "user_id:" << state->user_id;
+    return;
   }
+
+  const auto stream = db_->GetStreams()->GetByID(stream_id);
+
+  stream->GetViewerIPs()->Insert(state->ip);
+
+  const auto stream_channel = stream->GetChannel();
+  LOG(INFO) << "STREAM_OPEN ws_id:" << state->id << " "
+            << "user_id:" << state->user_id << " "
+            << "stream_service:" << stream_channel->GetService() << " "
+            << "stream_channel:" << stream_channel->GetChannel();
 }
 
 /**
@@ -339,6 +344,7 @@ void WSService::UnsetStream(uWS::WebSocket<uWS::SERVER>* ws) {
 
   if (stream != nullptr) {
     stream->DecrRustlerCount(state->afk);
+    stream->GetViewerIPs()->Remove(state->ip);
   }
 
   db_->GetViewerStates()->DecrViewerStream(state->user_id, state->stream_id);

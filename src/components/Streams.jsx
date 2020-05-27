@@ -48,7 +48,7 @@ Category.propTypes = {
 };
 
 const Streams = ({ history, streams, showHiddenStreams = false }) => {
-  var visibleStreams = Object.values(streams).filter(({ service }) => service !== 'youtube');
+  var visibleStreams = Object.values(streams);
   if (!showHiddenStreams)
     visibleStreams = visibleStreams.filter(({ hidden }) => !hidden);
 

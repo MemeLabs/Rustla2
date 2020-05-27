@@ -1,9 +1,16 @@
 /* global THUMBNAIL_REFRESH_INTERVAL */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import idx from 'idx';
+import lifecycle from 'recompose/lifecycle';
+import PropTypes from 'prop-types';
+
+import { fetchProfile } from '../actions';
 import { generateColor } from '../util/color';
+import StreamAdminMenu from './StreamAdminMenu';
 
 import '../css/StreamThumbnail';
 
@@ -28,15 +35,20 @@ const getStreamTitle = (overrustle_id, channel, title, service) => {
 };
 
 const StreamThumbnail = ({
+  id,
   afk_rustlers = 0,
   channel,
   live = false,
+  afk = false,
   nsfw = false,
+  promoted = false,
+  hidden = false,
   overrustle_id,
   rustlers,
   service,
   thumbnail,
   title,
+  isAdmin,
 }) => {
   const color = generateColor(channel + service);
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
@@ -53,37 +65,72 @@ const StreamThumbnail = ({
     };
   }
 
+  const adminMenu = isAdmin && (
+    <StreamAdminMenu
+      id={id}
+      channel={channel}
+      service={service}
+      overrustle_id={overrustle_id}
+      afk={afk}
+      nsfw={nsfw}
+      promoted={promoted}
+      hidden={hidden}
+    />
+  );
+
   return (
-    <Link
-      className={`stream-thumbnail stream-thumbnail-${service}`}
-      title={text}
-      to={url}>
-      <div {...thumbnailProps} />
-      <div className='stream-caption'>
-        <span className='thumbnail-text' style={{borderLeftColor: color}}>
-          {text}
-        </span>
-        <span
-          title={afk_rustlers && `${afk_rustlers} afk`}
-          className={`badge badge-${live ? 'success' : 'danger'}`}>
-          {rustlers}
-          <span className='glyphicon glyphicon-user' />
-        </span>
-      </div>
-    </Link>
+    <div>
+      {adminMenu}
+      <Link
+        className={`stream-thumbnail stream-thumbnail-${service}`}
+        title={text}
+        to={url}>
+        <div {...thumbnailProps} />
+        <div className='stream-caption'>
+          <span className='thumbnail-text' style={{borderLeftColor: color}}>
+            {text}
+          </span>
+          <span
+            title={afk_rustlers && `${afk_rustlers} afk`}
+            className={`badge badge-${live ? 'success' : 'danger'}`}>
+            {rustlers}
+            <span className='glyphicon glyphicon-user' />
+          </span>
+        </div>
+      </Link>
+    </div>
   );
 };
 
 StreamThumbnail.propTypes = {
+  id: PropTypes.number,
   afk_rustlers: PropTypes.number,
   channel: PropTypes.string.isRequired,
   live: PropTypes.bool,
+  afk: PropTypes.bool,
   nsfw: PropTypes.bool,
+  promoted: PropTypes.bool,
+  hidden: PropTypes.bool,
   overrustle_id: PropTypes.string,
   rustlers: PropTypes.number.isRequired,
   service: PropTypes.string.isRequired,
   thumbnail: PropTypes.string,
   title: PropTypes.string,
+  isAdmin: PropTypes.bool,
 };
 
-export default StreamThumbnail;
+export default compose(
+  connect(
+    (state, ownProps) => ({
+      isAdmin: idx(state, _ => _.self.profile.data.is_admin),
+    }),
+    (dispatch) => ({
+      fetchProfile: (history) => dispatch(fetchProfile(history))
+    }),
+  ),
+  lifecycle({
+    componentDidMount() {
+      this.props.fetchProfile(this.props.history);
+    },
+  }),
+)(StreamThumbnail);

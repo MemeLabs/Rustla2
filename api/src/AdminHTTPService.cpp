@@ -36,6 +36,17 @@ AdminHTTPService::AdminHTTPService(std::shared_ptr<DB> db, uWS::Hub *hub)
         }
       }
     )json");
+
+  ban_viewer_ips_schema_.Parse(R"json(
+      {
+        "type": "object",
+        "properties": {
+          "stream_id": {"type": "number"},
+          "note": {"type": "string"}
+        },
+        "required": ["stream_id"]
+      }
+    )json");
 }
 
 void AdminHTTPService::RegisterRoutes(HTTPRouter *router) {
@@ -48,6 +59,8 @@ void AdminHTTPService::RegisterRoutes(HTTPRouter *router) {
 
   router->Get(api + "/admin/viewer-states", &AdminHTTPService::GetViewerStates,
               this);
+
+  router->Post(api + "/admin/ban-viewers", &AdminHTTPService::BanViewers, this);
 }
 
 bool AdminHTTPService::RejectNonAdmin(uWS::HttpResponse *res,
@@ -267,6 +280,44 @@ void AdminHTTPService::GetViewerStates(uWS::HttpResponse *res,
   req->OnCancel([=]() { broadcaster->Stop(); });
 
   req->SetKeepAlive(true);
+}
+
+void AdminHTTPService::BanViewers(uWS::HttpResponse *res, HTTPRequest *req) {
+  if (RejectNonAdmin(res, req)) {
+    return;
+  }
+
+  req->OnPostData([=](const char *data, const size_t length) {
+    HTTPResponseWriter writer(res);
+
+    rapidjson::SchemaDocument ban_viewer_ips(ban_viewer_ips_schema_);
+    rapidjson::SchemaValidator validator(ban_viewer_ips);
+    rapidjson::Document input;
+    input.Parse(data, length);
+
+    if (input.HasParseError() || !input.Accept(validator)) {
+      writer.Status(400, "Invalid Request");
+      writer.JSON("{\"error\": \"malformed or invalid json\"}");
+      return;
+    }
+
+    auto stream = db_->GetStreams()->GetByID(input["stream_id"].GetUint64());
+    if (stream == nullptr) {
+      writer.JSON("{\"error\": \"stream id not found\"}");
+      return;
+    }
+
+    std::string note = "";
+    if (input.HasMember("note")) {
+      note = json::StringRef(input["note"]);
+    }
+
+    db_->GetBannedIPs()->Insert(stream->GetViewerIPs(), note);
+
+    writer.Status(200, "OK");
+    writer.JSON(json::Serialize(Status(StatusCode::OK, "done")));
+    return;
+  });
 }
 
 }  // namespace rustla2

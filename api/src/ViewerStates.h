@@ -2,6 +2,7 @@
 
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+
 #include <boost/thread/mutex.hpp>
 #include <chrono>
 #include <functional>

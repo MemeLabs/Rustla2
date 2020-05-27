@@ -20,6 +20,7 @@ namespace rustla2 {
 struct WSState {
   boost::uuids::uuid id;
   std::string user_id{""};
+  std::string ip{""};
   uint64_t stream_id{0};
   bool afk{false};
 };

@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "Channel.h"
+#include "IPRanges.h"
 #include "Observer.h"
 #include "Status.h"
 
@@ -32,6 +33,7 @@ class Stream {
          const bool service_nsfw = false, const bool removed = false)
       : db_(db),
         observers_(observers),
+        viewer_ips_(std::make_shared<IPSet>()),
         id_(id),
         channel_(std::shared_ptr<Channel>(channel)),
         title_(title),
@@ -212,6 +214,8 @@ class Stream {
     return true;
   }
 
+  inline std::shared_ptr<IPSet> GetViewerIPs() { return viewer_ips_; }
+
   bool Save();
 
   bool SaveNew();
@@ -235,6 +239,7 @@ class Stream {
 
   sqlite::database db_;
   std::shared_ptr<Observable<uint64_t>> observers_;
+  std::shared_ptr<IPSet> viewer_ips_;
   mutable boost::shared_mutex lock_;
   uint64_t id_;
   std::shared_ptr<Channel> channel_;
