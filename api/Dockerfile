@@ -112,7 +112,7 @@ WORKDIR /api
 COPY --from=base /api/build/rustla2_api .
 
 RUN apt-get update && apt-get install -y \
-    libmagic-dev
+    libmagic-dev curl
 
 RUN useradd -m rustla
 USER rustla
