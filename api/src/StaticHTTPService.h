@@ -13,6 +13,8 @@ namespace fs = boost::filesystem;
 
 class StaticCacheEntry {
  public:
+  static const fs::path VOID_PATH;
+
   explicit StaticCacheEntry(const fs::path& path);
 
   inline const char* Data() { return data_.c_str(); }

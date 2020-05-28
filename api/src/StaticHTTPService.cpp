@@ -11,12 +11,19 @@
 
 namespace rustla2 {
 
+const fs::path StaticCacheEntry::VOID_PATH = "";
+
 StaticCacheEntry::StaticCacheEntry(const fs::path& path) {
   std::stringstream buf;
   HTTPResponseWriter writer(buf);
   writer.Status(200, "OK");
   writer.Header("Cache-Control", "max-age=3600, public");
-  writer.LocalFile(path);
+
+  if (path == StaticCacheEntry::VOID_PATH) {
+    writer.Body("", 0);
+  } else {
+    writer.LocalFile(path);
+  }
 
   data_ = buf.str();
   data_size_ = data_.size();
@@ -27,6 +34,8 @@ StaticCacheEntry::StaticCacheEntry(const fs::path& path) {
 
 StaticHTTPService::StaticHTTPService(const std::string& root_dir,
                                      const std::string& index) {
+  cache_["/"].reset(new StaticCacheEntry(StaticCacheEntry::VOID_PATH));
+
   if (!fs::is_directory(root_dir)) {
     LOG(ERROR) << "http server path does not exist (" << root_dir << ")";
     return;
