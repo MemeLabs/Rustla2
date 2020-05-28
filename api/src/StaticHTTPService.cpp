@@ -1,9 +1,9 @@
 #include "StaticHTTPService.h"
 
 #include <folly/String.h>
+#include <glog/logging.h>
 #include <uWS/uWS.h>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/path.hpp>
+
 #include <sstream>
 
 #include "HTTPRequest.h"
@@ -27,6 +27,11 @@ StaticCacheEntry::StaticCacheEntry(const fs::path& path) {
 
 StaticHTTPService::StaticHTTPService(const std::string& root_dir,
                                      const std::string& index) {
+  if (!fs::is_directory(root_dir)) {
+    LOG(ERROR) << "http server path does not exist (" << root_dir << ")";
+    return;
+  }
+
   for (fs::recursive_directory_iterator
            i = fs::recursive_directory_iterator(fs::path(root_dir)),
            end_iter;

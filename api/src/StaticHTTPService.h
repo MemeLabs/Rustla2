@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
 #include <memory>
 #include <string>
 #include <unordered_map>

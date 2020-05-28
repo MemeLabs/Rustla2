@@ -3,6 +3,9 @@
 #include <folly/String.h>
 #include <folly/Uri.h>
 #include <glog/logging.h>
+
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
@@ -100,6 +103,11 @@ const std::unordered_map<std::string, std::string> Config::ReadConfigFile(
 
   std::ifstream file(path);
   std::unordered_map<std::string, std::string> config;
+
+  if (!boost::filesystem::exists(boost::filesystem::path(path))) {
+    LOG(ERROR) << "config file does not exist (" << path << ")";
+    return config;
+  }
 
   std::string line;
   while (std::getline(file, line)) {

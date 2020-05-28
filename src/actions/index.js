@@ -165,11 +165,6 @@ export const banViewers = (stream_id) => async () => {
     method: 'POST',
     body: JSON.stringify({stream_id}),
   });
-  // const stream = await res.json();
-  // dispatch({
-  //   type: websocketActions.STREAM_SET,
-  //   payload: [stream],
-  // });
 };
 
 export const SHOW_HEADER = Symbol('SHOW_HEADER');
@@ -179,7 +174,6 @@ export const showHeader = value => dispatch => {
     payload: value,
   });
 };
-
 
 export const SHOW_FOOTER = Symbol('SHOW_FOOTER');
 export const showFooter = value => dispatch => {
