@@ -3,7 +3,7 @@ version: '3'
 services:
   rustla2:
     build: ./
-    image: rustla2:latest
+    image: rustla2:stable
     volumes:
       - ..:/Rustla2:rw
     working_dir: /Rustla2
