@@ -2,13 +2,12 @@
 
 import React from 'react';
 import {useClickAway} from 'react-use';
-
 import { connect } from 'react-redux';
 import { modifyStream, banViewers } from '../actions';
 
 import '../css/StreamAdminMenu';
 
-type OwnProps = {
+type OwnProps = {|
   id: number;
   channel: string;
   service: string;
@@ -17,14 +16,14 @@ type OwnProps = {
   nsfw: boolean;
   promoted: boolean;
   hidden: boolean;
-};
+|};
 
-type DispatchProps = {
+type DispatchProps = {|
   modifyStream: typeof modifyStream,
   banViewers: typeof banViewers;
-};
+|};
 
-type Props = OwnProps & DispatchProps;
+type Props = {| ...OwnProps, ...DispatchProps |};
 
 const StreamAdminMenu = ({
   id,
