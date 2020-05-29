@@ -252,7 +252,9 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
 
   const auto stream = db_->GetStreams()->GetByID(stream_id);
 
-  stream->GetViewerIPs()->Insert(state->ip);
+  if (stream->GetViewerIPs()->Incr(state->ip) == 1) {
+    stream->IncrRustlerCount();
+  }
 
   const auto stream_channel = stream->GetChannel();
   LOG(INFO) << "STREAM_OPEN ws_id:" << state->id << " "
@@ -323,7 +325,6 @@ void WSService::SetStreamToChannel(
   writer->String("STREAM_SET");
   stream->WriteJSON(writer);
   *stream_id = stream->GetID();
-  stream->IncrRustlerCount();
 }
 
 /**
@@ -343,8 +344,12 @@ void WSService::UnsetStream(uWS::WebSocket<uWS::SERVER>* ws) {
   auto state = GetWSState(ws);
 
   if (stream != nullptr) {
-    stream->DecrRustlerCount(state->afk);
-    stream->GetViewerIPs()->Remove(state->ip);
+    if (stream->GetViewerIPs()->Decr(state->ip) == 0) {
+      stream->DecrRustlerCount();
+    }
+    if (state->afk) {
+      stream->DecrAFKCount();
+    }
   }
 
   db_->GetViewerStates()->DecrViewerStream(state->user_id, state->stream_id);

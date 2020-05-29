@@ -87,7 +87,7 @@ uint64_t Stream::IncrRustlerCount() {
   return ++rustler_count_;
 }
 
-uint64_t Stream::DecrRustlerCount(const bool decr_afk) {
+uint64_t Stream::DecrRustlerCount() {
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
   observers_->Mark(id_);
 
@@ -97,9 +97,6 @@ uint64_t Stream::DecrRustlerCount(const bool decr_afk) {
   }
 
   ResetUpdatedTime();
-  if (decr_afk) {
-    --afk_count_;
-  }
   return --rustler_count_;
 }
 

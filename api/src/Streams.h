@@ -142,7 +142,7 @@ class Stream {
 
   uint64_t IncrRustlerCount();
 
-  uint64_t DecrRustlerCount(const bool decr_afk = false);
+  uint64_t DecrRustlerCount();
 
   uint64_t IncrAFKCount();
 

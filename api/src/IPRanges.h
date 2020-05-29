@@ -17,8 +17,8 @@ class IPRanges;
 
 class IPSet {
  public:
-  void Insert(const std::string& address_str);
-  void Remove(const std::string& address_str);
+  uint32_t Incr(const std::string& address_str);
+  uint32_t Decr(const std::string& address_str);
 
  private:
   std::unordered_map<std::string, uint32_t> counts_;

@@ -59,6 +59,15 @@ bool IPRanges::Insert(const std::string& range_start_str,
     return false;
   }
 
+  {
+    boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+    if (data_.find(Value::closed(range_start, range_end)) != data_.end()) {
+      return false;
+    }
+
+    data_.insert(Value::closed(range_start, range_end));
+  }
+
   try {
     const auto sql = folly::sformat(
         "INSERT INTO `{}` VALUES (?, ?, ?, datetime(), datetime())",
@@ -76,22 +85,21 @@ bool IPRanges::Insert(const std::string& range_start_str,
     return false;
   }
 
-  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-  data_.insert(Value::closed(range_start, range_end));
-
   return true;
 }
 
-void IPSet::Insert(const std::string& address_str) {
+uint32_t IPSet::Incr(const std::string& address_str) {
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-  counts_[address_str]++;
+  return ++counts_[address_str];
 }
 
-void IPSet::Remove(const std::string& address_str) {
+uint32_t IPSet::Decr(const std::string& address_str) {
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
-  if (--counts_[address_str] == 0) {
+  const auto count = --counts_[address_str];
+  if (count == 0) {
     counts_.erase(address_str);
   }
+  return count;
 }
 
 namespace internal {
