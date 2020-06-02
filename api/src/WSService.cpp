@@ -252,9 +252,8 @@ void WSService::SetStream(uWS::WebSocket<uWS::SERVER>* ws,
 
   const auto stream = db_->GetStreams()->GetByID(stream_id);
 
-  if (stream->GetViewerIPs()->Incr(state->ip) == 1) {
-    stream->IncrRustlerCount();
-  }
+  stream->GetViewerIPs()->Incr(state->ip);
+  stream->IncrRustlerCount();
 
   const auto stream_channel = stream->GetChannel();
   LOG(INFO) << "STREAM_OPEN ws_id:" << state->id << " "
@@ -344,9 +343,9 @@ void WSService::UnsetStream(uWS::WebSocket<uWS::SERVER>* ws) {
   auto state = GetWSState(ws);
 
   if (stream != nullptr) {
-    if (stream->GetViewerIPs()->Decr(state->ip) == 0) {
-      stream->DecrRustlerCount();
-    }
+    stream->GetViewerIPs()->Decr(state->ip);
+    stream->DecrRustlerCount();
+
     if (state->afk) {
       stream->DecrAFKCount();
     }
