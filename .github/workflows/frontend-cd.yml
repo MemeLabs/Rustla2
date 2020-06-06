@@ -1,0 +1,23 @@
+name: Frontend Continuous Deployment
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
+    - name: Docker login
+      env:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      run: docker login https://docker.pkg.github.com -u ${username} -p ${password}
+    - name: Build image
+      run: docker build . -t docker.pkg.github.com/memelabs/rustla2/rustla2-ui:latest
+    - name: Publish image
+      run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-ui:latest
