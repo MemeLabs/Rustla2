@@ -22,9 +22,9 @@ const getSrc = (channel: string, service: string): string | null => {
     case 'smashcast':
       return `https://www.smashcast.tv/embed/${channel}?popout=true&autoplay=true`;
     case 'twitch-vod':
-      return `https://player.twitch.tv/?video=v${channel}`;
+      return `https://player.twitch.tv/?video=v${channel}&parent=${location.host}`;
     case 'twitch':
-      return `https://player.twitch.tv/?channel=${channel}`;
+      return `https://player.twitch.tv/?channel=${channel}&parent=${location.host}`;
     case 'ustream':
       return `https://www.ustream.tv/embed/${channel}?autoplay=true&html5ui=true`;
     case 'vaughn':
