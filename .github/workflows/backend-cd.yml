@@ -59,4 +59,11 @@ jobs:
     - name: Docker push
       run: docker push docker.pkg.github.com/memelabs/rustla2/rustla2-api:stable
 
-
+    - name: ssh-deploy for rustla backend
+      uses: appleboy/ssh-action@122f35dca5c7a216463c504741deb0de5b301953
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          ./hooks/rustla2-api.sh
