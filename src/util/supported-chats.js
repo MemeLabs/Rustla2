@@ -5,8 +5,8 @@ const supportedChats: {
   [key: string]: (channel: string) => string
 } = {
   'mixer': channel => `https://mixer.com/embed/chat/${channel}`,
-  'twitch-vod': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
-  'twitch': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout`,
+  'twitch-vod': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout&parent=${location.host}`,
+  'twitch': channel => `https://www.twitch.tv/embed/${channel}/chat?darkpopout&parent=${location.host}`,
   'vaughn': channel => `https://vaughnlive.tv/popout/chat/${channel}`,
   'youtube': channel => `https://youtube.com/live_chat?v=${channel}&embed_domain=${process.env.NODE_ENV === 'production' ? 'strims.gg' : 'localhost'}`,
 };
