@@ -68,7 +68,7 @@
     "eslint-loader": "3.0.3",
     "eslint-plugin-flowtype": "4.5.2",
     "eslint-plugin-react": "7.17.0",
-    "file-loader": "^2.0.0",
+    "file-loader": "^6.0.0",
     "flow-bin": "0.110.0",
     "helper-git-hash": "^1.0.0",
     "html-webpack-exclude-assets-plugin": "0.0.7",
