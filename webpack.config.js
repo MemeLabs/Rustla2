@@ -143,10 +143,10 @@ module.exports = {
       template: './src/index.ejs',
     }),
     new HtmlWebpackExcludeAssetsPlugin(),
-    new (require('webpack-subresource-integrity'))({
-      hashFuncNames: ['sha256', 'sha384'],
-      enabled: IS_PRODUCTION,
-    }),
+    // new (require('webpack-subresource-integrity'))({
+    //   hashFuncNames: ['sha256', 'sha384'],
+    //   enabled: IS_PRODUCTION,
+    // }),
     new webpack.DefinePlugin(
       Object.assign(
         {
