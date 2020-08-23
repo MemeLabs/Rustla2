@@ -112,11 +112,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               ident: 'postcss',
-              plugins: () => [
-                require('autoprefixer')({
-                  browsers: ['last 2 versions'],
-                })
-              ]
+              plugins: [require('autoprefixer')()]
             }
           },
           'sass-loader',
