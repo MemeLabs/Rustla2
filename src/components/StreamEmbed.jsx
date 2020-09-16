@@ -16,7 +16,7 @@ const getSrc = (channel: string, service: string): string | null => {
     case 'angelthump':
       return `https://player.angelthump.com/?channel=${channel}`;
     case 'facebook':
-      return `https://www.facebook.com/video/embed?video_id=${channel}&autoplay=true`;
+      return `https://www.facebook.com/plugins/video.php?href=https://www.facebook.com/facebook/videos/${channel}/&show_text=0`;
     case 'mixer':
       return `https://mixer.com/embed/player/${channel}`;
     case 'smashcast':
