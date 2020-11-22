@@ -8,7 +8,7 @@ import idx from 'idx';
 import lifecycle from 'recompose/lifecycle';
 import PropTypes from 'prop-types';
 
-import { fetchProfile } from '../actions';
+import { fetchProfileIfLoggedIn } from '../actions';
 import { generateColor } from '../util/color';
 import StreamAdminMenu from './StreamAdminMenu';
 
@@ -124,13 +124,13 @@ export default compose(
     (state, ownProps) => ({
       isAdmin: idx(state, _ => _.self.profile.data.is_admin),
     }),
-    (dispatch) => ({
-      fetchProfile: (history) => dispatch(fetchProfile(history))
-    }),
+    {
+      fetchProfileIfLoggedIn,
+    },
   ),
   lifecycle({
     componentDidMount() {
-      this.props.fetchProfile(this.props.history);
+      this.props.fetchProfileIfLoggedIn();
     },
   }),
 )(StreamThumbnail);
