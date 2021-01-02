@@ -13,7 +13,6 @@ const ServiceSelect = (props: React.ElementProps<'select'>) =>
     <option value='twitch'>Twitch</option>
     <option value='twitch-vod'>Twitch (VOD)</option>
     <option value='ustream'>Ustream</option>
-    <option value='vaughn'>Vaughn</option>
     <option value='youtube'>YouTube</option>
     <option value='youtube-playlist'>YouTube (playlist)</option>
     <option value='advanced'>Advanced</option>

@@ -27,8 +27,6 @@ const getSrc = (channel: string, service: string): string | null => {
       return `https://player.twitch.tv/?channel=${channel}&parent=${location.hostname}`;
     case 'ustream':
       return `https://www.ustream.tv/embed/${channel}?autoplay=true&html5ui=true`;
-    case 'vaughn':
-      return `https://vaughnlive.tv/embed/video/${channel}`;
     case 'youtube-playlist':
       return `https://www.youtube-nocookie.com/embed/videoseries?list=${channel}&autoplay=1`;
     case 'youtube':
@@ -48,7 +46,6 @@ type Service =
   | 'twitch-vod'
   | 'twitch'
   | 'ustream'
-  | 'vaughn'
   | 'youtube-playlist'
   | 'youtube';
 
