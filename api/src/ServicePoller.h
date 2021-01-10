@@ -5,7 +5,6 @@
 
 #include "APIClient.h"
 #include "DB.h"
-#include "MixerClient.h"
 #include "SmashcastClient.h"
 #include "Status.h"
 #include "TwitchClient.h"
@@ -38,8 +37,6 @@ class ServicePoller {
   const Status CheckTwitchVOD(const std::string& name, ChannelState* state);
 
   const Status CheckYouTube(const std::string& name, ChannelState* state);
-
-  const Status CheckMixer(const std::string& name, ChannelState* state);
 
   const Status CheckSmashcast(const std::string& name, ChannelState* state);
 

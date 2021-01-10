@@ -34,8 +34,6 @@ void ServicePoller::Run() {
       status = CheckYouTube(channel->GetChannel(), &state);
     } else if (channel->GetService() == kM3u8Service) {
       status = CheckM3u8(channel->GetChannel(), &state);
-    } else if (channel->GetService() == kMixerService) {
-      status = CheckMixer(channel->GetChannel(), &state);
     } else if (channel->GetService() == kSmashcastService) {
       status = CheckSmashcast(channel->GetChannel(), &state);
     }
@@ -160,24 +158,6 @@ const Status ServicePoller::CheckYouTube(const std::string &name,
     state->nsfw = video.IsNSFW();
   }
 
-  return status;
-}
-
-const Status ServicePoller::CheckMixer(const std::string &name,
-                                       ChannelState *state) {
-  mixer::Client client;
-  mixer::ChannelResult channel;
-  auto status = client.GetChannelByName(name, &channel);
-
-  if (!status.Ok()) {
-    return status;
-  }
-
-  state->title = channel.GetName();
-  state->live = channel.GetLive();
-  state->thumbnail = channel.GetThumbnail();
-  state->viewers = channel.GetViewers();
-  state->nsfw = channel.IsNSFW();
   return status;
 }
 
