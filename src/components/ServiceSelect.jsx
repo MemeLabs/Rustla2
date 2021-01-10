@@ -8,7 +8,6 @@ const ServiceSelect = (props: React.ElementProps<'select'>) =>
     <option value='angelthump'>AngelThump</option>
     <option value='facebook'>Facebook</option>
     <option value='m3u8'>m3u8</option>
-    <option value='mixer'>Mixer</option>
     <option value='smashcast'>Smashcast</option>
     <option value='twitch'>Twitch</option>
     <option value='twitch-vod'>Twitch (VOD)</option>
