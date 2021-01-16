@@ -78,6 +78,7 @@ TEST(StreamsTest, TestGetAPIJSON) {
   auto streams = new Streams(db);
   auto status = Status(StatusCode::OK, "");
   auto valid = streams->Emplace(Channel::Create("test", "youtube", &status));
+  auto removed = streams->Emplace(Channel::Create("jbpratt", "angelthump", &status));
   auto notlive = streams->Emplace(Channel::Create("jbpratt", "twitch", &status));
 
   valid->SetLive(true);
