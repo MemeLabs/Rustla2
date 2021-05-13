@@ -20,6 +20,7 @@ const Routes = () =>
       <Route exact path='/' component={AsyncStreams} />
       <Route path='/strims' component={AsyncStreams} />
       <Route path='/profile' component={AsyncProfile} />
+      <Route path='/login' component={() => window.location.reload()} />
       <Route path='/logout' component={Logout} />
       <Route path='/beand' component={Banned} />
       <Route path='/poll/create' component={PollCreate} />
