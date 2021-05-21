@@ -1,6 +1,6 @@
 ARG APP_ENV=partial
 
-FROM docker.pkg.github.com/memelabs/rustla2/rustla2-api:thirdPartyBase as partial-build
+FROM ghcr.io/memelabs/rustla2/rustla2-api:thirdPartyBase as partial-build
 
 FROM ubuntu:16.04 as full-build
 
