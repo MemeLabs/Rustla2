@@ -38,8 +38,7 @@ const AsyncStream = ({
   history,
   match: { params: { service, channel, streamer } },
 }: Props) => {
-  const [LoadableStream, setLoadableStream] = React.useState<?React$ComponentType<any>>(null);
-  React.useEffect(() => setLoadableStream((): ?React$ComponentType<any> => {
+  const LoadableStream = React.useMemo((): React$ComponentType<any> => {
     return Loadable.Map<*, Modules>({
       loader: {
         Component: () => import(/* webpackChunkName: "stream" */ './Stream'),
@@ -73,9 +72,9 @@ const AsyncStream = ({
         );
       },
     });
-  }), [service, channel]);
+  }, [service, channel, streamer]);
 
-  return LoadableStream && <LoadableStream />;
+  return <LoadableStream />;
 };
 
 export default compose(
