@@ -29,3 +29,9 @@ jobs:
         key: ${{ secrets.KEY }}
         script: |
           ./hooks/rustla2-ui.sh
+    - name: Purge cache
+      run: |
+        curl -X DELETE "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_RUSTLA2_ZONE }}/purge_cache" \
+             -H "Authorization: Bearer ${{ secrets.CF_TOKEN }}" \
+             -H "Content-Type:application/json" \
+             --data '{"purge_everything": true}'
