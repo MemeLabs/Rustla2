@@ -9,6 +9,7 @@ on:
       - '.gitmodules'
     branches:
       - 'master'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,40 +23,40 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
       run: docker login https://ghcr.io -u ${username} -p ${password}
-      
+
     - name: Build Third Party Image
       env:
-        DOCKER_BUILDKIT: 1  
+        DOCKER_BUILDKIT: 1
       run: |
         cd ./api
         if git diff --exit-code ../.gitmodules || git diff --exit-code ./third-party || git diff --exit-code ./Dockerfile
         then
-            docker build . -t ghcr.io/memelabs/rustla2/rustla2-api:thirdPartyBase --build-arg APP_ENV=full --target full-build 
+            docker build . -t ghcr.io/memelabs/rustla2/rustla2-api:thirdPartyBase --build-arg APP_ENV=full --target full-build
             docker push ghcr.io/memelabs/rustla2/rustla2-api:thirdPartyBase
         else
           return 0
         fi
-      
+
     - name: Build API image
       env:
-        DOCKER_BUILDKIT: 1  
+        DOCKER_BUILDKIT: 1
       run: cd ./api && docker build . -t ghcr.io/memelabs/rustla2/rustla2-api:stable
-      
+
     - name: Download container structure test binary
       uses: fnkr/github-action-git-bash@v1
       with:
         args: "wget -O ./api/container-structure-test https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64"
-     
+
     - name: Chmod
       uses: fnkr/github-action-git-bash@v1
       with:
         args: "chmod +x ./api/container-structure-test"
-    
+
     - name: Test image
       uses: fnkr/github-action-git-bash@v1
       with:
         args: "./api/container-structure-test test --image ghcr.io/memelabs/rustla2/rustla2-api:stable --config ./api/container_test.yaml"
-   
+
     - name: Docker push
       run: docker push ghcr.io/memelabs/rustla2/rustla2-api:stable
 
