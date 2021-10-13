@@ -32,7 +32,7 @@ const Category = ({ header, streams }) => {
     .map((stream, i) => <Thumbnail key={i} {...stream} />);
 
   return (
-    <section className='px-4'>
+    <section className='px-3'>
       <h3 className='mt-4'>{header}</h3>
       <div className='streams-layout'>
         {thumbnails}
