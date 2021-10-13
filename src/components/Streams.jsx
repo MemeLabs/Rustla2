@@ -16,9 +16,9 @@ import MainLayout from './MainLayout';
 import StreamThumbnail from './StreamThumbnail';
 
 const Thumbnail = stream => (
-  <div className='col-12 col-sm-4 col-md-3 col-lg-2' key={stream.id}>
+  <article key={stream.id}>
     <StreamThumbnail {...stream} />
-  </div>
+  </article>
 );
 
 const Category = ({ header, streams }) => {
@@ -32,10 +32,12 @@ const Category = ({ header, streams }) => {
     .map((stream, i) => <Thumbnail key={i} {...stream} />);
 
   return (
-    <div className='streams'>
-      <h3 className='col-12 mt-4'>{header}</h3>
-      {thumbnails}
-    </div>
+    <section className='px-4'>
+      <h3 className='mt-4'>{header}</h3>
+      <div className='streams-layout'>
+        {thumbnails}
+      </div>
+    </section>
   );
 };
 
