@@ -4,7 +4,7 @@ Livestream viewing with `strims.gg` chat.
 
 ## Setup
 
-First, ensure that you have Node.js (version 10 or greater) and `npm`
+First, ensure that you have Node.js (version 12 or greater) and `npm`
 (preferably the latest stable release) installed. Then,
 
 ``` bash
