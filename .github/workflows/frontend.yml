@@ -6,12 +6,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [10, 12]
+        node-version: [12, 14]
         os: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
     - uses: actions/checkout@v2
     - name: Setup Node.js v${{ matrix.node-version }}
-      uses: actions/setup-node@v2.1.2
+      uses: actions/setup-node@v2.5.0
       with:
         node-version: ${{ matrix.node-version }}
     - name: Update npm
@@ -19,7 +19,7 @@ jobs:
         npm install -g npm
         npm --version
     - name: Install dependencies
-      uses: bahmutov/npm-install@v1.4.5
+      uses: bahmutov/npm-install@v1.7.8
     - name: Build
       run: npm run build:production
     - name: Lint

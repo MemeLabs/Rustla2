@@ -1,4 +1,4 @@
-FROM node:12.18.0-alpine AS build
+FROM node:12.22.8-alpine AS build
 
 RUN mkdir /ui
 WORKDIR /ui
