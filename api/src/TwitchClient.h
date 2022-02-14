@@ -1,6 +1,10 @@
 #pragma once
 
 #include <rapidjson/document.h>
+
+#include <boost/thread.hpp>
+#include <boost/thread/mutex.hpp>
+#include <chrono>
 #include <string>
 
 #include "APIClient.h"
@@ -19,15 +23,6 @@ class ErrorResult : public APIResult {
   std::string GetMessage() const;
 };
 
-class UserResult : public APIResult {
- public:
-  rapidjson::Document GetSchema() final;
-
-  uint64_t GetID() const;
-
-  std::string GetName() const;
-};
-
 class UsersResult : public APIResult {
  public:
   class User {
@@ -35,6 +30,10 @@ class UsersResult : public APIResult {
     explicit User(const rapidjson::Value& data) : data_(data) {}
 
     uint64_t GetID() const;
+
+    std::string GetName() const;
+
+    std::string GetOfflineImageURL() const;
 
    private:
     const rapidjson::Value& data_;
@@ -54,35 +53,34 @@ class AuthTokenResult : public APIResult {
   rapidjson::Document GetSchema() final;
 
   std::string GetAccessToken() const;
+
+  uint64_t GetExpiresIn() const;
 };
 
 class StreamsResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
 
-  std::string GetGame() const;
+  const rapidjson::Value& GetStreamData() const;
 
   bool IsEmpty() const;
 
+  std::string GetGame() const;
+
   uint64_t GetViewers() const;
 
-  std::string GetLargePreview() const;
-};
-
-class ChannelsResult : public APIResult {
- public:
-  rapidjson::Document GetSchema() final;
-
-  std::string GetVideoBanner() const;
+  std::string GetThumbnailURL() const;
 };
 
 class VideosResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
 
+  const rapidjson::Value& GetVideoData() const;
+
   std::string GetTitle() const;
 
-  std::string GetLargePreview() const;
+  std::string GetThumbnailURL() const;
 
   uint64_t GetViews() const;
 };
@@ -99,26 +97,24 @@ class Client {
 
   Status GetOAuthToken(const std::string& code, AuthTokenResult* result);
 
-  Status GetUserByOAuthToken(const std::string& token, UserResult* result);
+  Status GetUserByOAuthToken(const std::string& token, UsersResult* result);
 
   Status GetUsersByName(const std::string& name, UsersResult* result);
 
   Status GetStreamByID(const uint64_t channel_id, StreamsResult* result);
 
-  Status GetChannelByID(const uint64_t channel_id, ChannelsResult* result);
-
   Status GetVideosByID(const std::string& video_id, VideosResult* result);
 
  private:
-  inline std::string GetKrakenURL(const std::string& path) {
-    return "https://api.twitch.tv/kraken/" + path;
+  inline std::string GetHelixURL(const std::string& path) {
+    return "https://api.twitch.tv/helix/" + path;
   }
 
   template <typename T>
   Status LoadResultFromURL(const std::string& url, T* result) {
     CurlRequest req(url);
-    req.AddHeader("Accept: application/vnd.twitchtv.v5+json");
-    req.AddHeader("Client-ID: " + config_.client_id);
+    req.AddHeader("Client-Id: " + config_.client_id);
+    req.AddHeader("Authorization: Bearer " + GetAccessToken());
     req.Submit();
 
     return LoadResultFromCurlRequest(req, result);
@@ -144,7 +140,14 @@ class Client {
     return result->SetData(response.c_str(), response.size());
   }
 
+  Status GetServerOAuthToken(AuthTokenResult* result);
+
+  std::string GetAccessToken();
+
   ClientConfig config_;
+  boost::mutex access_token_lock_;
+  std::chrono::time_point<std::chrono::steady_clock> access_token_eol_{};
+  std::string access_token_ = "";
 };
 
 }  // namespace twitch

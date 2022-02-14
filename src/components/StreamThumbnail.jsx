@@ -91,9 +91,9 @@ const StreamThumbnail = ({
             {text}
           </span>
           <span
-            title={afk_rustlers && `${afk_rustlers} afk`}
+            title={afk_rustlers ? `${afk_rustlers} afk` : ''}
             className={`badge badge-${live ? 'success' : 'danger'}`}>
-            {rustlers}
+            {rustlers.toLocaleString()}
             <span className='glyphicon glyphicon-user' />
           </span>
         </div>

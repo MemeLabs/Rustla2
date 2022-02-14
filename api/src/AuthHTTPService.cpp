@@ -23,9 +23,8 @@ void AuthHTTPService::RegisterRoutes(HTTPRouter *router) {
 
 void AuthHTTPService::GetLogin(uWS::HttpResponse *res, HTTPRequest *req) {
   std::stringstream url;
-  url << "https://api.twitch.tv/kraken/oauth2/authorize"
+  url << "https://id.twitch.tv/oauth2/authorize"
       << "?response_type=code"
-      << "&scope=user_read"
       << "&client_id=" << Config::Get().GetTwitchClientID()
       << "&redirect_uri=" << Config::Get().GetTwitchRedirectURL();
 
@@ -74,13 +73,15 @@ void AuthHTTPService::GetOAuth(uWS::HttpResponse *res, HTTPRequest *req) {
   }
   auto access_token = twitch_token.GetAccessToken();
 
-  twitch::UserResult twitch_user;
-  if (!twitch_client_->GetUserByOAuthToken(access_token, &twitch_user).Ok()) {
+  twitch::UsersResult twitch_users;
+  if (!twitch_client_->GetUserByOAuthToken(access_token, &twitch_users).Ok() ||
+      twitch_users.IsEmpty()) {
     writer.Status(503, "Service Unavailable");
     writer.Header("Content-Type", "text/plain");
     writer.Body("Twitch API failure while retrieving user");
     return;
   }
+  auto twitch_user = twitch_users.GetUser(0);
   auto twitch_id = twitch_user.GetID();
   auto twitch_name = twitch_user.GetName();
 

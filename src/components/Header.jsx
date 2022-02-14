@@ -66,7 +66,7 @@ const Header = ({
     if (rCount) {
       rustlers = (
         <li className="nav-item">
-          <a className="nav-link">{rCount} Rustlers</a>
+          <a className="nav-link">{rCount.toLocaleString()} Rustlers</a>
         </li>
       );
     }
@@ -74,7 +74,7 @@ const Header = ({
       viewers = (
         <li className="nav-item">
           <a className="nav-link">
-            {vCount} {viewerTitle}
+            {vCount.toLocaleString()} {viewerTitle}
           </a>
         </li>
       );

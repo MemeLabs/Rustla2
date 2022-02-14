@@ -3,6 +3,7 @@
 #include <folly/Format.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+
 #include <string>
 
 #include "JSON.h"
@@ -33,34 +34,16 @@ std::string ErrorResult::GetMessage() const {
   return json::StringRef(GetData()["message"]);
 }
 
-rapidjson::Document UserResult::GetSchema() {
-  rapidjson::Document schema;
-  schema.Parse(R"json(
-      {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string",
-            "pattern": "^[0-9]+$"
-          },
-          "name": {"type": "string"}
-        },
-        "required": ["_id", "name"]
-      }
-    )json");
-  return schema;
-}
-
-uint64_t UserResult::GetID() const {
-  return std::stoull(std::string(json::StringRef(GetData()["_id"])));
-}
-
-std::string UserResult::GetName() const {
-  return json::StringRef(GetData()["name"]);
-}
-
 uint64_t UsersResult::User::GetID() const {
-  return std::stoull(std::string(json::StringRef(data_["_id"])));
+  return std::stoull(std::string(json::StringRef(data_["id"])));
+}
+
+std::string UsersResult::User::GetName() const {
+  return json::StringRef(data_["id"]);
+}
+
+std::string UsersResult::User::GetOfflineImageURL() const {
+  return json::StringRef(data_["offline_image_url"]);
 }
 
 rapidjson::Document UsersResult::GetSchema() {
@@ -69,24 +52,32 @@ rapidjson::Document UsersResult::GetSchema() {
       {
         "type": "object",
         "properties": {
-          "_total": {"type": "integer"},
-          "users": {
+          "data": {
             "type": "array",
             "minItems": "1",
             "items": {
               "type": "object",
               "properties": {
-                "_id": {
+                "id": {
                   "type": "string",
                   "pattern": "^[0-9]+$"
                 },
-                "name": {"type": "string"}
+                "display_name": {"type": "string"},
+                "offline_image_url": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    {"type": "null"}
+                  ]
+                }
               },
-              "required": ["_id", "name"]
+              "required": ["id", "display_name", "offline_image_url"]
             }
           }
         },
-        "required": ["_total", "users"]
+        "required": ["data"]
       }
     )json");
   return schema;
@@ -94,10 +85,12 @@ rapidjson::Document UsersResult::GetSchema() {
 
 bool UsersResult::IsEmpty() const { return GetSize() == 0; }
 
-size_t UsersResult::GetSize() const { return GetData()["_total"].GetUint64(); }
+size_t UsersResult::GetSize() const {
+  return GetData()["data"].GetArray().Size();
+}
 
 const UsersResult::User UsersResult::GetUser(const size_t index) const {
-  const auto& users = GetData()["users"].GetArray();
+  const auto& users = GetData()["data"].GetArray();
   return User(users[index]);
 }
 
@@ -119,88 +112,59 @@ std::string AuthTokenResult::GetAccessToken() const {
   return json::StringRef(GetData()["access_token"]);
 }
 
+uint64_t AuthTokenResult::GetExpiresIn() const {
+  return GetData()["expires_in"].GetUint64();
+}
+
 rapidjson::Document StreamsResult::GetSchema() {
   rapidjson::Document schema;
   schema.Parse(R"json(
       {
         "type": "object",
         "properties": {
-          "stream": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "game": {"type": "string"},
-                  "viewers": {"type": "integer"},
-                  "preview": {
-                    "type": "object",
-                    "properties": {
-                      "large": {
-                        "type": "string",
-                        "format": "uri"
-                      }
-                    },
-                    "required": ["large"]
-                  },
-                  "channel": {
-                    "type": "object",
-                    "properties": {
-                      "display_name": {"type": "string"}
-                    },
-                    "required": ["display_name"]
-                  }
-                },
-                "required": ["game", "viewers", "preview", "channel"]
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "game_name": {"type": "string"},
+                "viewer_count": {"type": "integer"},
+                "thumbnail_url": {
+                  "type": "string",
+                  "format": "uri"
+                }
               },
-              {"type": "null"}
-            ]
+              "required": ["game_name", "viewer_count", "thumbnail_url"]
+            }
           }
         },
-        "required": ["stream"]
+        "required": ["data"]
       }
     )json");
   return schema;
+}
+
+const rapidjson::Value& StreamsResult::GetStreamData() const {
+  return GetData()["data"].GetArray()[0];
+}
+
+bool StreamsResult::IsEmpty() const {
+  return GetData()["data"].GetArray().Size() == 0;
 }
 
 std::string StreamsResult::GetGame() const {
-  return json::StringRef(GetData()["stream"]["game"]);
+  return json::StringRef(GetStreamData()["game_name"]);
 }
-
-bool StreamsResult::IsEmpty() const { return GetData()["stream"].IsNull(); }
 
 uint64_t StreamsResult::GetViewers() const {
-  return GetData()["stream"]["viewers"].GetUint64();
+  return GetStreamData()["viewer_count"].GetUint64();
 }
 
-std::string StreamsResult::GetLargePreview() const {
-  return json::StringRef(GetData()["stream"]["preview"]["large"]);
-}
-
-rapidjson::Document ChannelsResult::GetSchema() {
-  rapidjson::Document schema;
-  schema.Parse(R"json(
-      {
-        "type": "object",
-        "properties": {
-          "video_banner": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uri"
-              },
-              {"type": "null"}
-            ]
-          }
-        },
-        "required": ["video_banner"]
-      }
-    )json");
-  return schema;
-}
-
-std::string ChannelsResult::GetVideoBanner() const {
-  const auto& uri = GetData()["video_banner"];
-  return uri.IsNull() ? "" : std::string(json::StringRef(uri));
+std::string StreamsResult::GetThumbnailURL() const {
+  std::string url = json::StringRef(GetStreamData()["thumbnail_url"]);
+  url = url.replace(url.find("{height}"), 8, "360");
+  url = url.replace(url.find("{width}"), 7, "640");
+  return url;
 }
 
 rapidjson::Document VideosResult::GetSchema() {
@@ -209,94 +173,124 @@ rapidjson::Document VideosResult::GetSchema() {
       {
         "type": "object",
         "properties": {
-          "views": {"type": "integer"},
-          "preview": {
-            "type": "object",
-            "properties": {
-              "large": {
-                "type": "string",
-                "format": "uri"
-              }
-            },
-            "required": ["large"]
-          },
-          "title": {"type": "string"}
+          "data": {
+            "type": "array",
+            "minItems": "1",
+            "items": {
+              "type": "object",
+              "properties": {
+                "view_count": {"type": "integer"},
+                "thumbnail_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "title": {"type": "string"}
+              },
+              "required": ["view_count", "thumbnail_url", "title"]
+            }
+          }
         },
-        "required": ["views", "preview", "title"]
+        "required": ["data"]
       }
     )json");
   return schema;
 }
 
-std::string VideosResult::GetTitle() const {
-  return json::StringRef(GetData()["title"]);
+const rapidjson::Value& VideosResult::GetVideoData() const {
+  return GetData()["data"].GetArray()[0];
 }
 
-std::string VideosResult::GetLargePreview() const {
-  return json::StringRef(GetData()["preview"]["large"]);
+std::string VideosResult::GetTitle() const {
+  return json::StringRef(GetVideoData()["title"]);
+}
+
+std::string VideosResult::GetThumbnailURL() const {
+  std::string url = json::StringRef(GetVideoData()["thumbnail_url"]);
+  url = url.replace(url.find("%{height}"), 9, "360");
+  url = url.replace(url.find("%{width}"), 8, "640");
+  return url;
 }
 
 uint64_t VideosResult::GetViews() const {
-  return GetData()["views"].GetUint64();
+  return GetVideoData()["view_count"].GetUint64();
 }
 
 Client::Client(ClientConfig config) : config_(config) {}
 
 Status Client::GetOAuthToken(const std::string& code, AuthTokenResult* result) {
-  rapidjson::StringBuffer json;
-  rapidjson::Writer<rapidjson::StringBuffer> writer(json);
-  writer.StartObject();
-  writer.Key("client_id");
-  writer.String(config_.client_id);
-  writer.Key("client_secret");
-  writer.String(config_.client_secret);
-  writer.Key("redirect_uri");
-  writer.String(config_.redirect_uri);
-  writer.Key("grant_type");
-  writer.String("authorization_code");
-  writer.Key("code");
-  writer.String(code);
-  writer.EndObject();
+  std::stringstream url;
+  url << "https://id.twitch.tv/oauth2/token"
+      << "?grant_type=authorization_code"
+      << "&client_id=" << config_.client_id
+      << "&client_secret=" << config_.client_secret
+      << "&redirect_uri=" << config_.redirect_uri << "&code=" << code;
 
-  CurlRequest req(GetKrakenURL("oauth2/token"));
-  req.AddHeader("Content-Type: application/json");
-  req.SetPostData(json.GetString(), json.GetSize());
+  CurlRequest req(url.str());
   req.Submit();
 
   return LoadResultFromCurlRequest(req, result);
 }
 
 Status Client::GetUserByOAuthToken(const std::string& token,
-                                   UserResult* result) {
-  CurlRequest req(GetKrakenURL("user"));
-  req.AddHeader("Authorization: OAuth " + token);
+                                   UsersResult* result) {
+  CurlRequest req(GetHelixURL("user"));
+  req.AddHeader("Authorization: Bearer " + token);
   req.AddHeader("Client-ID: " + config_.client_id);
-  req.AddHeader("Accept: application/vnd.twitchtv.v5+json");
+  req.SetPostData(nullptr, 0);
   req.Submit();
 
   return LoadResultFromCurlRequest(req, result);
 }
 
 Status Client::GetUsersByName(const std::string& name, UsersResult* result) {
-  auto url = GetKrakenURL("users?login=" + name);
+  auto url = GetHelixURL("users?login=" + name);
   return LoadResultFromURL(url, result);
 }
 
 Status Client::GetStreamByID(const uint64_t channel_id, StreamsResult* result) {
-  auto url = GetKrakenURL("streams/" + std::to_string(channel_id));
-  return LoadResultFromURL(url, result);
-}
-
-Status Client::GetChannelByID(const uint64_t channel_id,
-                              ChannelsResult* result) {
-  auto url = GetKrakenURL("channels/" + std::to_string(channel_id));
+  auto url = GetHelixURL("streams?user_id=" + std::to_string(channel_id));
   return LoadResultFromURL(url, result);
 }
 
 Status Client::GetVideosByID(const std::string& video_id,
                              VideosResult* result) {
-  auto url = GetKrakenURL("videos/" + video_id);
+  auto url = GetHelixURL("videos?id=" + video_id);
   return LoadResultFromURL(url, result);
+}
+
+Status Client::GetServerOAuthToken(AuthTokenResult* result) {
+  std::stringstream url;
+  url << "https://id.twitch.tv/oauth2/token"
+      << "?grant_type=client_credentials"
+      << "&client_id=" << config_.client_id
+      << "&client_secret=" << config_.client_secret;
+
+  CurlRequest req(url.str());
+  req.SetPostData(nullptr, 0);
+  req.Submit();
+
+  return LoadResultFromCurlRequest(req, result);
+}
+
+std::string Client::GetAccessToken() {
+  auto now = std::chrono::steady_clock::now();
+
+  boost::lock_guard<boost::mutex> lock{access_token_lock_};
+
+  if (now < access_token_eol_) {
+    return access_token_;
+  }
+
+  AuthTokenResult token;
+  auto token_status = GetServerOAuthToken(&token);
+  if (!token_status.Ok()) {
+    return "";
+  }
+
+  access_token_eol_ = now + std::chrono::seconds(token.GetExpiresIn());
+  access_token_ = token.GetAccessToken();
+
+  return access_token_;
 }
 
 }  // namespace twitch

@@ -101,9 +101,9 @@ const Status ServicePoller::CheckTwitchStream(const std::string &name,
                   "Twitch API did not return a user matching this login");
   }
 
-  auto user_id = users.GetUser(0).GetID();
+  auto user = users.GetUser(0);
   twitch::StreamsResult stream;
-  auto stream_status = twitch_->GetStreamByID(user_id, &stream);
+  auto stream_status = twitch_->GetStreamByID(user.GetID(), &stream);
   if (!stream_status.Ok()) {
     return stream_status;
   }
@@ -111,18 +111,12 @@ const Status ServicePoller::CheckTwitchStream(const std::string &name,
   if (!stream.IsEmpty()) {
     state->title = stream.GetGame();
     state->live = true;
-    state->thumbnail = stream.GetLargePreview();
+    state->thumbnail = stream.GetThumbnailURL();
     state->viewers = stream.GetViewers();
   } else {
-    twitch::ChannelsResult channel;
-    auto channel_status = twitch_->GetChannelByID(user_id, &channel);
-    if (!channel_status.Ok()) {
-      return channel_status;
-    }
-
     state->title = "";
     state->live = false;
-    state->thumbnail = channel.GetVideoBanner();
+    state->thumbnail = user.GetOfflineImageURL();
     state->viewers = 0;
   }
 
@@ -132,12 +126,12 @@ const Status ServicePoller::CheckTwitchStream(const std::string &name,
 const Status ServicePoller::CheckTwitchVOD(const std::string &name,
                                            ChannelState *state) {
   twitch::VideosResult videos;
-  auto status = twitch_->GetVideosByID("v" + name, &videos);
+  auto status = twitch_->GetVideosByID(name, &videos);
 
   if (status.Ok()) {
     state->title = videos.GetTitle();
     state->live = true;
-    state->thumbnail = videos.GetLargePreview();
+    state->thumbnail = videos.GetThumbnailURL();
     state->viewers = videos.GetViews();
   }
 
