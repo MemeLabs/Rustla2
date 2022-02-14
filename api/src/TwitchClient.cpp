@@ -39,7 +39,7 @@ uint64_t UsersResult::User::GetID() const {
 }
 
 std::string UsersResult::User::GetName() const {
-  return json::StringRef(data_["id"]);
+  return json::StringRef(data_["display_name"]);
 }
 
 std::string UsersResult::User::GetOfflineImageURL() const {
