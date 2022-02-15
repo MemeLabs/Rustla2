@@ -226,6 +226,7 @@ Status Client::GetOAuthToken(const std::string& code, AuthTokenResult* result) {
       << "&redirect_uri=" << config_.redirect_uri << "&code=" << code;
 
   CurlRequest req(url.str());
+  req.SetPostData(nullptr, 0);
   req.Submit();
 
   return LoadResultFromCurlRequest(req, result);
@@ -233,10 +234,9 @@ Status Client::GetOAuthToken(const std::string& code, AuthTokenResult* result) {
 
 Status Client::GetUserByOAuthToken(const std::string& token,
                                    UsersResult* result) {
-  CurlRequest req(GetHelixURL("user"));
+  CurlRequest req(GetHelixURL("users"));
+  req.AddHeader("Client-Id: " + config_.client_id);
   req.AddHeader("Authorization: Bearer " + token);
-  req.AddHeader("Client-ID: " + config_.client_id);
-  req.SetPostData(nullptr, 0);
   req.Submit();
 
   return LoadResultFromCurlRequest(req, result);
