@@ -89,7 +89,7 @@ export default compose(
       showFooter: state.ui.showFooter,
       chatSize: state.ui.chatSize,
       showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
-      chatClosed: !state.ui.showChat,
+      chatClosed: !state.ui.showChat || !state.self.isLoggedIn,
     }),
     {
       setChatSize,
