@@ -8,7 +8,7 @@
 }
 
 @include media-breakpoint-down(md) {
-  @media (orientation:landscape){
+  @media (orientation:landscape) and (min-aspect-ratio: 2 / 1) {
     .flex-lg-row {
       flex-direction: row !important;
     }
