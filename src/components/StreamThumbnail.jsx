@@ -79,8 +79,12 @@ const StreamThumbnail = ({
   );
 
   return (
-    <div>
+    <div style={{position:'relative'}}>
       {adminMenu}
+      {service === "twitch" && <Link
+        className={`stream-thumbnail stream-thumbnail-transparent`}
+        title={text}
+        to={"twitch.tv/" + channel }/>}
       <Link
         className={`stream-thumbnail stream-thumbnail-${service}`}
         title={text}
