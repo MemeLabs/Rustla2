@@ -34,6 +34,36 @@ const getStreamTitle = (overrustle_id, channel, title, service) => {
   }
 };
 
+const isDirectLinkSupported = (service) => {
+  switch (service) {
+    case "angelthump": 
+      return true;
+    case "twitch-vod":
+      return true;
+    case "twitch":
+      return true;
+    case "youtube":
+      return true;
+    default:
+      return false;
+  }
+};
+
+const getStreamServiceLink = (channel, service) => {
+  switch (service) {
+    case "angelthump": 
+      return "https://strims.gg/angelthump/" + channel;
+    case "twitch-vod":
+      return "https://www.twitch.tv/videos/" + channel;
+    case "twitch":
+      return "https://www.twitch.tv/" + channel;
+    case "youtube":
+      return "https://www.youtube.com/watch?v=" + channel;
+    default:
+      return "https://www." + service + ".com/" + channel;
+  }
+};
+
 const StreamThumbnail = ({
   id,
   afk_rustlers = 0,
@@ -81,12 +111,13 @@ const StreamThumbnail = ({
   return (
     <div style={{position:'relative'}}>
       {adminMenu}
-      {service === "twitch" && <a
+      {isDirectLinkSupported(service) && 
+      <a
         className={`stream-thumbnail stream-thumbnail-transparent`}
         title={text}
         target="_blank"
         rel="noopener noreferrer"
-        href={"https://www.twitch.tv/" + channel }/>}
+        href={getStreamServiceLink(channel, service) }/>}
       <Link
         className={`stream-thumbnail stream-thumbnail-${service}`}
         title={text}
