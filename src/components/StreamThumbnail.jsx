@@ -34,6 +34,21 @@ const getStreamTitle = (overrustle_id, channel, title, service) => {
   }
 };
 
+const isDirectLinkSupported = (service) => {
+  switch (service) {
+    case "angelthump": 
+      return true;
+    case "twitch-vod":
+      return true;
+    case "twitch":
+      return true;
+    case "youtube":
+      return true;
+    default:
+      return false;
+  }
+};
+
 const getStreamServiceLink = (channel, service) => {
   switch (service) {
     case "angelthump": 
@@ -96,12 +111,13 @@ const StreamThumbnail = ({
   return (
     <div style={{position:'relative'}}>
       {adminMenu}
+      {isDirectLinkSupported(service) && 
       <a
         className={`stream-thumbnail stream-thumbnail-transparent`}
         title={text}
         target="_blank"
         rel="noopener noreferrer"
-        href={getStreamServiceLink(channel, service) }/>
+        href={getStreamServiceLink(channel, service) }/>}
       <Link
         className={`stream-thumbnail stream-thumbnail-${service}`}
         title={text}
