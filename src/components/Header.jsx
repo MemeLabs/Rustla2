@@ -105,7 +105,7 @@ const Header = ({
   );
 
   let hideHeader = !headerClosed ? (
-    <div className='close-header-btn' >
+    <div title="Hide Header" className='close-header-btn' >
       <span className='close-caret' onClick={()=> showHeader(false)} style={{ cursor:'pointer'}}>^</span>
     </div>
   ) : null ;
