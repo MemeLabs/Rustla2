@@ -2,6 +2,33 @@
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 
+
+.open-header-btn{
+  position: fixed;
+  top: 0px;
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  opacity: 1;
+  z-index: 1;
+  height: 25px;
+}
+
+.open-header-btn:hover .open-header-caret{
+  top:-10px
+}
+
+.open-header-caret{
+  position: fixed;
+  top: -30px;
+  transition: top 1.5s;
+  cursor:pointer;
+  &:hover{
+    top:-10px
+  }
+}
+
 @include media-breakpoint-down(md) {
   @media (orientation:portrait){
     .chat-embed {

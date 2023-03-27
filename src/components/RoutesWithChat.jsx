@@ -19,9 +19,10 @@ import '../css/Stream';
 import {
   setChatSize,
   showChat,
+  showHeader as headerFunc
 } from '../actions';
 
-export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, showLeftChat=false, chatClosed, chatSize}) =>
+export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, showLeftChat=false, chatClosed, chatSize, headerFunc}) =>
 {
   let left = (
     <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)`, height: chatClosed ? '100%' :  '', display: 'flex', flexDirection: 'column'}}>
@@ -47,20 +48,24 @@ export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, s
   return (
     <div style={{height: "100%"}}>
       <Router history={history}>
-        <div style={{height: "100%", display: 'flex', flexDirection: 'column'}}>
-          {showHeader ? <Header history={history} /> : null}
+        <div style={{ height: "100%", display: 'flex', flexDirection: 'column' }}>
+          {showHeader ? (<Header history={history} />) : (
+            <div title="Open Header" className="open-header-btn">
+              <span className='open-header-caret' onClick={() => headerFunc(true)}>v</span>
+            </div>
+          )}
           <Resizeable
-          className='flex-grow-1 flex-column flex-lg-row'
-          onResize={e => {
-          let newChatSize;
-          if (showLeftChat) {
-            newChatSize = e.pageX;
-          }
-          else {
-            newChatSize = window.innerWidth - e.pageX;
-          }
-            setChatSize(newChatSize);
-          }}>
+            className='flex-grow-1 flex-column flex-lg-row'
+            onResize={e => {
+              let newChatSize;
+              if (showLeftChat) {
+                newChatSize = e.pageX;
+              }
+              else {
+                newChatSize = window.innerWidth - e.pageX;
+              }
+              setChatSize(newChatSize);
+            }}>
             {left}
             {right}
           </Resizeable>
@@ -80,6 +85,7 @@ RoutesWithChat.propTypes = {
 
   setChatSize: PropTypes.func.isRequired,
   showChat: PropTypes.func.isRequired,
+  headerFunc: PropTypes.func.isRequired,
 };
 
 export default compose(
@@ -94,6 +100,7 @@ export default compose(
     {
       setChatSize,
       showChat,
+      headerFunc,
     },
   ),
 )(RoutesWithChat);

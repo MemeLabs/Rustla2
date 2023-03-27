@@ -15,6 +15,34 @@
   z-index: 1;
 }
 
+.close-header-btn{
+  position: fixed;
+  top: 25px;
+  font-size: 25px;
+  height: 25px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  opacity: 1;
+  z-index: 1;
+}
+
+.close-caret{
+  position: fixed;
+  top:25px;
+  transition: top 1.5s;
+  &:hover{
+    top:55px
+  }
+}
+
+.navbar{
+  z-index: 2;
+}
+.navbar:hover ~ .close-header-btn .close-caret{
+  top:55px
+}
+
 .header-donate {
   background-color: #b91010;
   border-radius: 8px;
