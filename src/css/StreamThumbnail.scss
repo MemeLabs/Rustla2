@@ -25,6 +25,17 @@
     width: 20%;
   }
 
+  &.stream-thumbnail-transparent {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    width: 40px;
+    height: 40px;
+    margin-top: 0px;
+    z-index: 3;
+    opacity: 0;
+  }
+  
   &.stream-thumbnail-twitch:before,
   &.stream-thumbnail-twitch-vod:before {
     background-image: url(/image/twitch.png);
