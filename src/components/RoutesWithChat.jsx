@@ -55,19 +55,19 @@ export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, s
             </div>
           )}
           <Resizeable
-            className='flex-grow-1 flex-column flex-lg-row'
-            onResize={e => {
-              let newChatSize;
-              if (showLeftChat) {
-                newChatSize = e.pageX;
-              }
-              else {
-                newChatSize = window.innerWidth - e.pageX;
-              }
-              setChatSize(newChatSize);
-            }}>
-            {left}
-            {right}
+          className='flex-grow-1 flex-column flex-lg-row'
+          onResize={e => {
+          let newChatSize;
+          if (showLeftChat) {
+            newChatSize = e.pageX;
+          }
+          else {
+            newChatSize = window.innerWidth - e.pageX;
+          }
+            setChatSize(newChatSize);
+          }}>
+          {left}
+          {right}
           </Resizeable>
         </div>
       </Router>
