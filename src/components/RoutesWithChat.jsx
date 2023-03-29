@@ -50,7 +50,7 @@ export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, s
       <Router history={history}>
         <div style={{ height: "100%", display: 'flex', flexDirection: 'column' }}>
           <Header history={history} classes={showHeader ? '' : 'close-header'} />
-          <div title="Open Header" className= {showHeader ?"close-header-btn" : 'open-header-btn'}>
+          <div title={showHeader ? "Close Header" : "Open Header"} className= {showHeader ?"close-header-btn" : 'open-header-btn'}>
             <span className={showHeader ? 'close-header-caret': 'open-header-caret'} onClick={() => showHeader ? headerFunc(false) : headerFunc(true)}>&#8250;</span>
           </div>
           <Resizeable
