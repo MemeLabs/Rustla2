@@ -106,12 +106,6 @@ const Header = ({
     </div>
   );
 
-  let hideHeader = !headerClosed ? (
-    <div title="Hide Header" className='close-header-btn' >
-      <span className='close-caret' onClick={()=> showHeader(false)} style={{ cursor:'pointer'}}>&#8250;</span>
-    </div>
-  ) : null ;
-
   return (
     <>
     <Navbar expand='lg' variant='dark' className={classes}>
