@@ -34,6 +34,7 @@ type Props = {|
   +headerClosed?: boolean,
   +currentStreamService?: string | null,
   +history: BrowserHistory,
+  classes: string,
   +isDggChat: boolean,
   +isLoggedIn: boolean,
   +isServiceChat: boolean,
