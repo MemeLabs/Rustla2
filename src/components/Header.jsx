@@ -31,7 +31,6 @@ type OwnProps = {||};
 type Props = {|
   ...OwnProps,
   +chatClosed?: boolean,
-  +headerClosed?: boolean,
   +currentStreamService?: string | null,
   +history: BrowserHistory,
   classes: string,
@@ -48,7 +47,6 @@ type Props = {|
 
 const Header = ({
   chatClosed,
-  headerClosed,
   currentStreamService,
   history,
   classes,
@@ -58,7 +56,6 @@ const Header = ({
   isStrimsChat,
   rustlerCount,
   showChat,
-  showHeader,
   showDggChat,
   toggleChat
 }: Props) => {
@@ -191,7 +188,6 @@ function mapStateToProps(state: State): $Shape<Props> {
     rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
     showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
     chatClosed: !state.ui.showChat,
-    headerClosed: !state.ui.showHeader,
   };
 }
 
@@ -201,7 +197,6 @@ export default compose(
     {
       toggleChat,
       showChat,
-      showHeader
     }
   )
 )(Header);
