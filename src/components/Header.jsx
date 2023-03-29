@@ -50,6 +50,7 @@ const Header = ({
   headerClosed,
   currentStreamService,
   history,
+  classes,
   isDggChat,
   isLoggedIn,
   isServiceChat,
@@ -106,13 +107,13 @@ const Header = ({
 
   let hideHeader = !headerClosed ? (
     <div title="Hide Header" className='close-header-btn' >
-      <span className='close-caret' onClick={()=> showHeader(false)} style={{ cursor:'pointer'}}>^</span>
+      <span className='close-caret' onClick={()=> showHeader(false)} style={{ cursor:'pointer'}}>&#8250;</span>
     </div>
   ) : null ;
 
   return (
     <>
-    <Navbar expand='lg' variant='dark'>
+    <Navbar expand='lg' variant='dark' className={classes}>
       {openChat}
       <Navbar.Brand>
         <Link className='navbar-brand' to='/'>Strims</Link>
@@ -181,7 +182,6 @@ const Header = ({
         </Nav>
       </Navbar.Collapse>
     </Navbar>
-    {hideHeader}
     </>
   );
 };
