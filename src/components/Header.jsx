@@ -21,7 +21,7 @@ import { faComments } from '@fortawesome/free-solid-svg-icons';
 import '../css/Header';
 
 import type { State } from '../redux/types';
-import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG, showHeader } from '../actions';
+import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
 import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
@@ -40,7 +40,6 @@ type Props = {|
   +isStrimsChat: boolean,
   +rustlerCount: number[] | null,
   +showChat: () => {},
-  +showHeader: (host: mixed) => {},
   +showDggChat: boolean,
   +toggleChat: (host: mixed) => {}
 |};
