@@ -21,7 +21,7 @@ import { faComments } from '@fortawesome/free-solid-svg-icons';
 import '../css/Header';
 
 import type { State } from '../redux/types';
-import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG, showHeader } from '../actions';
+import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
 import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
@@ -31,32 +31,30 @@ type OwnProps = {||};
 type Props = {|
   ...OwnProps,
   +chatClosed?: boolean,
-  +headerClosed?: boolean,
   +currentStreamService?: string | null,
   +history: BrowserHistory,
+  classes: string,
   +isDggChat: boolean,
   +isLoggedIn: boolean,
   +isServiceChat: boolean,
   +isStrimsChat: boolean,
   +rustlerCount: number[] | null,
   +showChat: () => {},
-  +showHeader: (host: mixed) => {},
   +showDggChat: boolean,
   +toggleChat: (host: mixed) => {}
 |};
 
 const Header = ({
   chatClosed,
-  headerClosed,
   currentStreamService,
   history,
+  classes,
   isDggChat,
   isLoggedIn,
   isServiceChat,
   isStrimsChat,
   rustlerCount,
   showChat,
-  showHeader,
   showDggChat,
   toggleChat
 }: Props) => {
@@ -104,15 +102,9 @@ const Header = ({
     </div>
   );
 
-  let hideHeader = !headerClosed ? (
-    <div title="Hide Header" className='close-header-btn' >
-      <span className='close-caret' onClick={()=> showHeader(false)} style={{ cursor:'pointer'}}>^</span>
-    </div>
-  ) : null ;
-
   return (
     <>
-    <Navbar expand='lg' variant='dark'>
+    <Navbar expand='lg' variant='dark' className={classes}>
       {openChat}
       <Navbar.Brand>
         <Link className='navbar-brand' to='/'>Strims</Link>
@@ -181,7 +173,6 @@ const Header = ({
         </Nav>
       </Navbar.Collapse>
     </Navbar>
-    {hideHeader}
     </>
   );
 };
@@ -196,7 +187,6 @@ function mapStateToProps(state: State): $Shape<Props> {
     rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
     showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
     chatClosed: !state.ui.showChat,
-    headerClosed: !state.ui.showHeader,
   };
 }
 
@@ -206,7 +196,6 @@ export default compose(
     {
       toggleChat,
       showChat,
-      showHeader
     }
   )
 )(Header);

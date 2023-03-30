@@ -2,8 +2,7 @@
 @import '~bootstrap/scss/variables';
 @import '~bootstrap/scss/mixins';
 
-
-.open-header-btn{
+.open-header-btn,.close-header-btn{
   position: fixed;
   top: 0px;
   font-size: 25px;
@@ -11,22 +10,41 @@
   justify-content: center;
   width: 100%;
   opacity: 1;
-  z-index: 1;
+  z-index: 3;
   height: 25px;
 }
 
+.open-header-caret,.close-header-caret{
+  position: fixed;
+  transition: top 1s, rotate 0.5s, opacity 2s;
+  cursor:pointer;
+  display: flex;
+  justify-content: center;
+  height: 30px;
+  font-size: 32px;
+  width: 25px;
+  line-height: 20px;
+  color: #D17134;
+}
+
 .open-header-btn:hover .open-header-caret{
-  top:-10px
+  top: -10px;
+  opacity:1;
 }
 
 .open-header-caret{
-  position: fixed;
-  top: -30px;
-  transition: top 1.5s;
-  cursor:pointer;
+  top: -15px;
+  rotate: 90deg;
+  opacity: 0;
   &:hover{
-    top:-10px
+    top:-10px;
+    opacity:1;
   }
+}
+
+.close-header-caret{
+  top:45px;
+  rotate: -90deg;
 }
 
 @include media-breakpoint-down(md) {

@@ -15,32 +15,18 @@
   z-index: 1;
 }
 
-.close-header-btn{
-  position: fixed;
-  top: 25px;
-  font-size: 25px;
-  height: 25px;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  opacity: 1;
-  z-index: 1;
-}
 
-.close-caret{
-  position: fixed;
-  top:25px;
-  transition: top 1.5s;
-  &:hover{
-    top:55px
-  }
-}
 
 .navbar{
   z-index: 2;
+  max-height: 60px;
+  min-height: 60px;
+  transition: max-height 1s , min-height 1s;
+  overflow: hidden;
 }
-.navbar:hover ~ .close-header-btn .close-caret{
-  top:55px
+.navbar.close-header{
+  max-height: 0px;
+  min-height: 0px;
 }
 
 .header-donate {
