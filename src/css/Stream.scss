@@ -14,6 +14,13 @@
   height: 25px;
 }
 
+
+@include media-breakpoint-down(md) {
+  .open-header-btn,.close-header-btn{
+    display: none;
+  }
+}
+
 .open-header-caret,.close-header-caret{
   position: fixed;
   transition: top 1s, rotate 0.5s, opacity 2s;
