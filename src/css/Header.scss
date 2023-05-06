@@ -46,8 +46,15 @@
 }
 
 @include media-breakpoint-down(md) {
+  .navbar-collapse{
+    margin-left: -20px;
+    margin-right: -20px;
+    background-color: #222;
+    padding-left: 5px;
+  }
   .navbar{
     min-height: unset;
+    overflow:visible;
   }
   @media (orientation:landscape){
     .nav-item {
