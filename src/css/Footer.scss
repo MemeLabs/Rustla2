@@ -21,8 +21,8 @@ footer {
 .footer-list{
   display: flex;
   flex-direction: row;
-  left: -50px;
   position: relative;
+  padding-left: 0px;
 }
 
 .footer-list > li{

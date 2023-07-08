@@ -13,9 +13,12 @@
   right: 25px;
   top: 65px;
   z-index: 1;
+  cursor: pointer;
 }
 
-
+.close-header .open-chat-btn{
+  top: 10px;
+}
 
 .navbar{
   z-index: 2;
