@@ -8,7 +8,9 @@
   font-size: 25px;
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
   opacity: 1;
   z-index: 3;
   height: 25px;
@@ -24,7 +26,7 @@
 
 .open-header-caret,.close-header-caret{
   position: fixed;
-  transition: top 1s, rotate 0.5s, opacity 2s;
+  transition: top 0.75s, rotate 0.75s, opacity 0.75s;
   cursor:pointer;
   display: flex;
   justify-content: center;
