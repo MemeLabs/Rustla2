@@ -24,7 +24,7 @@
   z-index: 2;
   max-height: 60px;
   min-height: 60px;
-  transition: max-height 1s , min-height 1s;
+  transition: max-height 0.75s , min-height 0.75s;
   overflow: hidden;
 }
 .navbar.close-header{
