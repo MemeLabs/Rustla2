@@ -18,11 +18,6 @@
 }
 
 
-@include media-breakpoint-down(md) {
-  .open-header-btn,.close-header-btn{
-    display: none;
-  }
-}
 
 .open-header-caret,.close-header-caret{
   position: fixed;
@@ -42,6 +37,16 @@
   opacity:1;
 }
 
+.open-header-caret-mobile{
+  display: none;
+  position:fixed;
+  rotate: 90deg;
+  color: #D17134;
+  font-size: 32px;
+  line-height: 20px;
+  opacity: 0.4;
+}
+
 .open-header-caret{
   top: -15px;
   rotate: 90deg;
@@ -58,6 +63,14 @@
 }
 
 @include media-breakpoint-down(md) {
+  .open-header-caret-mobile{
+    display: block;
+  }
+
+  .close-header-caret{
+    top:35px;
+  }
+  
   @media (orientation:portrait){
     .chat-embed {
       height: 100%;

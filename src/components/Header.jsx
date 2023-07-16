@@ -21,7 +21,7 @@ import { faComments } from '@fortawesome/free-solid-svg-icons';
 import '../css/Header';
 
 import type { State } from '../redux/types';
-import { toggleChat, showChat, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
+import { toggleChat, showChat, showHeader, CHAT_HOST_SERVICE, CHAT_HOST_STRIMS, CHAT_HOST_DGG } from '../actions';
 import { supportedChatServices } from '../util/supported-chats';
 import isVod from '../util/is-vod';
 import HeaderForm from './HeaderForm';
@@ -31,6 +31,7 @@ type OwnProps = {||};
 type Props = {|
   ...OwnProps,
   +chatClosed?: boolean,
+  +headerClosed?: boolean,
   +currentStreamService?: string | null,
   +history: BrowserHistory,
   classes: string,
@@ -40,12 +41,14 @@ type Props = {|
   +isStrimsChat: boolean,
   +rustlerCount: number[] | null,
   +showChat: () => {},
+  +showHeader: () => {},
   +showDggChat: boolean,
   +toggleChat: (host: mixed) => {}
 |};
 
 const Header = ({
   chatClosed,
+  headerClosed,
   currentStreamService,
   history,
   classes,
@@ -55,6 +58,7 @@ const Header = ({
   isStrimsChat,
   rustlerCount,
   showChat,
+  showHeader,
   showDggChat,
   toggleChat
 }: Props) => {
@@ -102,10 +106,17 @@ const Header = ({
     </div>
   );
 
+  let openHeader = !headerClosed ? null : (
+    <div title="Open Header" className='open-header-mobile-btn' onClick={showHeader}>
+       <span className='open-header-caret-mobile'>&#8250;</span>
+    </div>
+  );
+
   return (
     <>
     <Navbar expand='lg' variant='dark' className={classes}>
       {openChat}
+      {openHeader}
       <Navbar.Brand>
         <Link className='navbar-brand' to='/'>Strims</Link>
       </Navbar.Brand>
@@ -187,6 +198,7 @@ function mapStateToProps(state: State): $Shape<Props> {
     rustlerCount: state.streams[state.stream] ? [state.streams[state.stream].rustlers, state.streams[state.stream].viewers] : null,
     showDggChat: Boolean(idx(state, _ => _.self.profile.data.show_dgg_chat)),
     chatClosed: !state.ui.showChat,
+    headerClosed: !state.ui.showHeader,
   };
 }
 
@@ -196,6 +208,7 @@ export default compose(
     {
       toggleChat,
       showChat,
+      showHeader,
     }
   )
 )(Header);

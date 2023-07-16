@@ -8,7 +8,7 @@
   border-radius: 0px;
 }
 
-.open-chat-btn{
+.open-chat-btn,.open-header-mobile-btn{
   position: fixed;
   right: 25px;
   top: 65px;
@@ -16,7 +16,11 @@
   cursor: pointer;
 }
 
-.close-header .open-chat-btn{
+.open-header-mobile-btn{
+  left: 25px;
+}
+
+.close-header .open-chat-btn,.close-header .open-header-mobile-btn{
   top: 10px;
 }
 
@@ -59,6 +63,9 @@
     min-height: unset;
     overflow:visible;
   }
+  .close-header.navbar{
+    overflow:hidden;
+  }
   @media (orientation:landscape){
     .nav-item {
       padding-left: 0.5rem;
@@ -71,7 +78,5 @@
       padding-right: 0.5rem;
     }
   }
-  #open-chat-btn{
-    display: none;
-  }
+
 }
