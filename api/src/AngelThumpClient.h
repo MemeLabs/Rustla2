@@ -13,6 +13,8 @@ class ChannelResult : public APIResult {
  public:
   rapidjson::Document GetSchema() final;
 
+  const rapidjson::Value& GetVideoData() const;
+
   std::string GetTitle() const;
 
   bool GetLive() const;

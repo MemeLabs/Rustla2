@@ -10,64 +10,72 @@ rapidjson::Document ChannelResult::GetSchema() {
   rapidjson::Document schema;
   schema.Parse(R"json(
       {
-        "type": "object",
-        "properties": {
-          "type": {"type": "string"},
-          "thumbnail_url": {
-            "type": "string",
-            "format": "uri"
-          },
-          "viewer_count": {"type": "integer"},
-          "user": {
-            "type": "object",
-            "properties": {
-              "title": {"type": "string"},
-              "offline_banner_url": {
-                "type": "string",
-                "format": "uri"
-              },
-              "nsfw": {"type": "boolean"}
+        "type": "array",
+        "minItems": "1",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {"type": "string"},
+            "thumbnail_url": {
+              "type": "string",
+              "format": "uri"
             },
-            "required": ["offline_banner_url", "nsfw"]
-          }
-        },
-        "required": ["user"]
+            "viewer_count": {"type": "integer"},
+            "user": {
+              "type": "object",
+              "properties": {
+                "title": {"type": "string"},
+                "offline_banner_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "nsfw": {"type": "boolean"}
+              },
+              "required": ["offline_banner_url", "nsfw"]
+            }
+          },
+          "required": ["user"]
+        }
       }
     )json");
   return schema;
 }
 
+const rapidjson::Value& ChannelResult::GetVideoData() const {
+  return GetData().GetArray()[0];
+}
+
 std::string ChannelResult::GetTitle() const {
-  if (GetData()["user"].HasMember("title")) {
-    return json::StringRef(GetData()["user"]["title"]);
+  if (GetVideoData()["user"].HasMember("title")) {
+    return json::StringRef(GetVideoData()["user"]["title"]);
   }
   return "";
 }
 
 bool ChannelResult::GetLive() const {
-  return GetData().HasMember("type") &&
-         json::StringRef(GetData()["type"]) == "live";
+  return GetVideoData().HasMember("type") &&
+         json::StringRef(GetVideoData()["type"]) == "live";
 }
 
 std::string ChannelResult::GetThumbnail() const {
-  return GetData().HasMember("thumbnail_url")
-             ? json::StringRef(GetData()["thumbnail_url"])
-             : json::StringRef(GetData()["user"]["offline_banner_url"]);
+  return GetVideoData().HasMember("thumbnail_url")
+             ? json::StringRef(GetVideoData()["thumbnail_url"])
+             : json::StringRef(GetVideoData()["user"]["offline_banner_url"]);
 }
 
 bool ChannelResult::IsNSFW() const {
-  return GetData()["user"]["nsfw"].GetBool();
+  return GetVideoData()["user"]["nsfw"].GetBool();
 }
 
 uint64_t ChannelResult::GetViewers() const {
-  return GetData().HasMember("viewer_count")
-             ? GetData()["viewer_count"].GetUint64()
+  return GetVideoData().HasMember("viewer_count")
+             ? GetVideoData()["viewer_count"].GetUint64()
              : 0;
 }
 
 Status Client::GetChannelByName(const std::string& name,
                                 ChannelResult* result) {
-  CurlRequest req("https://api.angelthump.com/v2/streams/" + name);
+  CurlRequest req("https://api.angelthump.com/v3/streams?username=" + name);
   req.Submit();
 
   if (!req.Ok()) {
