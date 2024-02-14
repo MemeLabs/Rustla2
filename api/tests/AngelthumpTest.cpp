@@ -10,16 +10,18 @@ namespace rustla2 {
 
 TEST(AngelthumpTest, TestNSFW) {
   std::string resp = R"json(
-    {
-      "type": "live",
-      "thumbnail_url": "https://thumbnail.angelthump.com/thumbnails/psrngafk.jpeg",
-      "viewer_count": 38,
-      "user": {
-        "offline_banner_url": "https://images-angelthump.nyc3.cdn.digitaloceanspaces.com/offline-banners/31dc54b09264952f60fcdd6b7b743920be725a74a1026a858b81b259cfc79fc6.png",
-        "title": "Arrival (2016)",
-        "nsfw": true
+    [
+      {
+        "type": "live",
+        "thumbnail_url": "https://thumbnail.angelthump.com/thumbnails/psrngafk.jpeg",
+        "viewer_count": 38,
+        "user": {
+          "offline_banner_url": "https://images-angelthump.nyc3.cdn.digitaloceanspaces.com/offline-banners/31dc54b09264952f60fcdd6b7b743920be725a74a1026a858b81b259cfc79fc6.png",
+          "title": "Arrival (2016)",
+          "nsfw": true
+        }
       }
-    }
+    ]
   )json";
 
   angelthump::ChannelResult chnl;
@@ -39,16 +41,18 @@ TEST(AngelthumpTest, TestNSFW) {
 
 TEST(AngelthumpTest, TestNotNSFW) {
   std::string resp = R"json(
-    {
-      "type": "live",
-      "thumbnail_url": "https://thumbnail.angelthump.com/thumbnails/psrngafk.jpeg",
-      "viewer_count": 34,
-      "user": {
-        "offline_banner_url": "https://images-angelthump.nyc3.cdn.digitaloceanspaces.com/offline-banners/31dc54b09264952f60fcdd6b7b743920be725a74a1026a858b81b259cfc79fc6.png",
-        "title": "Arrival (2016)",
-        "nsfw": false
+    [
+      {
+        "type": "live",
+        "thumbnail_url": "https://thumbnail.angelthump.com/thumbnails/psrngafk.jpeg",
+        "viewer_count": 34,
+        "user": {
+          "offline_banner_url": "https://images-angelthump.nyc3.cdn.digitaloceanspaces.com/offline-banners/31dc54b09264952f60fcdd6b7b743920be725a74a1026a858b81b259cfc79fc6.png",
+          "title": "Arrival (2016)",
+          "nsfw": false
+        }
       }
-    }
+    ]
   )json";
 
   angelthump::ChannelResult chnl;
@@ -66,7 +70,7 @@ TEST(AngelthumpTest, TestNotNSFW) {
   }
 }
 
-} // namespace rustla2
+}  // namespace rustla2
 
 int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);

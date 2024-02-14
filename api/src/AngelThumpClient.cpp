@@ -11,7 +11,7 @@ rapidjson::Document ChannelResult::GetSchema() {
   schema.Parse(R"json(
       {
         "type": "array",
-        "minItems": "1",
+        "minItems": 1,
         "items": {
           "type": "object",
           "properties": {
