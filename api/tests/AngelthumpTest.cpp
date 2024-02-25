@@ -14,7 +14,7 @@ TEST(AngelthumpTest, TestNSFW) {
       {
         "type": "live",
         "thumbnail_url": "https://thumbnail.angelthump.com/thumbnails/psrngafk.jpeg",
-        "viewer_count": 38,
+        "viewer_count": "38",
         "user": {
           "offline_banner_url": "https://images-angelthump.nyc3.cdn.digitaloceanspaces.com/offline-banners/31dc54b09264952f60fcdd6b7b743920be725a74a1026a858b81b259cfc79fc6.png",
           "title": "Arrival (2016)",
@@ -45,7 +45,7 @@ TEST(AngelthumpTest, TestNotNSFW) {
       {
         "type": "live",
         "thumbnail_url": "https://thumbnail.angelthump.com/thumbnails/psrngafk.jpeg",
-        "viewer_count": 34,
+        "viewer_count": "34",
         "user": {
           "offline_banner_url": "https://images-angelthump.nyc3.cdn.digitaloceanspaces.com/offline-banners/31dc54b09264952f60fcdd6b7b743920be725a74a1026a858b81b259cfc79fc6.png",
           "title": "Arrival (2016)",

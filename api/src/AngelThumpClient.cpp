@@ -1,5 +1,7 @@
 #include "AngelThumpClient.h"
 
+#include <string>
+
 #include "Curl.h"
 #include "JSON.h"
 
@@ -20,7 +22,7 @@ rapidjson::Document ChannelResult::GetSchema() {
               "type": "string",
               "format": "uri"
             },
-            "viewer_count": {"type": "integer"},
+            "viewer_count": {"type": "string"},
             "user": {
               "type": "object",
               "properties": {
@@ -69,7 +71,7 @@ bool ChannelResult::IsNSFW() const {
 
 uint64_t ChannelResult::GetViewers() const {
   return GetVideoData().HasMember("viewer_count")
-             ? GetVideoData()["viewer_count"].GetUint64()
+             ? std::stoull(json::StringRef(GetVideoData()["viewer_count"]))
              : 0;
 }
 
