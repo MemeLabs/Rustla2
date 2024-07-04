@@ -70,8 +70,8 @@
   .close-header-caret{
     top:35px;
   }
-  
-  @media (orientation:portrait){
+  // Orientantion + aspect ratio mirrors the same ruleset in MainLayout.scss
+  @media (orientation:portrait), (orientation:landscape) and (max-aspect-ratio: 2 / 1){
     .chat-embed {
       height: 100%;
       width: 100% !important;
