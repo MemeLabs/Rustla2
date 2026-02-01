@@ -1,0 +1,45 @@
+// modal when image is opened
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.image-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.image-modal__content {
+  height: 100%;
+  place-items: end;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  width: max-content;
+  z-index: 100;
+  position: relative;
+}
+
+.image-modal__btn {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+.image-modal__toolbar {
+  margin-bottom: 10px;
+  button {
+    span {
+      font-size: 25px;
+    }
+  }
+}
+
+.image-modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  user-select: none;
+}

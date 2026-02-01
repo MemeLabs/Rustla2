@@ -8,10 +8,13 @@
   },
   "scripts": {
     "clean": "rm -rf public/assets public/index.html",
+    "clean-w": "rmdir /s /q public\\assets && del /f /q public\\index.html",
     "build": "npm run clean && npm run build:bundle",
+    "build-w": "npm run clean-w && npm run build:bundle",
     "build:bundle": "webpack --progress",
     "build:production": "npm run --prod build",
     "dev-server": "npm run build && webpack-dev-server --inline --hot",
+    "dev-server-w": "npm run build-w && webpack-dev-server --inline --hot",
     "flow": "flow check",
     "lint": "eslint webpack.config.js --ext .js --ext .jsx src"
   },

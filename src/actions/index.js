@@ -175,6 +175,14 @@ export const showHeader = value => dispatch => {
   });
 };
 
+export const IMAGE_MODAL_SRC = Symbol('IMAGE_MODAL_SRC');
+export const imageModalSrc = value => dispatch => {
+  dispatch({
+    type: IMAGE_MODAL_SRC,
+    payload: value,
+  });
+};
+
 export const SHOW_FOOTER = Symbol('SHOW_FOOTER');
 export const showFooter = value => dispatch => {
   dispatch({

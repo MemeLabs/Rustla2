@@ -13,6 +13,7 @@ export default {
     chatSize: localStorage ? Number(localStorage.getItem('chatSize')) || 400 : 400,
     showChat: localStorage ? !(localStorage.getItem('showChat') === 'false') : true,
     showHeader: true,
+    imageModalSrc: null,
     showFooter: true,
   },
   self: {

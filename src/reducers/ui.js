@@ -6,6 +6,7 @@ import {
   SHOW_CHAT,
   SHOW_HEADER,
   SHOW_FOOTER,
+  IMAGE_MODAL_SRC,
 } from '../actions';
 import { actions } from '../actions/websocket';
 
@@ -37,6 +38,11 @@ function uiReducer(state = INITIAL_STATE.ui, action) {
       return {
         ...state,
         showHeader: action.payload,
+      };
+    case IMAGE_MODAL_SRC:
+      return {
+        ...state,
+        imageModalSrc: action.payload,
       };
     case SHOW_FOOTER:
       return {
