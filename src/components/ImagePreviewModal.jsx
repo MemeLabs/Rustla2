@@ -27,9 +27,10 @@ const ImageModal = ({ dispatch, src, onClose }) => (
       <div className="image-modal__toolbar">
         <button
           className="image-modal__btn button-orange"
-          href={src}
           tabIndex={0}
-          target="_blank"
+           onClick={() => {
+           window.open(src,'_blank')
+           }}
         >
           <span className="glyphicon glyphicon-new-window" />
         </button>
@@ -44,9 +45,11 @@ const ImageModal = ({ dispatch, src, onClose }) => (
         <button
           className="image-modal__btn image-modal__btn--close button-orange"
           aria-label="Close"
-          onClick={onClose}
           tabIndex={0}
           autoFocus
+          onClick={() => {
+            dispatch(imageModalSrc(null));
+          }}
         >
           <span className="glyphicon glyphicon-remove" />
         </button>
