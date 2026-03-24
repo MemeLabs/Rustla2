@@ -60,6 +60,15 @@ a {
   }
 }
 
+.button-orange{
+  border: none;
+  background-color: transparent;
+  color: $rustle-orange;
+  &:hover, &:focus {
+    color: darken($rustle-orange, 20%);
+  }
+}
+
 .form-control, .form-control, .btn-group > .navbar-btn, .input-group-btn > .btn {
   background-color: #222;
   color: #fff;

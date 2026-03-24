@@ -51,5 +51,6 @@ export type State = {|
     +showChat: boolean,
     +showHeader: boolean,
     +showFooter: boolean,
+    +imageModalSrc: string,
   |}
 |};

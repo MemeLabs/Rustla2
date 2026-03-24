@@ -13,6 +13,7 @@ import Header from './Header';
 import Footer from './Footer';
 
 import CustomScrollbar from './CustomScrollbar';
+import ImageModal from './ImagePreviewModal';
 
 import '../css/Stream';
 
@@ -22,7 +23,7 @@ import {
   showHeader as headerFunc
 } from '../actions';
 
-export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, showLeftChat=false, chatClosed, chatSize, headerFunc}) =>
+export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, showLeftChat=false, chatClosed, chatSize, headerFunc, imageModalSrc}) =>
 {
   let left = (
     <div className='flex-shrink-0 stream-embed' style={{ width: chatClosed ? '100%' : `calc(100% - ${chatSize}px)`, height: chatClosed ? '100%' :  '', display: 'flex', flexDirection: 'column'}}>
@@ -53,6 +54,11 @@ export const RoutesWithChat = ({showHeader, showFooter, setChatSize, showChat, s
           <div title={showHeader ? "Close Header" : "Open Header"} className= {showHeader ?"close-header-btn" : 'open-header-btn'}>
             <span className={showHeader ? 'close-header-caret': 'open-header-caret'} onClick={() => showHeader ? headerFunc(false) : headerFunc(true)}>&#8250;</span>
           </div>
+          {imageModalSrc && (
+            <ImageModal
+              src={imageModalSrc}
+            />
+          )}   
           <Resizeable
           className='flex-grow-1 flex-column flex-lg-row'
           onResize={e => {
@@ -80,6 +86,8 @@ RoutesWithChat.propTypes = {
   showLeftChat: PropTypes.bool,
   chatClosed: PropTypes.bool,
 
+  imageModalSrc: PropTypes.string,
+
   chatSize: PropTypes.number.isRequired,
 
   setChatSize: PropTypes.func.isRequired,
@@ -96,6 +104,7 @@ export default compose(
       showLeftChat: idx(state, _ => _.self.profile.data.left_chat),
       chatClosed: !state.ui.showChat,
       headerClosed: !state.ui.showHeader,
+      imageModalSrc: state.ui.imageModalSrc,
     }),
     {
       setChatSize,
