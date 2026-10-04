@@ -20,6 +20,8 @@
 
 namespace rustla2 {
 
+class Users;
+
 // Cap stream IDs to 48 bits for JS
 const uint64_t kMaxStreamID = 0xFFFFFFFFFFF;
 
@@ -30,7 +32,8 @@ class Stream {
          bool hidden = false, bool afk = false, bool promoted = false,
          const std::string &title = "", const std::string &thumbnail = "",
          const bool live = false, const uint64_t viewer_count = 0,
-         const bool service_nsfw = false, const bool removed = false)
+         const bool service_nsfw = false, const bool removed = false,
+         std::shared_ptr<Users> users = nullptr)
       : db_(db),
         observers_(observers),
         viewer_ips_(std::make_shared<IPSet>()),
@@ -45,11 +48,14 @@ class Stream {
         afk_(afk),
         promoted_(promoted),
         viewer_count_(viewer_count),
-        service_nsfw_(service_nsfw) {}
+        service_nsfw_(service_nsfw),
+        users_(users) {}
 
   Stream(sqlite::database db, std::shared_ptr<Observable<uint64_t>> observers,
-         const Channel &channel)
-      : Stream(db, observers, ChannelHash{}(channel)&kMaxStreamID, channel) {}
+         const Channel &channel, std::shared_ptr<Users> users = nullptr)
+      : Stream(db, observers, ChannelHash{}(channel)&kMaxStreamID, channel) {
+    users_ = users;
+  }
 
   inline uint64_t GetID() const {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -231,6 +237,10 @@ class Stream {
   }
 
  private:
+  // Called while holding the stream lock. Resolve the current profile so edits
+  // appear in the next directory broadcast without changing provider metadata.
+  std::string GetTitleOverride() const;
+
   inline void ResetUpdatedTime() {
     update_time_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
                        std::chrono::steady_clock::now().time_since_epoch())
@@ -257,6 +267,7 @@ class Stream {
   uint64_t afk_count_{0};
   uint64_t reset_time_{0};
   uint64_t update_time_{0};
+  std::shared_ptr<Users> users_;
 
   friend std::ostream &operator<<(std::ostream &os, const Stream &stream);
 };
@@ -293,7 +304,7 @@ struct IsNotRemoved {
 
 class Streams {
  public:
-  explicit Streams(sqlite::database db);
+  explicit Streams(sqlite::database db, std::shared_ptr<Users> users = nullptr);
 
   void InitTable();
 
@@ -351,6 +362,7 @@ class Streams {
 
  private:
   sqlite::database db_;
+  std::shared_ptr<Users> users_;
   std::shared_ptr<Observable<uint64_t>> observers_;
   boost::shared_mutex lock_;
   std::unordered_map<uint64_t, std::shared_ptr<Stream>> data_by_id_;

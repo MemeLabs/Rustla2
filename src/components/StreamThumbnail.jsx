@@ -82,11 +82,12 @@ const StreamThumbnail = ({
   service,
   thumbnail,
   title,
+  title_override,
   isAdmin,
 }) => {
   const color = generateColor(channel + service);
   const url = overrustle_id ? overrustle_id : `${service}/${channel}`;
-  const text = getStreamTitle(overrustle_id, channel, title, service);
+  const text = title_override || getStreamTitle(overrustle_id, channel, title, service);
 
   let thumbnailProps = { className: 'thumbnail-image thumbnail-default-image' };
   if (thumbnail) {
@@ -158,6 +159,7 @@ StreamThumbnail.propTypes = {
   service: PropTypes.string.isRequired,
   thumbnail: PropTypes.string,
   title: PropTypes.string,
+  title_override: PropTypes.string,
   isAdmin: PropTypes.bool,
 };
 

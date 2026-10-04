@@ -2,7 +2,21 @@
 
 #include <algorithm>
 
+#include "Users.h"
+
 namespace rustla2 {
+
+std::string Stream::GetTitleOverride() const {
+  if (!users_ || !channel_->HasStreamPath()) {
+    return "";
+  }
+  auto user = users_->GetByStreamPath(channel_->GetStreamPath());
+  // Old stream cards must not inherit a title after a profile changes source.
+  if (!user || !ChannelEqual{}(*user->GetChannel(), *channel_)) {
+    return "";
+  }
+  return user->GetStreamTitleOverride();
+}
 
 void Stream::WriteAPIJSON(
     rapidjson::Writer<rapidjson::StringBuffer> *writer) const {
@@ -29,6 +43,8 @@ void Stream::WriteAPIJSON(
   writer->String(channel_->GetChannel());
   writer->Key("title");
   writer->String(title_);
+  writer->Key("title_override");
+  writer->String(GetTitleOverride());
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("url");
@@ -53,6 +69,8 @@ void Stream::WriteJSON(
   writer->String(channel_->GetStreamPath());
   writer->Key("title");
   writer->String(title_);
+  writer->Key("title_override");
+  writer->String(GetTitleOverride());
   writer->Key("thumbnail");
   writer->String(thumbnail_);
   writer->Key("live");
@@ -221,8 +239,9 @@ bool Stream::SaveNew() {
   return true;
 }
 
-Streams::Streams(sqlite::database db)
-    : db_(db), observers_(std::make_shared<Observable<uint64_t>>()) {
+Streams::Streams(sqlite::database db, std::shared_ptr<Users> users)
+    : db_(db), users_(users),
+      observers_(std::make_shared<Observable<uint64_t>>()) {
   InitTable();
 
   auto sql = R"sql(
@@ -254,7 +273,7 @@ Streams::Streams(sqlite::database db)
     auto stream_channel = Channel::Create(channel, service, path);
     auto stream = std::make_shared<Stream>(
         db_, observers_, id, stream_channel, nsfw, hidden, afk, promoted, title,
-        thumbnail, live, viewer_count, service_nsfw, removed);
+        thumbnail, live, viewer_count, service_nsfw, removed, users_);
 
     data_by_id_[stream->GetID()] = stream;
     data_by_channel_[stream_channel] = stream;
@@ -353,7 +372,7 @@ void Streams::WriteStreamsJSON(
 }
 
 std::shared_ptr<Stream> Streams::Emplace(const Channel &channel) {
-  auto stream = std::make_shared<Stream>(db_, observers_, channel);
+  auto stream = std::make_shared<Stream>(db_, observers_, channel, users_);
 
   {
     boost::unique_lock<boost::shared_mutex> write_lock(lock_);

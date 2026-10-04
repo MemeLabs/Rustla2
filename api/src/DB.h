@@ -19,7 +19,7 @@ class DB {
         users_(std::make_shared<Users>(db_)),
         banned_streams_(std::make_shared<BannedStreams>(db_)),
         banned_ips_(std::make_shared<IPRanges>(db_, "banned_ip_ranges")),
-        streams_(std::make_shared<Streams>(db_)),
+        streams_(std::make_shared<Streams>(db_, users_)),
         viewer_states_(std::make_shared<ViewerStates>(users_, streams_)) {}
 
   inline std::shared_ptr<Users> GetUsers() { return users_; }

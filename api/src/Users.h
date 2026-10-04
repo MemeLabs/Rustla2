@@ -28,7 +28,8 @@ class User {
        const int64_t twitch_id, const std::string &name, const Channel &channel,
        const std::string &last_ip, const time_t last_seen, const bool left_chat,
        const bool is_admin, const bool show_hidden, const bool show_dgg_chat,
-       const bool enable_public_state)
+       const bool enable_public_state,
+       const std::string &stream_title_override = "")
       : db_(db),
         id_(id),
         twitch_id_(twitch_id),
@@ -40,7 +41,8 @@ class User {
         is_admin_(is_admin),
         show_hidden_(show_hidden),
         show_dgg_chat_(show_dgg_chat),
-        enable_public_state_(enable_public_state) {}
+        enable_public_state_(enable_public_state),
+        stream_title_override_(stream_title_override) {}
 
   User(sqlite::database db, const uint64_t twitch_id, const Channel &channel,
        const std::string &last_ip)
@@ -68,7 +70,8 @@ class User {
         is_admin_(user.is_admin_),
         show_hidden_(user.show_hidden_),
         show_dgg_chat_(user.show_dgg_chat_),
-        enable_public_state_(user.enable_public_state_) {}
+        enable_public_state_(user.enable_public_state_),
+        stream_title_override_(user.stream_title_override_) {}
 
   inline boost::uuids::uuid GetID() {
     boost::shared_lock<boost::shared_mutex> read_lock(lock_);
@@ -130,6 +133,11 @@ class User {
     return enable_public_state_;
   }
 
+  inline std::string GetStreamTitleOverride() {
+    boost::shared_lock<boost::shared_mutex> read_lock(lock_);
+    return stream_title_override_;
+  }
+
   std::string GetStreamJSON();
 
   std::string GetUsernameJSON();
@@ -139,6 +147,8 @@ class User {
   void WriteJSON(rapidjson::Writer<rapidjson::StringBuffer> *writer);
 
   Status SetName(const std::string &name);
+
+  Status SetStreamTitleOverride(const std::string &title);
 
   bool SetChannel(const Channel &channel);
 
@@ -172,6 +182,7 @@ class User {
   bool show_hidden_;
   bool show_dgg_chat_;
   bool enable_public_state_;
+  std::string stream_title_override_;
 
   friend class Users;
   friend std::ostream &operator<<(std::ostream &os, const User &user);
