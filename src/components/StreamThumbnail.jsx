@@ -38,6 +38,8 @@ const isDirectLinkSupported = (service) => {
   switch (service) {
     case "angelthump": 
       return true;
+    case "okru":
+      return true;
     case "twitch-vod":
       return true;
     case "twitch":
@@ -53,6 +55,8 @@ const getStreamServiceLink = (channel, service) => {
   switch (service) {
     case "angelthump": 
       return "https://strims.gg/angelthump/" + channel;
+    case "okru":
+      return "https://ok.ru/video/" + channel;
     case "twitch-vod":
       return "https://www.twitch.tv/videos/" + channel;
     case "twitch":
@@ -87,7 +91,8 @@ const StreamThumbnail = ({
   let thumbnailProps = { className: 'thumbnail-image thumbnail-default-image' };
   if (thumbnail) {
     const epochMinute = Math.floor(Date.now() / (THUMBNAIL_REFRESH_INTERVAL || 60000));
-    const thumbnailUrl = live ? `${thumbnail}?${epochMinute}` : thumbnail;
+    const separator = thumbnail.includes('?') ? '&' : '?';
+    const thumbnailUrl = live ? `${thumbnail}${separator}${epochMinute}` : thumbnail;
 
     thumbnailProps = {
       className: `thumbnail-image ${nsfw ? 'thumbnail-image-nsfw' : ''}`,

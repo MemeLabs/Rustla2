@@ -77,6 +77,7 @@ set(SOURCE_FILES
         src/HTTPService.cpp
         src/IPRanges.cpp
         src/MIMETypes.cpp
+        src/OkruClient.cpp
         src/ServicePoller.cpp
         src/Session.cpp
         src/SmashcastClient.cpp
@@ -151,6 +152,15 @@ add_executable(angelthump_test
 target_include_directories(angelthump_test PRIVATE ${TEST_LIB_HEADER})
 target_link_libraries(angelthump_test PRIVATE ${TEST_LIB})
 
+add_executable(okru_test
+        tests/OkruTest.cpp
+        src/OkruClient.cpp
+        src/Curl.cpp
+        src/APIClient.cpp
+        src/Status.cpp)
+target_include_directories(okru_test PRIVATE ${TEST_LIB_HEADER})
+target_link_libraries(okru_test PRIVATE ${TEST_LIB})
+
 add_executable(smashcast_test
         tests/SmashcastTest.cpp
         src/SmashcastClient.cpp
@@ -175,5 +185,6 @@ add_test(ip_ranges ip_ranges_test)
 add_test(curl curl_test)
 add_test(youtube youtube_test)
 add_test(angelthump angelthump_test)
+add_test(okru okru_test)
 add_test(smashcast smashcast_test)
 add_test(streams streams_test)

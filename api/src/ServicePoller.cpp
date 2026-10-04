@@ -2,6 +2,7 @@
 
 #include "AngelThumpClient.h"
 #include "Config.h"
+#include "OkruClient.h"
 
 namespace rustla2 {
 
@@ -30,6 +31,8 @@ void ServicePoller::Run() {
       status = CheckTwitchVOD(channel->GetChannel(), &state);
     } else if (channel->GetService() == kAngelThumpService) {
       status = CheckAngelThump(channel->GetChannel(), &state);
+    } else if (channel->GetService() == kOkruService) {
+      status = CheckOkru(channel->GetChannel(), &state);
     } else if (channel->GetService() == kYouTubeService) {
       status = CheckYouTube(channel->GetChannel(), &state);
     } else if (channel->GetService() == kM3u8Service) {
@@ -71,6 +74,22 @@ const Status ServicePoller::CheckAngelThump(const std::string &name,
   state->thumbnail = channel.GetThumbnail();
   state->viewers = channel.GetViewers();
   state->nsfw = channel.IsNSFW();
+  return status;
+}
+
+const Status ServicePoller::CheckOkru(const std::string &id,
+                                    ChannelState *state) {
+  okru::Client client;
+  okru::ChannelResult channel;
+  auto status = client.GetChannelByID(id, &channel);
+
+  if (!status.Ok()) {
+    return status;
+  }
+
+  state->title = channel.GetTitle();
+  state->live = channel.GetLive();
+  state->thumbnail = channel.GetThumbnail();
   return status;
 }
 
