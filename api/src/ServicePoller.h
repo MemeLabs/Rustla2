@@ -32,6 +32,8 @@ class ServicePoller {
 
   const Status CheckM3u8(const std::string& name, ChannelState* state);
 
+  const Status CheckOkru(const std::string& id, ChannelState* state);
+
   const Status CheckTwitchStream(const std::string& name, ChannelState* state);
 
   const Status CheckTwitchVOD(const std::string& name, ChannelState* state);
