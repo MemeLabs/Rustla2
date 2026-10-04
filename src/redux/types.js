@@ -24,6 +24,7 @@ type Stream = {|
   +service: string,
   +thumbnail: string,
   +title: string,
+  +title_override?: string,
   +viewers: number
 |};
 

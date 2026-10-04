@@ -35,6 +35,7 @@ const Profile = ({
               service: event.target.elements.service.value,
               channel: event.target.elements.channel.value,
               stream_path: event.target.elements.stream_path.value,
+              stream_title_override: event.target.elements.stream_title_override.value,
               username: event.target.elements.username.value,
               enable_public_state: event.target.elements.enable_public_state.checked,
               left_chat: event.target.elements.left_chat.checked,
@@ -101,6 +102,21 @@ const Profile = ({
             </div>
           </div>
           <div className='form-group'>
+            <label htmlFor='profile-stream-title'>Stream title override</label>
+            <input
+              className='form-control'
+              id='profile-stream-title'
+              type='text'
+              name='stream_title_override'
+              maxLength={120}
+              defaultValue={profile.data.stream_title_override || ''}
+              aria-describedby='profile-stream-title-help'
+            />
+            <small id='profile-stream-title-help' className='form-text text-muted'>
+              Custom title for your stream card. Leave blank to use the default title.
+            </small>
+          </div>
+          <div className='form-group'>
             <div className='form-check'>
               <Checkbox
                 id='profile-enablepublicstate'
@@ -163,6 +179,7 @@ Profile.propTypes = {
       show_dgg_chat: PropTypes.bool,
       show_hidden: PropTypes.bool,
       stream_path: PropTypes.string,
+      stream_title_override: PropTypes.string,
       username: PropTypes.string
     }),
     err: PropTypes.any,

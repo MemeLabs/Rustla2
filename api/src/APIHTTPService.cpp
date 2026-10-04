@@ -17,6 +17,7 @@ APIHTTPService::APIHTTPService(std::shared_ptr<DB> db) : db_(db) {
           "stream_path": {"type": "string"},
           "service": {"type": "string"},
           "channel": {"type": "string"},
+          "stream_title_override": {"type": "string"},
           "left_chat": {"type": "boolean"},
           "show_hidden": {"type": "boolean"},
           "show_dgg_chat": {"type": "boolean"},
@@ -143,6 +144,11 @@ void APIHTTPService::PostProfile(uWS::HttpResponse *res, HTTPRequest *req) {
       newUser->SetChannel(Channel::Create(
           json::StringRef(input["channel"]), json::StringRef(input["service"]),
           json::StringRef(input["stream_path"]), &status));
+    }
+
+    if (status.Ok() && input.HasMember("stream_title_override")) {
+      status = newUser->SetStreamTitleOverride(
+          json::StringRef(input["stream_title_override"]));
     }
 
     if (status.Ok()) {

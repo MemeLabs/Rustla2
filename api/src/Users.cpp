@@ -1,6 +1,7 @@
 #include "Users.h"
 
 #include <glog/logging.h>
+#include <rapidjson/memorystream.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/regex.hpp>
 
@@ -58,6 +59,8 @@ std::string User::GetProfileJSON() {
   writer.Bool(show_dgg_chat_);
   writer.Key("enable_public_state");
   writer.Bool(enable_public_state_);
+  writer.Key("stream_title_override");
+  writer.String(stream_title_override_);
   writer.EndObject();
 
   return buf.GetString();
@@ -167,6 +170,28 @@ bool User::SetChannel(const Channel &channel) {
   return true;
 }
 
+Status User::SetStreamTitleOverride(const std::string &title) {
+  const auto trimmed = boost::trim_copy(title);
+  rapidjson::MemoryStream input(trimmed.data(), trimmed.size());
+  size_t length = 0;
+  while (input.Tell() < trimmed.size()) {
+    unsigned codepoint;
+    if (!rapidjson::UTF8<>::Decode(input, &codepoint) || codepoint < 32 ||
+        (codepoint >= 127 && codepoint <= 159)) {
+      return Status(StatusCode::VALIDATION_ERROR,
+                    "Stream title must be a single line of valid text.");
+    }
+    if (++length > 120) {
+      return Status(StatusCode::VALIDATION_ERROR,
+                    "Stream title must be 120 characters or fewer.");
+    }
+  }
+
+  boost::unique_lock<boost::shared_mutex> write_lock(lock_);
+  stream_title_override_ = trimmed;
+  return Status::OK;
+}
+
 bool User::SetLeftChat(bool left_chat) {
   boost::unique_lock<boost::shared_mutex> write_lock(lock_);
   left_chat_ = left_chat;
@@ -219,13 +244,14 @@ bool User::Save() {
           `show_hidden` = ?,
           `show_dgg_chat` = ?,
           `enable_public_state` = ?,
+          `stream_title_override` = ?,
           `updated_at` = datetime()
         WHERE `id` = ?
       )sql";
     db_ << sql << name_ << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
         << is_admin_ << show_hidden_ << show_dgg_chat_ << enable_public_state_
-        << GetIDString();
+        << stream_title_override_ << GetIDString();
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error updating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -255,6 +281,7 @@ bool User::SaveNew() {
           `show_hidden`,
           `show_dgg_chat`,
           `enable_public_state`,
+          `stream_title_override`,
           `ban_reason`,
           `created_at`,
           `updated_at`
@@ -274,6 +301,7 @@ bool User::SaveNew() {
           ?,
           ?,
           ?,
+          ?,
           '',
           datetime(),
           datetime()
@@ -282,7 +310,8 @@ bool User::SaveNew() {
     db_ << sql << GetIDString() << twitch_id_ << channel_->GetChannel() << name_
         << channel_->GetStreamPath() << channel_->GetService()
         << channel_->GetChannel() << last_ip_ << last_seen_ << left_chat_
-        << is_admin_ << show_hidden_ << show_dgg_chat_ << enable_public_state_;
+        << is_admin_ << show_hidden_ << show_dgg_chat_ << enable_public_state_
+        << stream_title_override_;
   } catch (const sqlite::sqlite_exception &e) {
     LOG(ERROR) << "error creating user " << this << ", "
                << "error: " << e.what() << ", "
@@ -327,7 +356,8 @@ Users::Users(sqlite::database db) : db_(db) {
         `is_admin`,
         `show_hidden`,
         `show_dgg_chat`,
-        `enable_public_state`
+        `enable_public_state`,
+        `stream_title_override`
       FROM `users`
     )sql";
   auto query = db_ << sql;
@@ -338,12 +368,14 @@ Users::Users(sqlite::database db) : db_(db) {
                const std::string &last_ip, const time_t last_seen,
                const bool left_chat, const bool is_admin,
                const bool show_hidden, const bool show_dgg_chat,
-               const bool enable_public_state) {
+               const bool enable_public_state,
+               const std::string &stream_title_override) {
     boost::uuids::string_generator to_uuid;
     auto user_channel = Channel::Create(channel, service, stream_path);
     auto user = std::make_shared<User>(
         db_, to_uuid(id), twitch_id, name, user_channel, last_ip, last_seen,
-        left_chat, is_admin, show_hidden, show_dgg_chat, enable_public_state);
+        left_chat, is_admin, show_hidden, show_dgg_chat, enable_public_state,
+        stream_title_override);
 
     data_by_id_[user->GetID()] = user;
     data_by_twitch_id_[user->GetTwitchID()] = user;
@@ -377,11 +409,26 @@ void Users::InitTable() {
         `show_hidden` TINYINT(1) DEFAULT 0,
         `show_dgg_chat` TINYINT(1) DEFAULT 0,
         `enable_public_state` TINYINT(1) DEFAULT 1,
+        `stream_title_override` TEXT NOT NULL DEFAULT '',
         UNIQUE (`id`),
         UNIQUE (`twitch_id`)
       )
     )sql";
   db_ << sql;
+
+  // CREATE TABLE does not add columns to existing databases.
+  bool has_title_override = false;
+  db_ << "PRAGMA table_info(users)" >>
+      [&](int, const std::string &name, const std::string &, int,
+          std::unique_ptr<std::string>, int) {
+        if (name == "stream_title_override") {
+          has_title_override = true;
+        }
+      };
+  if (!has_title_override) {
+    db_ << "ALTER TABLE users ADD COLUMN stream_title_override "
+           "TEXT NOT NULL DEFAULT ''";
+  }
 }
 
 std::shared_ptr<User> Users::GetByID(const boost::uuids::uuid &id) {

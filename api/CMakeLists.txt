@@ -173,6 +173,9 @@ target_link_libraries(smashcast_test PRIVATE ${TEST_LIB})
 add_executable(streams_test
         tests/StreamsTest.cpp
         src/Streams.cpp
+        src/Users.cpp
+        src/Config.cpp
+        src/Strings.cpp
         src/Channel.cpp
         src/Status.cpp
         src/APIClient.cpp)
@@ -188,3 +191,5 @@ add_test(angelthump angelthump_test)
 add_test(okru okru_test)
 add_test(smashcast smashcast_test)
 add_test(streams streams_test)
+add_test(NAME users COMMAND users_test)
+set_tests_properties(users PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tests)
